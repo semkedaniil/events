@@ -1,0 +1,47 @@
+@import "src/ui/styles/variables";
+
+:local {
+  .map-controls {
+    padding: @base-size * 3;
+    z-index: 1;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+    border-radius: 0 16px 16px 0;
+    display: flex;
+    align-items: center;
+    gap: @base-size * 2;
+    margin-top: @base-size * 4;
+    top: @base-size * 16;
+    left: 0;
+    transition: left 0.5s ease;
+
+    &.closed {
+      left: -350px;
+    }
+
+    .caption {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .button {
+      padding: @base-size * 2;
+    }
+
+    .switch-button {
+      width: 35px;
+      height: 35px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 50%;
+      background-color: white;
+
+      &.closed {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}

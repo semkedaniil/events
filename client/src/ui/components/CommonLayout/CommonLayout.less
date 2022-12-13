@@ -1,0 +1,18 @@
+@import "src/ui/styles/variables";
+
+@global-horizontal-padding: @base-size * 8px;
+@global-vertical-padding: @base-size * 10px;
+
+
+:local {
+  .common-layout {
+    padding: @global-vertical-padding @global-horizontal-padding 0;
+  }
+
+  .common-layout-header {
+    display: flex;
+    margin-bottom: @base-size * 8;
+    gap: @base-size * 3;
+    align-items: center;
+  }
+}

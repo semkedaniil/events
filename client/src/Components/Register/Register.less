@@ -1,0 +1,28 @@
+@import "src/ui/styles/variables";
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+
+  .login-page-card {
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: @base-size * 3;
+    background-color: white;
+    margin-bottom: @base-size * 20;
+    outline: 2px solid rgba(0, 0, 0, 0.15);
+    height: fit-content;
+    padding: @base-size * 8;
+    border-radius: 16px;
+  }
+
+  .login-page-additional-info {
+    font-size: 13px;
+    display: flex;
+    gap: @base-size * 10;
+  }
+}

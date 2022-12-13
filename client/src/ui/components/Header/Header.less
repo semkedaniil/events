@@ -1,0 +1,55 @@
+@import "src/ui/styles/variables";
+
+:local {
+  .header {
+    top: @global-vertical-padding;
+    position: absolute;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 1;
+    padding-right: @base-size * 3;
+    right: @base-size * 4;
+  }
+
+  .header-menu {
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+    top: 70px;
+    font-size: 14px;
+    border-radius: 16px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: @base-size * 2;
+    min-width: 250px;
+    justify-content: center;
+    background-color: white;
+    padding: @base-size * 7;
+
+    .credentials {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: @base-size * 3;
+      padding-bottom: @base-size * 3;
+      margin-bottom: @base-size * 3;
+
+      img {
+        cursor: default;
+      }
+    }
+
+    .menu-item {
+      text-align: center;
+      cursor: pointer;
+      padding: @base-size * 2;
+      border-radius: 16px;
+      outline: 1px solid rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+}

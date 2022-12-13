@@ -1,0 +1,8 @@
+/node_modules/
+*.js
+**/.*/*
+*
+# only for .ts and .tsx files
+!*/
+!*.ts
+!*.tsx

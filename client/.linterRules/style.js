@@ -1,0 +1,55 @@
+module.exports = {
+    rules: {
+        "unicorn/prefer-number-properties": "off",
+        "unicorn/numeric-separators-style": "error",
+        "unicorn/filename-case": [
+            "error",
+            {
+                "cases": {
+                    "camelCase": true,
+                    "pascalCase": true,
+                },
+                "ignore": [/^[A-Z]*/i],
+            },
+        ],
+        "unicorn/prevent-abbreviations": ["error", {
+            "allowList": {
+                "Ref": true,
+                "str": true,
+                "Params": true,
+                "prod": true,
+                "doc": true,
+                "docs": true,
+                "Docs": true,
+                "func": true,
+                "Func": true,
+                "args": true,
+                "props": true,
+                "Props": true,
+            },
+        }],
+        "unicorn/switch-case-braces": ["error", "avoid"],
+        curly: 2,
+        "no-labels": [2, { allowLoop: true, allowSwitch: true }],
+        "no-new-wrappers": 2,
+        "arrow-body-style": "error",
+        "@typescript-eslint/prefer-function-type": "error",
+        "spaced-comment": "error",
+        "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+        "@typescript-eslint/consistent-type-assertions": ["error", { assertionStyle: "as" }],
+        "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/triple-slash-reference": [
+            "error",
+            {
+                path: "never",
+                types: "never",
+                lib: "never",
+            },
+        ],
+        "@typescript-eslint/no-unnecessary-qualifier": "off",
+        "no-multi-assign": "off",
+        "prefer-object-spread": "error",
+        "prefer-template": "error",
+        "@typescript-eslint/member-delimiter-style": "error",
+    },
+};
