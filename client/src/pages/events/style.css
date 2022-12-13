@@ -1,0 +1,12 @@
+.main-page {
+    position: absolute;
+    display: grid;
+    height: calc(100% - 70px);
+    width: 100%;
+}
+
+.popup-modal-window{
+    visibility: hidden;
+    z-index: 9999;
+    position: absolute;
+}

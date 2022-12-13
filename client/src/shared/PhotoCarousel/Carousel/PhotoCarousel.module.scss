@@ -1,0 +1,82 @@
+.photoCarousel {
+  width: 100%;
+  background: #d7dcd7;
+
+  &__imageWrapper {
+    position: relative;
+    display: flex !important;
+    justify-content: center;
+    height: 320px;
+    cursor: pointer;
+  }
+
+  &__deleteImageButton {
+    all: unset;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: box-shadow 0.2s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 0 5px #00000020;
+    }
+
+    &:active {
+      background-color: #008d8e;
+    }
+  }
+
+  &__image {
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.arrowNext,
+.arrowPrev {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 50%;
+  margin-top: -15px;
+  font-weight: bold;
+  vertical-align: center;
+  background: #d7dcd7;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  z-index: 5;
+
+  &:hover {
+    background-color: #008d8e;
+  }
+}
+
+.arrowNext {
+  right: 0;
+}
+
+.arrowPrev {
+  left: 0;
+}
+
+.slick-arrow {
+  background: #171f1d;
+}

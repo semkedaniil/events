@@ -1,0 +1,22 @@
+.modalWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 300px;
+
+  .error {
+    color: #DC143CFF;
+  }
+
+  .success {
+    color: #008D8E;
+  }
+
+  .message {
+    width: 80%;
+    text-align: center;
+    font-size: 24px;
+  }
+}

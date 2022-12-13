@@ -1,0 +1,53 @@
+.side-bar {
+  display: flex;
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.closemenu {
+  transition: 0.5s linear;
+  z-index: 3333;
+  transform: translateX(0);
+  position: relative;
+  top: calc(50vh - 70px - 28px);
+}
+
+.pro-sidebar {
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.pro-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  color: #323232;
+  background-color: #d7dcd7;
+  padding: 1em 2em 0;
+  font-size: 1.15em;
+  position: relative;
+  height: 100%;
+}
+
+.pro-sidebar::-webkit-scrollbar,
+.pro-sidebar-content::-webkit-scrollbar {
+  width: 0;
+  visibility: hidden;
+}
+
+.button {
+  background-color: #59c7c7;
+  border-radius: 50%;
+  display: flex;
+  border: none;
+  color: #008d8e;
+  cursor: pointer;
+}
+
+.buttonMenu {
+  width: 55px;
+  height: 55px;
+  font-size: 30px;
+  align-items: center;
+  justify-content: center;
+}

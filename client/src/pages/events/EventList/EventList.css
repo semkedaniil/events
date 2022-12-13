@@ -1,0 +1,11 @@
+.event-container {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+  overflow-y: scroll;
+}
+
+.event-container::-webkit-scrollbar{
+  width: 0;
+  visibility: hidden;
+}
