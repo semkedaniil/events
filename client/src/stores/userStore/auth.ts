@@ -13,7 +13,7 @@ interface UserStore {
 
 interface Actions {
     setToken: (token: string) => void;
-    setUser: (user: User) => void;
+    setUser: (user: User | null) => void;
     setIsAuth: (isAuth: boolean) => void;
     check: () => Promise<void>;
 }
@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthStoreState>()(
     persist(
         (set, get) => ({
             ...defaultUserState,
-            setUser: (user: User) => set(() => ({ user })),
+            setUser: (user: User | null) => set(() => ({ user })),
             setIsAuth: (isAuth: boolean) =>
                 set(() => ({
                     isAuth,
@@ -44,7 +44,8 @@ export const useAuthStore = create<AuthStoreState>()(
                 get().setUser(user);
             },
             check: async () => {
-                const user = await check();
+                const token = await check();
+                const user = jwtDecode(token) as User;
                 get().setUser(user);
             },
             logout: () => {

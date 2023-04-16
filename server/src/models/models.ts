@@ -3,6 +3,8 @@ import { DataTypes } from "sequelize";
 
 const User = db.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  username: { type: DataTypes.STRING, unique: true },
+  birthday: { type: DataTypes.STRING  , unique: false },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING, unique: true },
   role: { type: DataTypes.STRING, defaultValue: "USER" },

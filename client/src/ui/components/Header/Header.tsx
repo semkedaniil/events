@@ -23,7 +23,7 @@ export const Header = (): JSX.Element => {
             <div onClick={onHeaderClick}>
                 <UserAvatar />
             </div>
-            {showMenu && <HeaderMenu />}
+            {showMenu && <HeaderMenu onClose={() => setShowMenu(false)} />}
         </header>
     );
 };

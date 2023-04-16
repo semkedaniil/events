@@ -6,22 +6,35 @@ import { BsKey } from "react-icons/bs";
 
 import cn from "./Register.less";
 import { getRegistrationValidationInfo } from "./helpers";
+import { login, registration } from "../../api/auth/auth";
+import { useAuthStore } from "../../stores/userStore/auth";
+import { useNavigate } from "react-router-dom";
 
 const inputWidth = "100%";
 const maxInputLength = 100;
 
 export const Register = (): JSX.Element => {
-    const [token, setToken] = useState(null);
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
     const [password, setPassword] = useState("");
     const [repeatedPassword, setRepeatedPassword] = useState("");
-    const [isKeepLogin, setIsKeepLogin] = useState(false);
     const container = useRef<ValidationContainer | null>(null);
-    const [birthDate, setBirthDate] = useState<string | null>("BirthDate");
+    const [birthDate, setBirthDate] = useState<string>("BirthDate");
 
     const signIn = async (): Promise<void> => {
-        await container.current?.submit();
+        const isValid = await container.current?.validate();
+        if (!isValid) {
+            return;
+        }
+        setLoading(true);
+        try {
+            await registration(username, birthDate, email, password);
+            navigate("/login");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const validationInfo = getRegistrationValidationInfo(username, email, password, repeatedPassword, birthDate);

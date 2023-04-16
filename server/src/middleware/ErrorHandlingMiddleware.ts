@@ -1,5 +1,5 @@
 import { ApiError } from "../error/ApiError";
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 
 export default function (
   error: any,
