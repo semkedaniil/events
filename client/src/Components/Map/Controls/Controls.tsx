@@ -1,16 +1,48 @@
-import { useCallback, useState, useEffect, SetStateAction } from "react";
+import { useCallback, useState, useEffect, SetStateAction, useRef } from "react";
 import { useMap } from "react-map-gl";
-import { Button, Input } from "@skbkontur/react-ui";
+import {
+    Button, DatePicker,
+    Input,
+    RadioGroup, Token,
+    TokenInput,
+    TokenInputType,
+} from "@skbkontur/react-ui";
 
 import RightIcon from "../../../assets/arrow_right.svg";
 
 import cn from "./Controls.less";
+import { inputNumber } from "@skbkontur/react-ui/components/DateInput/helpers/inputNumber";
+import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
+import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
+
+const inputWidth = 270;
+const maxInputLength = 100;
+
+const enum EventType {
+    LOCAL = "Локальный",
+    GLOBAL = "Глобальный"
+}
+
+const pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+
+const parseDate = (date: string) => new Date(date.replace(pattern, "$3-$2-$1"));
 
 export const Controls = (): JSX.Element => {
     const { eventMap } = useMap();
-    const [inputValue, setInputValue] = useState("");
+    const [coords, setCoords] = useState("");
+    const [name, setName] = useState("");
+    const [participantsCount, setParticipantsCount] = useState<Nullable<number>>(null);
+    const [tags, setTags] = useState([]);
+    const [creatorName, setCreatorName] = useState("");
+    const [type, setType] = useState<EventType>(EventType.LOCAL);
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
+    const container = useRef<ValidationContainer | null>(null);
+    const controlsRef = useRef<HTMLDivElement>(null);
+
+
     const [hasError, setHasError] = useState(false);
-    const [isClosed, setIsClosed] = useState(true);
+    const [isClosed, setIsClosed] = useState(false);
 
     useEffect((): undefined | (() => void) => {
         if (!eventMap) {
@@ -19,7 +51,7 @@ export const Controls = (): JSX.Element => {
 
         const onMove = (): void => {
             const { lng, lat } = eventMap.getCenter();
-            setInputValue(`${lng.toFixed(3)}, ${lat.toFixed(3)}`);
+            setCoords(`${lng.toFixed(3)}, ${lat.toFixed(3)}`);
             setHasError(false);
         };
         eventMap.on("move", onMove);
@@ -30,12 +62,16 @@ export const Controls = (): JSX.Element => {
         };
     }, [eventMap]);
 
-    const onChange = useCallback((event: { target: { value: SetStateAction<string> } }): void => {
-        setInputValue(event.target.value);
+    const onChangeCoords = useCallback((event: { target: { value: SetStateAction<string> } }): void => {
+        setCoords(event.target.value);
     }, []);
 
     const onSubmit = useCallback((): void => {
-        const [lng, lat] = inputValue.split(",").map(Number);
+        const isValid = container.current?.validate();
+        if (!isValid) {
+            return;
+        }
+        const [lng, lat] = coords.split(",").map(Number);
         if (Math.abs(lng) <= 180 && Math.abs(lat) <= 85 && eventMap) {
             eventMap.easeTo({
                 center: [lng, lat],
@@ -44,28 +80,120 @@ export const Controls = (): JSX.Element => {
         } else {
             setHasError(true);
         }
-    }, [eventMap, inputValue]);
+    }, [eventMap, coords]);
 
     const onClickSwitchButton = (): void => {
         setIsClosed(!isClosed);
     };
-
+    const validationInfo: ValidationInfo | null = (from && to && parseDate(from).getTime() - parseDate(to).getTime()) > 0 ? {
+        message: "Введите корректный промежуток времени",
+        type: "submit",
+    } : null;
+    const numberRegexp = /^\d+$/;
     return (
-        <div className={cn("map-controls", { closed: isClosed })}>
-            <span className={cn("caption")}>Центр</span>
-            <Input
-                title="Поиск"
-                type="text"
-                value={inputValue}
-                onChange={onChange}
-                style={{ color: hasError ? "red" : "black" }}
-            />
-            <Button title="Искать" onClick={onSubmit}>
-                Искать
-            </Button>
-            <div className={cn("switch-button", { closed: !isClosed })} onClick={onClickSwitchButton}>
-                <img src={RightIcon} alt="switch-button" />
+        <ValidationContainer ref={container}>
+            <div className={cn("map-controls", { closed: isClosed })}
+                 style={{ left: isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth : undefined }}
+                 ref={controlsRef}>
+                <div className={cn("switch-button", { closed: !isClosed })}
+                     onClick={onClickSwitchButton}>
+                    <img src={RightIcon} alt="switch-button" />
+                </div>
+                <div className={cn("map-control-header")}>
+                    <h2>Фильтрация событий</h2>
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Центр</span>
+                    <Input
+                        maxLength={maxInputLength}
+                        width={inputWidth}
+                        title="Поиск"
+                        type="text"
+                        value={coords}
+                        onChange={onChangeCoords}
+                        style={{ color: hasError ? "red" : "black" }}
+                    />
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Название</span>
+                    <Input
+                        maxLength={maxInputLength}
+                        width={inputWidth}
+                        title="Поиск"
+                        type="text"
+                        value={name}
+                        onValueChange={setName}
+                        style={{ color: hasError ? "red" : "black" }}
+                    />
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Создатель</span>
+                    <Input
+                        maxLength={maxInputLength}
+                        width={inputWidth}
+                        title="Поиск"
+                        type="text"
+                        value={creatorName}
+                        onValueChange={setCreatorName}
+                        style={{ color: hasError ? "red" : "black" }}
+                    />
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Количество участников</span>
+                    <Input
+                        maxLength={10}
+                        width={inputWidth}
+                        onValueChange={value => {
+                            if (value === "") {
+                                setParticipantsCount(null);
+                            }
+                            if (numberRegexp.test(value)) {
+                                setParticipantsCount(Number(value));
+                            }
+                        }
+                        }
+                        value={participantsCount?.toString() ?? ""}
+                    />
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Даты</span>
+                    с<ValidationWrapper validationInfo={validationInfo}>
+                    <DatePicker width={110} value={from} onValueChange={setFrom}
+                                enableTodayLink /></ValidationWrapper>по<DatePicker
+                    width={110} value={to} onValueChange={setTo} enableTodayLink />
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Тип события</span>
+                    <RadioGroup value={type} onValueChange={setType} width={inputWidth} inline name="number-simple"
+                                items={[EventType.LOCAL, EventType.GLOBAL]} />
+                </div>
+                <div className={cn("control")}>
+                    <span className={cn("caption")}>Теги</span>
+                    <TokenInput
+                        width={inputWidth}
+                        style={{ maxHeight: 200, overflow: "auto" }}
+                        type={TokenInputType.Combined}
+                        getItems={q =>
+                            Promise.resolve(
+                                ["First", "Second", "asdasdsad", "Fourth", "Fifth", "Sixth", "First1", "Second1", "Third1", "Fourth1", "Fifth1", "Sixth1", "First2", "Second2", "Third2", "Fourth2", "Fifth2", "Sixth2"].filter(
+                                    x => x.toLowerCase().includes(q.toLowerCase()) || x.toString() === q,
+                                ) as never[],
+                            )}
+                        menuAlign="left"
+                        menuWidth={tags.length === 10 ? "0px" : undefined}
+                        selectedItems={tags}
+                        onValueChange={(value) => (tags.length < 10 || value.length < 10) && setTags(value)}
+                        renderToken={(item, tokenProps) => (
+                            <Token key={item} {...tokenProps}>
+                                {item}
+                            </Token>
+                        )}
+                    />
+                </div>
+                <Button use="primary" title="Искать" onClick={onSubmit}>
+                    Отфильтровать
+                </Button>
             </div>
-        </div>
+        </ValidationContainer>
     );
 };

@@ -23,3 +23,7 @@ code {
 html, body, body > :first-child {
   height: 100%;
 }
+
+body > :first-child {
+  overflow: hidden;
+}

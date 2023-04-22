@@ -13,6 +13,7 @@ import { NotFoundPage } from "./Components/NotFoundPage/NotFoundPage";
 import cn from "./App.less";
 import { useAuthStore } from "./stores/userStore/auth";
 import { login } from "./api/auth/auth";
+import { isDevelopment } from "./Commons/utlis";
 
 const routes = [
     { path: "/", element: <Map /> },
@@ -33,8 +34,7 @@ export const App = (): JSX.Element => {
     const { pathname } = useLocation();
     useEffect(() => {
         // todo: для дев режима сделать пользователя
-        // console.log(process.env.NODE_ENV === 'development');
-        if (allowedRoutes.includes(pathname)) {
+        if (isDevelopment || allowedRoutes.includes(pathname)) {
             return;
         }
         setLoading(true);

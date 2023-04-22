@@ -3,45 +3,66 @@
 :local {
   .map-controls {
     padding: @base-size * 3;
+    max-height: 90%;
     z-index: 1;
     position: absolute;
     background-color: rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(5px);
     border-radius: 0 16px 16px 0;
     display: flex;
-    align-items: center;
-    gap: @base-size * 2;
+    flex-direction: column;
     margin-top: @base-size * 4;
-    top: @base-size * 16;
+    top: @base-size * 12;
     left: 0;
+    padding-right: @base-size * 8;
+    gap: @base-size * 3;
     transition: left 0.5s ease;
 
     &.closed {
-      left: -350px;
+      .switch-button {
+        right: -36px;
+      }
     }
 
-    .caption {
-      font-size: 16px;
-      font-weight: bold;
-    }
+    .control {
+      display: flex;
+      align-items: center;
+      gap: @base-size * 2;
 
-    .button {
-      padding: @base-size * 2;
+      .caption {
+        width: 120px;
+        font-size: 18px;
+        font-weight: bold;
+      }
     }
 
     .switch-button {
-      width: 35px;
-      height: 35px;
+      position: absolute;
+      right: -18px;
+      top: calc(50% - 18px);
+      justify-self: flex-end;
+      width: 36px;
+      height: 36px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
       border-radius: 50%;
       background-color: white;
+      transition: rigth 1s ease;
 
       &.closed {
         transform: rotate(180deg);
       }
+    }
+
+    .map-control-header {
+      display: flex;
+      gap: @base-size * 2;
+    }
+
+    .button {
+      padding: @base-size * 2;
     }
   }
 }
