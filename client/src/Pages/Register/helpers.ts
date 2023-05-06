@@ -2,7 +2,7 @@ import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWr
 
 import { isValidUsername } from "../Login/helpers";
 
-const subtractYears = (date: Date, years: number): Date => {
+export const subtractYears = (date: Date, years: number): Date => {
     const dateCopy = new Date(date);
     dateCopy.setFullYear(date.getFullYear() - years);
 

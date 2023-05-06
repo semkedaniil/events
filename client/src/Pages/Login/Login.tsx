@@ -4,13 +4,14 @@ import { BsKey } from "react-icons/bs";
 import { AiOutlineMail } from "react-icons/ai";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
+import { useNavigate } from "react-router-dom";
+
+import { login } from "../../api/auth/auth";
+import { useAuthStore } from "../../stores/userStore/auth";
 
 import { isValidUsername } from "./helpers";
 import cn from "./Login.less";
-import { login } from "../../api/auth/auth";
-import { useAuthStore } from "../../stores/userStore/auth";
-import jwtDecode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+
 
 const inputWidth = "100%";
 const maxInputLength = 100;
@@ -36,7 +37,7 @@ export const Login = (): JSX.Element => {
             const token = await login(username, password);
             authStore.setToken(token);
             navigate("/");
-        } catch (e) {
+        } catch {
             setError(true);
         } finally {
             setLoading(false);

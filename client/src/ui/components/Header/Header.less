@@ -27,20 +27,34 @@
     background-color: white;
     padding: @base-size * 7;
 
-    .credentials {
+    .credentials-wrapper {
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       display: flex;
       align-items: center;
+      padding: @base-size * 3;
       gap: @base-size * 3;
       padding-bottom: @base-size * 3;
       margin-bottom: @base-size * 3;
 
-      img {
-        cursor: default;
+      .credentials {
+        display: flex;
+        flex-direction: column;
+
+        .username {
+          font-weight: 500;
+        }
+
+        .email {
+          color: @muted-text;
+        }
+      }
+      .user-avatar {
+        cursor: pointer;
       }
     }
 
     .menu-item {
+      text-decoration: none;
       text-align: center;
       cursor: pointer;
       padding: @base-size * 2;
