@@ -37,12 +37,16 @@ export default function GeocoderControl(props: GeocoderControlProps) {
 
                 const { result } = event_;
                 const location =
-                    result &&
-                    (result.center || (result.geometry?.type === "Point" && result.geometry.coordinates));
+                    result && (result.center || (result.geometry?.type === "Point" && result.geometry.coordinates));
                 const { marker } = props;
                 if (location && marker) {
-                    setMarker(<Marker {...typeof marker === "object" ? { ...marker } : null} longitude={location[0]}
-                                      latitude={location[1]} />);
+                    setMarker(
+                        <Marker
+                            {...(typeof marker === "object" ? { ...marker } : null)}
+                            longitude={location[0]}
+                            latitude={location[1]}
+                        />
+                    );
                 } else {
                     setMarker(null);
                 }
@@ -54,7 +58,7 @@ export default function GeocoderControl(props: GeocoderControlProps) {
         },
         {
             position: props.position,
-        },
+        }
     );
 
     // @ts-ignore (TS2339) private member

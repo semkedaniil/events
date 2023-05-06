@@ -25,5 +25,5 @@ interface CommonLayoutContentProps {
 }
 
 CommonLayout.Content = ({ children, className }: CommonLayoutContentProps) => (
-  <div className={cn(className, "common-layout-content")}>{children}</div>
+    <div className={cn(className, "common-layout-content")}>{children}</div>
 );

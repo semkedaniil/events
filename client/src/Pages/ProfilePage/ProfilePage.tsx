@@ -57,7 +57,8 @@ export const ProfilePage = () => {
                         <div className={cn("avatar-wrapper")}>
                             <div
                                 className={cn("avatar")}
-                                style={{ backgroundColor: stringToColor(username ?? "default") }}>
+                                style={{ backgroundColor: stringToColor(username ?? "default") }}
+                            >
                                 {user?.username.trim()[0]}
                             </div>
                             <Button use="default">Изменить фото</Button>
@@ -80,7 +81,8 @@ export const ProfilePage = () => {
                                 <LocaleContext.Provider
                                     value={{
                                         langCode: LangCodes.ru_RU,
-                                    }}>
+                                    }}
+                                >
                                     <ValidationWrapper validationInfo={validationInfo.birthdate}>
                                         <DatePicker
                                             width="100%"

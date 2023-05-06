@@ -27,7 +27,7 @@ export const HeaderMenu = ({ onClose }: HeaderMenuProps): JSX.Element => {
         navigate("/profile");
     };
 
-    const renderTooltip = () => <span>Изменить аватар</span>
+    const renderTooltip = () => <span>Изменить аватар</span>;
     return (
         <div className={cn("header-menu")}>
             {isAuth && (

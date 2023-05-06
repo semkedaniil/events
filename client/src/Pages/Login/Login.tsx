@@ -12,7 +12,6 @@ import { useAuthStore } from "../../stores/userStore/auth";
 import { isValidUsername } from "./helpers";
 import cn from "./Login.less";
 
-
 const inputWidth = "100%";
 const maxInputLength = 100;
 
@@ -74,7 +73,7 @@ export const Login = (): JSX.Element => {
                         </ValidationWrapper>
                         <ValidationWrapper validationInfo={validationInfo.password}>
                             <PasswordInput
-                                style={{ width: "100%"}}
+                                style={{ width: "100%" }}
                                 maxLength={maxInputLength}
                                 onValueChange={setPassword}
                                 placeholder="Password"

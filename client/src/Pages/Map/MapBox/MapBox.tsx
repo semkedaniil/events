@@ -14,9 +14,7 @@ const initialViewState = {
 
 const geojson = {
     type: "FeatureCollection",
-    features: [
-        { type: "Feature", geometry: { type: "Point", coordinates: [60.61, 56.84] } },
-    ],
+    features: [{ type: "Feature", geometry: { type: "Point", coordinates: [60.61, 56.84] } }],
 };
 
 export const MapBox = (): JSX.Element => {
@@ -54,12 +52,14 @@ export const MapBox = (): JSX.Element => {
             mapboxAccessToken={MAPBOX_TOKEN}
         >
             <GeocoderControl mapboxAccessToken={MAPBOX_TOKEN || ""} position="top-left" />
-            <Source id="earthquakes"
-                    type="geojson"
-                    cluster
-                    clusterMaxZoom={14}
-                    clusterRadius={50}
-                    data="https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson">
+            <Source
+                id="earthquakes"
+                type="geojson"
+                cluster
+                clusterMaxZoom={14}
+                clusterRadius={50}
+                data="https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"
+            >
                 <Layer {...clusterLayer} />
                 <Layer {...clusterCountLayer} />
                 <Layer {...unclusteredPointLayer} />

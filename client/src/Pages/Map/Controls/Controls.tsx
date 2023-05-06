@@ -1,12 +1,6 @@
 import { useCallback, useState, useEffect, SetStateAction, useRef } from "react";
 import { useMap } from "react-map-gl";
-import {
-    Button, DatePicker,
-    Input,
-    RadioGroup, Token,
-    TokenInput,
-    TokenInputType,
-} from "@skbkontur/react-ui";
+import { Button, DatePicker, Input, RadioGroup, Token, TokenInput, TokenInputType } from "@skbkontur/react-ui";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
 
@@ -19,7 +13,7 @@ const maxInputLength = 100;
 
 const enum EventType {
     LOCAL = "Локальный",
-    GLOBAL = "Глобальный"
+    GLOBAL = "Глобальный",
 }
 
 const pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
@@ -38,7 +32,6 @@ export const Controls = (): JSX.Element => {
     const [to, setTo] = useState("");
     const container = useRef<ValidationContainer | null>(null);
     const controlsRef = useRef<HTMLDivElement>(null);
-
 
     const [hasError, setHasError] = useState(false);
     const [isClosed, setIsClosed] = useState(false);
@@ -84,18 +77,24 @@ export const Controls = (): JSX.Element => {
     const onClickSwitchButton = (): void => {
         setIsClosed(!isClosed);
     };
-    const validationInfo: ValidationInfo | null = (from && to && parseDate(from).getTime() - parseDate(to).getTime()) > 0 ? {
-        message: "Введите корректный промежуток времени",
-        type: "submit",
-    } : null;
+    const validationInfo: ValidationInfo | null =
+        (from && to && parseDate(from).getTime() - parseDate(to).getTime()) > 0
+            ? {
+                  message: "Введите корректный промежуток времени",
+                  type: "submit",
+              }
+            : null;
     const numberRegexp = /^\d+$/;
     return (
         <ValidationContainer ref={container}>
-            <div className={cn("map-controls", { closed: isClosed })}
-                 style={{ left: isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth : undefined }}
-                 ref={controlsRef}>
-                <div className={cn("switch-button", { closed: !isClosed })}
-                     onClick={onClickSwitchButton}>
+            <div
+                className={cn("map-controls", { closed: isClosed })}
+                style={{
+                    left: isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth : undefined,
+                }}
+                ref={controlsRef}
+            >
+                <div className={cn("switch-button", { closed: !isClosed })} onClick={onClickSwitchButton}>
                     <img src={RightIcon} alt="switch-button" />
                 </div>
                 <div className={cn("map-control-header")}>
@@ -149,22 +148,28 @@ export const Controls = (): JSX.Element => {
                             if (numberRegexp.test(value)) {
                                 setParticipantsCount(Number(value));
                             }
-                        }
-                        }
+                        }}
                         value={participantsCount?.toString() ?? ""}
                     />
                 </div>
                 <div className={cn("control")}>
-                    <span className={cn("caption")}>Даты</span>
-                    с<ValidationWrapper validationInfo={validationInfo}>
-                    <DatePicker width={110} value={from} onValueChange={setFrom}
-                                enableTodayLink /></ValidationWrapper>по<DatePicker
-                    width={110} value={to} onValueChange={setTo} enableTodayLink />
+                    <span className={cn("caption")}>Даты</span>с
+                    <ValidationWrapper validationInfo={validationInfo}>
+                        <DatePicker width={110} value={from} onValueChange={setFrom} enableTodayLink />
+                    </ValidationWrapper>
+                    по
+                    <DatePicker width={110} value={to} onValueChange={setTo} enableTodayLink />
                 </div>
                 <div className={cn("control")}>
                     <span className={cn("caption")}>Тип события</span>
-                    <RadioGroup value={type} onValueChange={setType} width={inputWidth} inline name="number-simple"
-                                items={[EventType.LOCAL, EventType.GLOBAL]} />
+                    <RadioGroup
+                        value={type}
+                        onValueChange={setType}
+                        width={inputWidth}
+                        inline
+                        name="number-simple"
+                        items={[EventType.LOCAL, EventType.GLOBAL]}
+                    />
                 </div>
                 <div className={cn("control")}>
                     <span className={cn("caption")}>Теги</span>
@@ -174,14 +179,34 @@ export const Controls = (): JSX.Element => {
                         type={TokenInputType.Combined}
                         getItems={q =>
                             Promise.resolve(
-                                ["First", "Second", "asdasdsad", "Fourth", "Fifth", "Sixth", "First1", "Second1", "Third1", "Fourth1", "Fifth1", "Sixth1", "First2", "Second2", "Third2", "Fourth2", "Fifth2", "Sixth2"].filter(
-                                    x => x.toLowerCase().includes(q.toLowerCase()) || x.toString() === q,
-                                ) as never[],
-                            )}
+                                [
+                                    "First",
+                                    "Second",
+                                    "asdasdsad",
+                                    "Fourth",
+                                    "Fifth",
+                                    "Sixth",
+                                    "First1",
+                                    "Second1",
+                                    "Third1",
+                                    "Fourth1",
+                                    "Fifth1",
+                                    "Sixth1",
+                                    "First2",
+                                    "Second2",
+                                    "Third2",
+                                    "Fourth2",
+                                    "Fifth2",
+                                    "Sixth2",
+                                ].filter(
+                                    x => x.toLowerCase().includes(q.toLowerCase()) || x.toString() === q
+                                ) as never[]
+                            )
+                        }
                         menuAlign="left"
                         menuWidth={tags.length === 10 ? "0px" : undefined}
                         selectedItems={tags}
-                        onValueChange={(value) => (tags.length < 10 || value.length < 10) && setTags(value)}
+                        onValueChange={value => (tags.length < 10 || value.length < 10) && setTags(value)}
                         renderToken={(item, tokenProps) => (
                             <Token key={item} {...tokenProps}>
                                 {item}
