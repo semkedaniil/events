@@ -25,7 +25,7 @@ export default function (
     // @ts-ignore
     req.user = jwt.verify(token, process.env.SECRET_KEY);
     next();
-  } catch (e) {
+  } catch (error) {
     res.status(401).json({ message: "Не авторизован" });
   }
   return undefined;

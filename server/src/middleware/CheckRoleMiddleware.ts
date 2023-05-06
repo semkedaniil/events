@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export default function (role: string): (req: e.Request, res: e.Response, next: (args?: any) => void) => (e.Response<any, Record<string, any>> | undefined) {
