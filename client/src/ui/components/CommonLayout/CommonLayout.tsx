@@ -14,6 +14,16 @@ interface CommonLayoutHeaderProps {
     children: ReactNode;
     className?: string;
 }
-export const CommonLayoutHeader = ({ children, className }: CommonLayoutHeaderProps): JSX.Element => (
+
+CommonLayout.Header = ({ children, className }: CommonLayoutHeaderProps): JSX.Element => (
     <div className={cn(className, "common-layout-header")}>{children}</div>
+);
+
+interface CommonLayoutContentProps {
+    children: ReactNode;
+    className?: string;
+}
+
+CommonLayout.Content = ({ children, className }: CommonLayoutContentProps) => (
+  <div className={cn(className, "common-layout-content")}>{children}</div>
 );

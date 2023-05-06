@@ -1,0 +1,37 @@
+@import "src/ui/styles/variables";
+
+:local {
+  .content {
+    flex-direction: row;
+    gap: @base-size * 4;
+  }
+
+  .avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: @base-size * 3;
+
+    .avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 160px;
+      height: 160px;
+      transition: background-color 0.5s;
+    }
+  }
+
+  .muted-text {
+    font-size: 14px;
+    color: @muted-text;
+  }
+
+  .credentials {
+    display: flex;
+    flex-direction: column;
+    gap: @base-size * 4;
+  }
+}
