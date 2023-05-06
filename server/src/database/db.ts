@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
 const { DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DB_HOST } = process.env;
-console.log(process.env);
+
 if (!DB_NAME) {
   throw new Error(
     "Отсутствует название базы данных. Введите в .env DB_NAME=`Ваше название`"

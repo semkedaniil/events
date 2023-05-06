@@ -25,9 +25,9 @@ const startServer = async (): Promise<void> => {
   try {
     await db.authenticate();
     await db.sync();
-    app.listen(port, (): void => console.log("Server listening on port " + port));
-  } catch (e) {
-    console.log(e);
+    app.listen(port, (): void => console.log(`Server listening on port ${port}`));
+  } catch (error) {
+    console.log(error);
   }
 };
 

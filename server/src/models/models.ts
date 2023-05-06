@@ -7,12 +7,12 @@ const User = db.define("user", {
   birthday: { type: DataTypes.STRING  , unique: false },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING, unique: true },
+  confirmed: { type: DataTypes.BOOLEAN, defaultValue: false },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
 });
 
 const Event = db.define("event", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-
   isPrivate: { type: DataTypes.BOOLEAN, defaultValue: true },
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: false },
