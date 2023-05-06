@@ -2,4 +2,11 @@ import defaultAvatar from "../../../assets/avatar.jpg";
 
 import cn from "./UserAvatar.less";
 
-export const UserAvatar = (): JSX.Element => <img alt="Avatar" className={cn("avatar")} src={defaultAvatar} />;
+interface UserAvatarProps {
+    onClick?: () => void;
+    className?: string;
+}
+
+export const UserAvatar = (props: UserAvatarProps): JSX.Element => (
+    <img alt="Avatar" {...props} className={cn("avatar", props.className)} src={defaultAvatar} />
+);

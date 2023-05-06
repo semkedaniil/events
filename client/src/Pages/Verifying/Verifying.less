@@ -1,0 +1,31 @@
+@import "src/ui/styles/variables";
+
+:local {
+  .page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 @base-size * 5;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.15);
+
+    .header {
+      background-color: white;
+      padding: @base-size * 8;
+      border-radius: @base-size * 4;
+      border: 1px solid rgba(0, 0, 0, 0.55);
+      display: flex;
+      gap: @base-size * 2;
+      align-items: center;
+      justify-content: center;
+
+      .mark {
+        border-radius: 50%;
+        height: 36px;
+        width: 36px;
+        text-align: center;
+        border: 1px solid green;
+      }
+    }
+  }
+}

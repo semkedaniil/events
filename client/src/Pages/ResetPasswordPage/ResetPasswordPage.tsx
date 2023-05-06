@@ -4,7 +4,7 @@ import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWr
 import { Button, Input } from "@skbkontur/react-ui";
 import { AiOutlineMail } from "react-icons/ai";
 
-import { CommonLayoutHeader } from "../../ui/components/CommonLayout/CommonLayout";
+import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { isValidEmail } from "../Register/helpers";
 
 import cn from "./ResetPasswordPage.less";
@@ -30,7 +30,7 @@ export const ResetPasswordPage = (): JSX.Element => {
         <ValidationContainer ref={container}>
             <div className={cn("login-page")}>
                 <div className={cn("login-page-card", "reset-page-card")}>
-                    <CommonLayoutHeader>Введите адрес электронной почты для восстановления пароля</CommonLayoutHeader>
+                    <CommonLayout.Header>Введите адрес электронной почты для восстановления пароля</CommonLayout.Header>
                     <ValidationWrapper validationInfo={validationInfo}>
                         <Input
                             value={email}
