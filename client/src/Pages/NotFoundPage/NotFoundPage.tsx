@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@skbkontur/react-ui";
 import { useState } from "react";
 
-import { CommonLayout, CommonLayoutHeader } from "../../ui/components/CommonLayout/CommonLayout";
+import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 
 import { Game } from "./2048/components/Game/Game";
@@ -13,10 +13,10 @@ export const NotFoundPage = (): JSX.Element => {
     const [showGame, setShowGame] = useState(false);
     return (
         <CommonLayout>
-            <CommonLayoutHeader>
+            <CommonLayout.Header>
                 <GoBackLink backUrl=".." />
                 <h1 className={cn("not-found-page-header")}>Вернуться на главную</h1>
-            </CommonLayoutHeader>
+            </CommonLayout.Header>
             <div className={cn("not-found-page")}>
                 <p className={cn("not-found-page-title")}>
                     Запрашиваемая страница с URL <b>{pathname}</b> не найдена на этом сервере, но не расстраивайтесь,
