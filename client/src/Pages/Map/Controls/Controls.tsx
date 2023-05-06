@@ -7,13 +7,12 @@ import {
     TokenInput,
     TokenInputType,
 } from "@skbkontur/react-ui";
+import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
+import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
 
 import RightIcon from "../../../assets/arrow_right.svg";
 
 import cn from "./Controls.less";
-import { inputNumber } from "@skbkontur/react-ui/components/DateInput/helpers/inputNumber";
-import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
-import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
 
 const inputWidth = 270;
 const maxInputLength = 100;

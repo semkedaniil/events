@@ -1,5 +1,7 @@
 import Map, { Layer, Source, GeoJSONSource, useMap } from "react-map-gl";
+
 import GeocoderControl from "../Controls/GeocoderControl";
+
 import { clusterCountLayer, clusterLayer, unclusteredPointLayer } from "./Layers";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -26,8 +28,8 @@ export const MapBox = (): JSX.Element => {
 
         const mapboxSource = map.current?.getSource("earthquakes") as GeoJSONSource;
 
-        mapboxSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
-            if (err) {
+        mapboxSource.getClusterExpansionZoom(clusterId, (error, zoom) => {
+            if (error) {
                 return;
             }
 
@@ -57,7 +59,7 @@ export const MapBox = (): JSX.Element => {
                     cluster
                     clusterMaxZoom={14}
                     clusterRadius={50}
-                    data={"https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"}>
+                    data="https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson">
                 <Layer {...clusterLayer} />
                 <Layer {...clusterCountLayer} />
                 <Layer {...unclusteredPointLayer} />

@@ -8,12 +8,13 @@ type GeocoderControlProps = Omit<GeocoderOptions, "accessToken" | "mapboxgl" | "
 
     position: ControlPosition;
 
-    onLoading?: (e: object) => void;
-    onResults?: (e: object) => void;
-    onResult?: (e: object) => void;
-    onError?: (e: object) => void;
+    onLoading?: (event: object) => void;
+    onResults?: (event: object) => void;
+    onResult?: (event: object) => void;
+    onError?: (event: object) => void;
 };
 
+// eslint-disable-next-line import/no-default-export
 export default function GeocoderControl(props: GeocoderControlProps) {
     const [marker, setMarker] = useState<JSX.Element | null>(null);
     const geocoder = useControl<MapboxGeocoder>(
@@ -31,10 +32,10 @@ export default function GeocoderControl(props: GeocoderControlProps) {
                 ctrl.on("results", props.onResults);
             }
 
-            ctrl.on("result", (evt: any) => {
-                props.onResult?.(evt);
+            ctrl.on("result", (event_: any) => {
+                props.onResult?.(event_);
 
-                const { result } = evt;
+                const { result } = event_;
                 const location =
                     result &&
                     (result.center || (result.geometry?.type === "Point" && result.geometry.coordinates));
@@ -101,11 +102,15 @@ export default function GeocoderControl(props: GeocoderControlProps) {
 GeocoderControl.defaultProps = {
     marker: true,
     onLoading: () => {
+        // empty
     },
     onResults: () => {
+        // empty
     },
     onResult: () => {
+        // empty
     },
     onError: () => {
+        // empty
     },
 };
