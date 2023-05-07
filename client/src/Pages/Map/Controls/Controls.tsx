@@ -45,7 +45,7 @@ export const Controls = (): JSX.Element => {
 
         const onMove = (): void => {
             const { lng, lat } = eventMap.getCenter();
-            setCoords(`${lng.toFixed(3)}, ${lat.toFixed(3)}`);
+            setCoords(`${lng.toFixed(6)}, ${lat.toFixed(6)}`);
             setHasError(false);
         };
         eventMap.on("move", onMove);
@@ -168,7 +168,7 @@ export const Controls = (): JSX.Element => {
                         <DatePicker width={110} value={from} onValueChange={setFrom} enableTodayLink />
                     </ValidationWrapper>
                     по
-                    <DatePicker width={110} value={to} onValueChange={setTo} enableTodayLink />
+                    <DatePicker menuAlign="right" width={110} value={to} onValueChange={setTo} enableTodayLink />
                 </RowStack>
                 <RowStack>
                     <span className={cn("caption")}>Тип события</span>
