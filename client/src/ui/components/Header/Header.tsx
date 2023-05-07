@@ -36,7 +36,7 @@ export const Header = (): JSX.Element | null => {
     return (
         <header ref={wrapperRef} className={cn("header")}>
             <div onClick={onHeaderClick} title={`Аккаунт Events ${user?.username} \n ${user?.email}`}>
-                <UserAvatar />
+                <UserAvatar username={user?.username} />
             </div>
             {showMenu && <HeaderMenu onClose={() => setShowMenu(false)} />}
         </header>

@@ -34,7 +34,11 @@ export const HeaderMenu = ({ onClose }: HeaderMenuProps): JSX.Element => {
                 <>
                     <div className={cn("credentials-wrapper")}>
                         <Tooltip render={renderTooltip}>
-                            <UserAvatar onClick={onClickCredentials} className={cn("user-avatar")} />
+                            <UserAvatar
+                                username={user?.username}
+                                onClick={onClickCredentials}
+                                className={cn("user-avatar")}
+                            />
                         </Tooltip>
                         <div className={cn("credentials")}>
                             <span className={cn("username")}>{user?.username}</span>

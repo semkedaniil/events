@@ -5,6 +5,8 @@ import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-vali
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
 
 import RightIcon from "../../../assets/arrow_right.svg";
+import { RowStack } from "../../../ui/components/RowStack/RowStack";
+import { CommonLayout } from "../../../ui/components/CommonLayout/CommonLayout";
 
 import cn from "./Controls.less";
 
@@ -85,22 +87,30 @@ export const Controls = (): JSX.Element => {
               }
             : null;
     const numberRegexp = /^\d+$/;
+    const menuWidth = controlsRef.current?.clientWidth;
     return (
         <ValidationContainer ref={container}>
+            {menuWidth && (
+                <div
+                    style={{
+                        left: isClosed ? 0 : menuWidth - 18,
+                    }}
+                    className={cn("switch-button", { closed: !isClosed })}
+                    onClick={onClickSwitchButton}>
+                    <img src={RightIcon} alt="switch-button" />
+                </div>
+            )}
             <div
                 className={cn("map-controls", { closed: isClosed })}
                 style={{
-                    left: isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth : undefined,
+                    left:
+                        isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth - 5 : undefined,
                 }}
-                ref={controlsRef}
-            >
-                <div className={cn("switch-button", { closed: !isClosed })} onClick={onClickSwitchButton}>
-                    <img src={RightIcon} alt="switch-button" />
-                </div>
-                <div className={cn("map-control-header")}>
+                ref={controlsRef}>
+                <CommonLayout.Header className={cn("map-control-header")}>
                     <h2>Фильтрация событий</h2>
-                </div>
-                <div className={cn("control")}>
+                </CommonLayout.Header>
+                <RowStack>
                     <span className={cn("caption")}>Центр</span>
                     <Input
                         maxLength={maxInputLength}
@@ -111,8 +121,8 @@ export const Controls = (): JSX.Element => {
                         onChange={onChangeCoords}
                         style={{ color: hasError ? "red" : "black" }}
                     />
-                </div>
-                <div className={cn("control")}>
+                </RowStack>
+                <RowStack>
                     <span className={cn("caption")}>Название</span>
                     <Input
                         maxLength={maxInputLength}
@@ -123,8 +133,8 @@ export const Controls = (): JSX.Element => {
                         onValueChange={setName}
                         style={{ color: hasError ? "red" : "black" }}
                     />
-                </div>
-                <div className={cn("control")}>
+                </RowStack>
+                <RowStack>
                     <span className={cn("caption")}>Создатель</span>
                     <Input
                         maxLength={maxInputLength}
@@ -135,8 +145,8 @@ export const Controls = (): JSX.Element => {
                         onValueChange={setCreatorName}
                         style={{ color: hasError ? "red" : "black" }}
                     />
-                </div>
-                <div className={cn("control")}>
+                </RowStack>
+                <RowStack>
                     <span className={cn("caption")}>Количество участников</span>
                     <Input
                         maxLength={10}
@@ -151,16 +161,16 @@ export const Controls = (): JSX.Element => {
                         }}
                         value={participantsCount?.toString() ?? ""}
                     />
-                </div>
-                <div className={cn("control")}>
+                </RowStack>
+                <RowStack>
                     <span className={cn("caption")}>Даты</span>с
                     <ValidationWrapper validationInfo={validationInfo}>
                         <DatePicker width={110} value={from} onValueChange={setFrom} enableTodayLink />
                     </ValidationWrapper>
                     по
                     <DatePicker width={110} value={to} onValueChange={setTo} enableTodayLink />
-                </div>
-                <div className={cn("control")}>
+                </RowStack>
+                <RowStack>
                     <span className={cn("caption")}>Тип события</span>
                     <RadioGroup
                         value={type}
@@ -170,8 +180,8 @@ export const Controls = (): JSX.Element => {
                         name="number-simple"
                         items={[EventType.LOCAL, EventType.GLOBAL]}
                     />
-                </div>
-                <div className={cn("control")}>
+                </RowStack>
+                <RowStack>
                     <span className={cn("caption")}>Теги</span>
                     <TokenInput
                         width={inputWidth}
@@ -213,10 +223,20 @@ export const Controls = (): JSX.Element => {
                             </Token>
                         )}
                     />
-                </div>
+                </RowStack>
                 <Button use="primary" title="Искать" onClick={onSubmit}>
                     Отфильтровать
                 </Button>
+                <CommonLayout.Header className={cn("map-control-header")}>
+                    <h2>Отфильтрованные события</h2>
+                </CommonLayout.Header>
+                <div className={cn("events")}>
+                    {Array.from({ length: 5 }, (x, index) => (
+                        <div key={index} className={cn("event")}>
+                            Здесь должна быть карточка события
+                        </div>
+                    ))}
+                </div>
             </div>
         </ValidationContainer>
     );

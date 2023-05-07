@@ -8,9 +8,10 @@ import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
 import { useAuthStore } from "../../stores/userStore/auth";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
 import { updateUserInfo } from "../../api/userInfo/userInfo";
+import { UserAvatar } from "../../ui/components/UserAvatar/UserAvatar";
 
 import cn from "./ProfilePage.less";
-import { getValidationInfo, stringToColor } from "./helpers";
+import { getValidationInfo } from "./helpers";
 
 const inputWidth = 400;
 
@@ -55,12 +56,7 @@ export const ProfilePage = () => {
                     </CommonLayout.Header>
                     <CommonLayout.Content className={cn("content")}>
                         <div className={cn("avatar-wrapper")}>
-                            <div
-                                className={cn("avatar")}
-                                style={{ backgroundColor: stringToColor(username ?? "default") }}
-                            >
-                                {user?.username.trim()[0]}
-                            </div>
+                            <UserAvatar className={cn("avatar")} username={username} />
                             <Button use="default">Изменить фото</Button>
                         </div>
                         <div className={cn("credentials")}>
@@ -81,8 +77,7 @@ export const ProfilePage = () => {
                                 <LocaleContext.Provider
                                     value={{
                                         langCode: LangCodes.ru_RU,
-                                    }}
-                                >
+                                    }}>
                                     <ValidationWrapper validationInfo={validationInfo.birthdate}>
                                         <DatePicker
                                             width="100%"
