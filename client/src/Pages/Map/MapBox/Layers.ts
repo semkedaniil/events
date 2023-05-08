@@ -1,10 +1,11 @@
 import type { LayerProps } from "react-map-gl";
 import {BackgroundLayer} from "mapbox-gl";
 
+const sourceId = "events"
 export const clusterLayer: LayerProps = {
     id: "clusters",
     type: "circle",
-    source: "earthquakes",
+    source: sourceId,
     filter: ["has", "point_count"],
     paint: {
         "circle-stroke-width": 1,
@@ -18,24 +19,22 @@ export const clusterLayer: LayerProps = {
 export const clusterCountLayer: LayerProps = {
     id: "cluster-count",
     type: "symbol",
-    source: "earthquakes",
+    source: sourceId,
     filter: ["has", "point_count"],
     layout: {
-        "text-field": "{point_count_abbreviated}",
+        "text-field": ['get', 'point_count_abbreviated'],
         "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
         "text-size": 14,
     },
 };
 
-export const unclusteredPointLayer: LayerProps = {
-    id: "unclustered-point",
-    type: "circle",
-    source: "earthquakes",
+export const unclusteredSymbolLayer: LayerProps = {
+    id: "points",
+    type: "symbol",
+    source: sourceId,
     filter: ["!", ["has", "point_count"]],
-    paint: {
-        "circle-stroke-color": "rgba(255, 255, 255, 0.1)",
-        "circle-color": "#2f12df",
-        "circle-radius": 12,
-        "circle-stroke-width": 2,
-    },
+    layout: {
+        "icon-image": "event",
+        'icon-size': 0.25
+    }
 };

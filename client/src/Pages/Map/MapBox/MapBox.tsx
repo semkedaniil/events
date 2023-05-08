@@ -1,6 +1,4 @@
 import Map, {
-    Layer,
-    Source,
     GeoJSONSource,
     useMap,
     NavigationControl,
@@ -8,23 +6,26 @@ import Map, {
     GeolocateControl,
     ScaleControl,
     Marker,
+    MapboxEvent,
 } from "react-map-gl";
-
 import defaultImage from "../../../assets/avatar.jpg";
 import GeocoderControl from "../Controls/GeocoderControl";
 
-import { clusterCountLayer, clusterLayer, unclusteredPointLayer } from "./Layers";
+import { clusterLayer } from "./Layers";
 import cn from "./MapBox.less";
 import { getGeoJson } from "./helpers";
+import { useState } from "react";
+import { ClusterLayer } from "../Cluster/Cluster";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 const initialViewState = {
-    latitude: 56.84,
-    longitude: 60.61,
-    zoom: 5,
+    latitude: 63.1016,
+    longitude: -151.5129,
+    zoom: 1,
 };
 
+const pointerEventsNames = ["clusters", "points"];
 export const MapBox = (): JSX.Element => {
     const map = useMap() as any;
 
@@ -74,24 +75,45 @@ export const MapBox = (): JSX.Element => {
                             backgroundSize: "100%",
                         }}
                         onClick={onClickMarker}
-                        className={cn("marker")}></div>
+                        className={cn("marker")}
+                    />
                 </Marker>
             );
         });
+
+    const onLoadMap = ({ target: map }: MapboxEvent<undefined>) => {
+        map.loadImage(defaultImage, (error, image) => {
+            if (error) {
+                throw error;
+            }
+            if (image) {
+                map.addImage("event", image, { pixelRatio: 5 });
+            }
+        });
+        pointerEventsNames.forEach(eventName => {
+            map.on("mouseenter", eventName, () => {
+                const style = map.getCanvas().style;
+                style.cursor = "pointer";
+            });
+            map.on("mouseleave", eventName, () => {
+                map.getCanvas().style.cursor = "";
+            });
+        });
+    };
+
+    const onSelectMarker = (nextZoom: number, coordinates: [number, number]) => {
+        map.current?.flyTo({ zoom: nextZoom, center: coordinates });
+    };
+    const [s, setS] = useState<any>("");
+    const data = getGeoJson();
+    const onZoomEnd = (e: any) => {
+        setS(e.viewState.zoom);
+    };
     return (
         <Map
+            onZoomEnd={onZoomEnd}
             ref={element => (map.current = element)}
-            onLoad={({ target }) => {
-                target.loadImage(defaultImage, (error, image) => {
-                    if (error) {
-                        throw error;
-                    }
-                    if (!target.hasImage("cat")) {
-                        // @ts-ignore
-                        target.addImage("cat", image, { sdf: true });
-                    }
-                });
-            }}
+            onLoad={onLoadMap}
             projection="mercator"
             id="eventMap"
             initialViewState={initialViewState}
@@ -105,17 +127,16 @@ export const MapBox = (): JSX.Element => {
             <NavigationControl position="bottom-right" />
             <FullscreenControl position="bottom-right" />
             <GeolocateControl position="bottom-right" />
-            <Source
-                id="earthquakes"
-                type="geojson"
-                cluster
-                clusterMaxZoom={14}
-                clusterRadius={50}
-                data={getGeoJson() as any}>
-                <Layer {...clusterLayer} />
-                <Layer {...clusterCountLayer} />
-                <Layer {...unclusteredPointLayer} />
-            </Source>
+            <ClusterLayer
+                mapId="eventMap"
+                data={data.features}
+                onSelectMarker={onSelectMarker}
+                ClusterComponent={Cluster}
+            />
         </Map>
     );
 };
+
+function Cluster(props: any): JSX.Element {
+    return <div className={cn("marker")}>Здесь кластер</div>;
+}
