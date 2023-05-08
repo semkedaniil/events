@@ -28,7 +28,7 @@ const routes = [
     { path: "*", element: <NotFoundPage /> },
 ];
 
-const allowedRoutes = new Set(["/login", "/register", "/reset-password", "/help"]);
+const allowedRoutes = new Set(["/login", "/register", "/reset-password", "/help", "/verify"]);
 
 export const App = (): JSX.Element => {
     const [loading, setLoading] = useState(false);
@@ -36,19 +36,19 @@ export const App = (): JSX.Element => {
     const authStore = useAuthStore();
     const { pathname } = useLocation();
     useEffect(() => {
-        if (isDevelopment || allowedRoutes.has(pathname)) {
+        if (allowedRoutes.has(pathname)) {
             return;
         }
         setLoading(true);
         authStore
             .check()
             .catch(error => {
-                if (error.response.status === 401) {
+                if (error.response.status >= 400) {
                     navigate("/login");
                 }
             })
             .finally(() => setLoading(false));
-    }, [authStore, navigate, pathname]);
+    }, []);
 
     return (
         <Loader type="big" active={loading} className={cn("app")}>

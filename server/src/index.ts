@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-
+/* eslint-disable */
 dotenv.config();
 
 // @ts-ignore
@@ -16,8 +16,9 @@ const port = process.env.PORT || 5000;
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(fileUploader({}));
-app.use(express.static(path.resolve(__dirname, "static")));
+app.use(express.urlencoded({ extended: false, limit: '20mb' }))
+app.use(fileUploader({limits: { fileSize: 20 * 1024 * 1024 }}));
+app.use(express.static(path.resolve(__dirname, "..", "static")));
 app.use("/api", router);
 app.use(ErrorHandlingMiddleware);
 

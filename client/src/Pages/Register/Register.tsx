@@ -41,8 +41,8 @@ export const Register = (): JSX.Element => {
     const validationInfo = getRegistrationValidationInfo(username, email, password, repeatedPassword, birthDate);
 
     return (
-        <Loader active={loading}>
-            <ValidationContainer ref={container}>
+        <ValidationContainer ref={container}>
+            <Loader active={loading} className={cn("loader")}>
                 <div className={cn("login-page")}>
                     <div className={cn("login-page-card")}>
                         <ValidationWrapper validationInfo={validationInfo.username}>
@@ -90,8 +90,7 @@ export const Register = (): JSX.Element => {
                         <LocaleContext.Provider
                             value={{
                                 langCode: LangCodes.ru_RU,
-                            }}
-                        >
+                            }}>
                             <ValidationWrapper validationInfo={validationInfo.birthdate}>
                                 <DatePicker
                                     width="100%"
@@ -108,7 +107,7 @@ export const Register = (): JSX.Element => {
                         </div>
                     </div>
                 </div>
-            </ValidationContainer>
-        </Loader>
+            </Loader>
+        </ValidationContainer>
     );
 };

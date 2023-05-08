@@ -8,8 +8,17 @@
 
   .avatar-wrapper {
     display: flex;
+    position: relative;
+    align-items: center;
     flex-direction: column;
     gap: @base-size * 3;
+
+    .remove-button {
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+      bottom: 38px;
+    }
 
     .avatar {
       display: flex;
@@ -32,6 +41,6 @@
   .credentials {
     display: flex;
     flex-direction: column;
-    gap: @base-size * 4;
+    gap: @base-size * 7 - 1;
   }
 }

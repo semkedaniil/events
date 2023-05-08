@@ -16,14 +16,13 @@ export const sendEmail = async (email: string, token: string): Promise<string> =
     const mailOptions = {
       from: process.env.TRANSPORTER_EMAIL,
       to: email,
-      subject: "Email verification - Events project",
-      html: `<p>Вы запросили подтверждение электронной почты, пожалуйста, перейдите по этой <a href="${url}">ссылке</a> для подтверждения вашего адреса</p>`
+      subject: `Email verification - ${email} Events project`,
+      html: `<p>Вы запросили подтверждение электронной почты ${email} в ${new Date().toDateString()}, пожалуйста, перейдите по этой <a href="${url}">ссылке</a> для подтверждения вашего адреса</p>`
     };
 
     await mail.sendMail(mailOptions);
     return `Подтверждение аккаунта было отправлено на этот адресс - ${email}. Эта ссылка будет действительно в течение 1 дня.`;
   } catch (error) {
-    console.log(error);
     return "";
   }
-}
+};

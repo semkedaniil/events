@@ -1,17 +1,19 @@
-import { db } from "../database/db";
 import { DataTypes } from "sequelize";
 
-const User = db.define("user", {
+import { db as database } from "../database/db";
+
+const User = database.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   username: { type: DataTypes.STRING, unique: true },
   birthday: { type: DataTypes.STRING  , unique: false },
   email: { type: DataTypes.STRING, unique: true },
+  avatar: { type: DataTypes.STRING, allowNull: true },
   password: { type: DataTypes.STRING, unique: true },
   confirmed: { type: DataTypes.BOOLEAN, defaultValue: false },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
 });
 
-const Event = db.define("event", {
+const Event = database.define("event", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   isPrivate: { type: DataTypes.BOOLEAN, defaultValue: true },
   name: { type: DataTypes.STRING, allowNull: false },
@@ -19,26 +21,26 @@ const Event = db.define("event", {
   img: { type: DataTypes.STRING, allowNull: false },
 });
 
-const DateRange = db.define("dateRange", {
+const DateRange = database.define("dateRange", {
   startDate: { type: DataTypes.DATE, allowNull: false },
   endDate: { type: DataTypes.DATE, allowNull: true },
 });
 
-const Location = db.define("location", {
+const Location = database.define("location", {
   longitude: { type: DataTypes.DOUBLE, allowNull: false },
   latitude: { type: DataTypes.DOUBLE, allowNull: false },
 });
 
-const Tag = db.define("tag", {
+const Tag = database.define("tag", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, allowNull: false },
 });
 
-const Subscription = db.define("subscription", {
+const Subscription = database.define("subscription", {
   subscriptionDate: { type: DataTypes.DATE, allowNull: false },
 });
 
-const Mark = db.define("mark", {
+const Mark = database.define("mark", {
   isLiked: { type: DataTypes.BOOLEAN, allowNull: false },
   date: { type: DataTypes.DATE, allowNull: false },
 });

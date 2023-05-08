@@ -9,7 +9,6 @@ import cn from "./Verifying.less";
 
 export const Verifying = () => {
     const [searchParams] = useSearchParams();
-    const { setToken } = useAuthStore();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const token = searchParams.get("token");
     useEffect(() => {
@@ -17,6 +16,8 @@ export const Verifying = () => {
         if (token) {
             verify(token).then(x => {
                 setIsConfirmed(x);
+            }).catch(() => {
+                setIsConfirmed(false);
             });
         }
     }, [searchParams]);

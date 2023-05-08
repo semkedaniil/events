@@ -48,9 +48,6 @@ export const useAuthStore = create<AuthStoreState>()(
                 const user = jwtDecode(token) as User;
                 get().setUser(user);
             },
-            logout: () => {
-                set(() => ({ isAuth: false, user: null }));
-            },
         }),
         { name: "global" }
     )
