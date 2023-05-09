@@ -8,3 +8,9 @@ export interface User {
     id: number;
     role: Role;
 }
+
+export interface UserInfo {
+    userId: number;
+    avatarUrl?: string;
+    username: string;
+}

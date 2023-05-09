@@ -2,7 +2,7 @@ import { Hint, Link, Tooltip } from "@skbkontur/react-ui";
 import { useNavigate } from "react-router-dom";
 
 import { UserAvatar } from "../UserAvatar/UserAvatar";
-import { TOKEN_KEY, useAuthStore } from "../../../stores/userStore/auth";
+import { TOKEN_KEY, useAuthStore } from "../../../stores/userStore/userStore";
 import { setLocalStorage } from "../../../stores/utils";
 
 import cn from "./Header.less";

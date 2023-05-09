@@ -11,7 +11,7 @@ import { Register } from "./Pages/Register/Register";
 import { ResetPasswordPage } from "./Pages/ResetPasswordPage/ResetPasswordPage";
 import { NotFoundPage } from "./Pages/NotFoundPage/NotFoundPage";
 import cn from "./App.less";
-import { useAuthStore } from "./stores/userStore/auth";
+import { useAuthStore } from "./stores/userStore/userStore";
 import { isDevelopment } from "./Commons/utlis";
 import { Verifying } from "./Pages/Verifying/Verifying";
 import { ProfilePage } from "./Pages/ProfilePage/ProfilePage";

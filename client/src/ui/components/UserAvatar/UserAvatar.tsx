@@ -1,18 +1,19 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 import { stringToColor } from "../../../Pages/ProfilePage/helpers";
 import defaultImage from "../../../assets/avatar.jpg";
 
 import cn from "./UserAvatar.less";
-import {useAuthStore} from "../../../stores/userStore/auth";
+import { useAuthStore } from "../../../stores/userStore/userStore";
 
 interface UserAvatarProps {
     onClick?: () => void;
     className?: string;
     url?: Nullable<string>;
+    username?: string;
 }
 
-export const UserAvatar = ({ onClick, className }: UserAvatarProps): JSX.Element => {
+export const UserAvatar = ({ onClick, className, username }: UserAvatarProps): JSX.Element => {
     const { user } = useAuthStore();
     const [imageUrl, setImageUrl] = useState<Nullable<string>>(user?.avatarUrl);
     useEffect(() => {
@@ -27,15 +28,17 @@ export const UserAvatar = ({ onClick, className }: UserAvatarProps): JSX.Element
         return <img className={cn(className, "avatar")} onClick={onClick} src={imageUrl} alt="avatar" />;
     }
 
-    if (user?.username) {
+    const currentUsername = username ?? user?.username;
+    if (currentUsername) {
         return (
             <div
                 className={cn(className, "avatar")}
                 onClick={onClick}
-                style={{ backgroundColor: stringToColor(user.username ?? "default") }}>
-                {user.username?.trim()[0].toUpperCase()}
+                style={{ backgroundColor: stringToColor(currentUsername ?? "default") }}>
+                {currentUsername?.trim()[0].toUpperCase()}
             </div>
         );
     }
+
     return <img className={cn(className, "avatar")} onClick={onClick} src={defaultImage} alt="avatar" />;
 };

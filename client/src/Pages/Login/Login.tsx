@@ -7,7 +7,7 @@ import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWr
 import { useNavigate } from "react-router-dom";
 
 import { login } from "../../api/auth/auth";
-import { useAuthStore } from "../../stores/userStore/auth";
+import { useAuthStore } from "../../stores/userStore/userStore";
 
 import { isValidUsername } from "./helpers";
 import cn from "./Login.less";

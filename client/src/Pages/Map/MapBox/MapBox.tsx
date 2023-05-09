@@ -13,7 +13,7 @@ import GeocoderControl from "../Controls/GeocoderControl";
 
 import { clusterLayer } from "./Layers";
 import cn from "./MapBox.less";
-import { getGeoJson } from "./helpers";
+import { getGeoJson } from "../../../stores/eventsStore/helpers";
 import { useState } from "react";
 import { ClusterLayer } from "../Cluster/ClusterLayer";
 import { Cluster } from "../Cluster/Cluster";
@@ -57,36 +57,10 @@ export const MapBox = (): JSX.Element => {
         });
     };
 
-    const onClickMarker = () => {
-        // some logic here
-    };
-
-    const renderMarkers = () =>
-        getGeoJson().features.map(({ geometry: { coordinates }, properties: { iconSize } }) => {
-            const width = iconSize[0];
-            const height = iconSize[1];
-            // eslint-disable-next-line no-alert
-            return (
-                <Marker key={coordinates.toString()} latitude={coordinates[1]} longitude={coordinates[0]}>
-                    <div
-                        style={{
-                            backgroundImage: `url(https://placekitten.com/g/${width}/${height}/)`,
-                            width: `${width}px`,
-                            height: `${height}px`,
-                            backgroundSize: "100%",
-                        }}
-                        onClick={onClickMarker}
-                        className={cn("marker")}
-                    />
-                </Marker>
-            );
-        });
-
     const onSelectMarker = (nextZoom: number, coordinates: [number, number]) => {
         map.current?.flyTo({ zoom: nextZoom, center: coordinates });
     };
     const [_, rerender] = useState<any>("");
-    const { features } = getGeoJson();
     const onZoomEnd = (e: any) => {
         rerender(e.viewState.zoom);
     };
@@ -107,7 +81,7 @@ export const MapBox = (): JSX.Element => {
             <NavigationControl position="bottom-right" />
             <FullscreenControl position="bottom-right" />
             <GeolocateControl position="bottom-right" />
-            <ClusterLayer mapId="eventMap" data={features} onSelectMarker={onSelectMarker} ClusterComponent={Cluster} />
+            <ClusterLayer mapId="eventMap" data={getGeoJson()} onSelectMarker={onSelectMarker} ClusterComponent={Cluster} />
         </Map>
     );
 };

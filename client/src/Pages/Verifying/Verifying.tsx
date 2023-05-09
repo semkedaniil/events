@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { FcCheckmark } from "react-icons/fc";
 
 import { verify } from "../../api/auth/auth";
-import { useAuthStore } from "../../stores/userStore/auth";
+import { useAuthStore } from "../../stores/userStore/userStore";
 
 import cn from "./Verifying.less";
 

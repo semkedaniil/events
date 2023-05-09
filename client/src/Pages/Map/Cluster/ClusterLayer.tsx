@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
-import { Marker, useMap } from "react-map-gl";
+import { Marker, Popup, useMap } from "react-map-gl";
+import { Location } from "../../../Commons/types/Event";
 
 import Supercluster from "supercluster";
 import cn from "../MapBox/MapBox.less";
@@ -14,6 +15,7 @@ interface ClusterLayerProps {
 
 export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: ClusterLayerProps) => {
     const { [mapId]: mapRef } = useMap();
+    const [showPopup, setShowPopup] = useState(false);
     const bbox = mapRef?.getBounds().toArray().flat() as [number, number, number, number];
     const zoom = mapRef?.getZoom() ?? 0;
 
@@ -29,11 +31,15 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
         const nextZoom = SUPERCLUSTER.getClusterExpansionZoom(clusterId);
         onSelectMarker(nextZoom, coordinates);
     };
-    
-    const renderMarker = ({ coordinates }: any, properties: any) => {
+
+    const renderMarker = ({ coordinates: [longitude, latitude] }: any, properties: any) => {
         const [width, height] = properties.iconSize;
         return (
-            <Marker key={properties.cartodb_id} latitude={coordinates[1]} longitude={coordinates[0]}>
+            <Marker
+                key={properties.cartodb_id}
+                latitude={latitude}
+                longitude={longitude}
+                onClick={() => setShowPopup(true)}>
                 <div
                     key={`marker-${properties.cartodb_id}`}
                     style={{
@@ -44,6 +50,14 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
                     }}
                     className={cn("marker")}
                 />
+                {showPopup && (
+                    <Popup
+                        longitude={longitude}
+                        latitude={latitude}
+                        onClose={() => setShowPopup(false)}>
+                        You are here
+                    </Popup>
+                )}
             </Marker>
         );
     };

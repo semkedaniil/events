@@ -18,7 +18,7 @@ import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-vali
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
-import { useAuthStore } from "../../stores/userStore/auth";
+import { useAuthStore } from "../../stores/userStore/userStore";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
 import { updateUserAvatar, updateUserInfo } from "../../api/userInfo/userInfo";
 import { UserAvatar } from "../../ui/components/UserAvatar/UserAvatar";
@@ -125,7 +125,7 @@ export const ProfilePage = () => {
                     </CommonLayout.Header>
                     <CommonLayout.Content className={cn("content")}>
                         <div className={cn("avatar-wrapper")}>
-                            <UserAvatar className={cn("avatar")} onClick={onFileUploaderClick} />
+                            <UserAvatar username={username} className={cn("avatar")} onClick={onFileUploaderClick} />
                             {user?.avatarUrl && (
                                 <div className={cn("remove-button")} title="Удалить" onClick={onShowModal}>
                                     <TiDeleteOutline size={36} />

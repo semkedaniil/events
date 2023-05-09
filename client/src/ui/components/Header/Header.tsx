@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 import { UserAvatar } from "../UserAvatar/UserAvatar";
 import { useOutsideAlerter } from "../../../hooks/useOutsideAlerter";
-import { useAuthStore } from "../../../stores/userStore/auth";
+import { useAuthStore } from "../../../stores/userStore/userStore";
 
 import { HeaderMenu } from "./HeaderMenu";
 import cn from "./Header.less";

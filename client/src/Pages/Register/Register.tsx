@@ -6,7 +6,7 @@ import { BsKey } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
 import { login, registration } from "../../api/auth/auth";
-import { useAuthStore } from "../../stores/userStore/auth";
+import { useAuthStore } from "../../stores/userStore/userStore";
 
 import cn from "./Register.less";
 import { getRegistrationValidationInfo } from "./helpers";
