@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import _ from "lodash";
-import { Event, FilterRequest } from "../../Commons/types/Event";
+import { Event, SearchRequest } from "../../Commons/types/Event";
 
 interface EventsStore {
     events: Event[];
@@ -11,9 +11,10 @@ interface Actions {
     setEvents: (event: Event[]) => void;
     addEvents: (event: Event[]) => void;
     removeEvent: (eventId: number) => void;
+    findById: (eventId: number) => Event | undefined;
     hideEvent: (eventId: number) => void;
     showEvent: (eventId: number) => void;
-    filterEvents: (params: FilterRequest) => void;
+    filterEvents: (params: SearchRequest) => void;
 }
 
 type EventsStoreState = EventsStore & Actions;
@@ -26,6 +27,10 @@ export const useEventsStore = create<EventsStoreState>()(
     persist(
         (set, get) => ({
             ...defaultUserState,
+            findById: eventId => {
+                const { events } = get();
+                return events.find(event => event.id === eventId);
+            },
             setEvents: events => set(() => ({ events })),
             addEvents: events => {
                 const { events: currentEvents } = get();
@@ -51,8 +56,8 @@ export const useEventsStore = create<EventsStoreState>()(
                 // some logic
             },
         }),
-        { name: "global" }
-    )
+        { name: "global" },
+    ),
 );
 
 function mergeArrays(original: Event[], updated: Event[]): Event[] {

@@ -19,11 +19,10 @@ export const Cluster = ({ leaves, properties: { point_count } }: ClusterProps): 
                     Здесь всего {point_count} {pluralString}:
                 </span>
                 <span>
-                    {leaves.slice(0, 10).map(({ properties: { id } }, index) => {
-                        // todo create link to event page
+                    {leaves.slice(0, 10).map(({ properties: { name, id } }, index) => {
                         return (
                             <div key={index.toString() + id}>
-                                {index + 1}. {id}
+                                {index + 1}. {name}
                             </div>
                         );
                     })}

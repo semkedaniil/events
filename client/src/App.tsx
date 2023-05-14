@@ -4,17 +4,17 @@ import { Loader } from "@skbkontur/react-ui";
 
 import { CommonPage } from "./ui/components/CommonPage/CommonPage";
 import { Map } from "./Pages/Map/Map";
-import { Help } from "./Pages/Help/Help";
-import { Events } from "./Pages/Events/Events";
-import { Login } from "./Pages/Login/Login";
-import { Register } from "./Pages/Register/Register";
+import { Help } from "./Pages/HelpPage/Help";
+import { Events } from "./Pages/EventsPage/Events";
+import { Login } from "./Pages/LoginPage/Login";
+import { Register } from "./Pages/RegisterPage/Register";
 import { ResetPasswordPage } from "./Pages/ResetPasswordPage/ResetPasswordPage";
 import { NotFoundPage } from "./Pages/NotFoundPage/NotFoundPage";
 import cn from "./App.less";
 import { useAuthStore } from "./stores/userStore/userStore";
-import { isDevelopment } from "./Commons/utlis";
-import { Verifying } from "./Pages/Verifying/Verifying";
+import { Verifying } from "./Pages/VerifyingPage/Verifying";
 import { ProfilePage } from "./Pages/ProfilePage/ProfilePage";
+import { EventPage } from "./Pages/EventPage/EventPage";
 
 const routes = [
     { path: "/", element: <Map /> },
@@ -24,6 +24,7 @@ const routes = [
     { path: "/register", element: <Register /> },
     { path: "/verify", element: <Verifying /> },
     { path: "/reset-password", element: <ResetPasswordPage /> },
+    { path: "/event/:id", element: <EventPage /> },
     { path: "/profile", element: <ProfilePage /> },
     { path: "*", element: <NotFoundPage /> },
 ];

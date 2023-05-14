@@ -75,6 +75,7 @@ module.exports = function (webpackEnv) {
             : isEnvDevelopment && "cheap-module-source-map",
         entry: paths.appIndexJs,
         output: {
+            publicPath: '/',
             path: paths.appBuild,
             pathinfo: isEnvDevelopment,
             filename: isEnvProduction

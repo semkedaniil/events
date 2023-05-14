@@ -5,7 +5,7 @@ import { Button, Input } from "@skbkontur/react-ui";
 import { AiOutlineMail } from "react-icons/ai";
 
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
-import { isValidEmail } from "../Register/helpers";
+import { isValidEmail } from "../RegisterPage/helpers";
 
 import cn from "./ResetPasswordPage.less";
 

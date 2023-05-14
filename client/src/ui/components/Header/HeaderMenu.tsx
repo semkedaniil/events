@@ -45,7 +45,7 @@ export const HeaderMenu = ({ onClose }: HeaderMenuProps): JSX.Element => {
                             <span className={cn("email")}>{user?.email}</span>
                         </div>
                     </div>
-                    <Link onClick={onClickCredentials} className={cn("menu-item")}>
+                    <Link href="/profile" className={cn("menu-item")}>
                         Личные данные
                     </Link>
                     <Link href="/events" className={cn("menu-item")}>

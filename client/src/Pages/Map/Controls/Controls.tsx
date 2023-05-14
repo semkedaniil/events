@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, SetStateAction, useRef } from "react";
+import { useCallback, useState, useEffect, SetStateAction, useRef, memo } from "react";
 import { useMap } from "react-map-gl";
 import { Button, DatePicker, Input, RadioGroup, Token, TokenInput, TokenInputType } from "@skbkontur/react-ui";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
@@ -9,14 +9,11 @@ import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { CommonLayout } from "../../../ui/components/CommonLayout/CommonLayout";
 
 import cn from "./Controls.less";
+import { EventType } from "../../../Commons/types/Event";
+import { isNightNow } from "../MapBox/MapBox";
 
 const inputWidth = 270;
 const maxInputLength = 100;
-
-const enum EventType {
-    LOCAL = "Локальный",
-    GLOBAL = "Глобальный",
-}
 
 const pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
 
@@ -34,9 +31,10 @@ export const Controls = (): JSX.Element => {
     const [to, setTo] = useState("");
     const container = useRef<ValidationContainer | null>(null);
     const controlsRef = useRef<HTMLDivElement>(null);
+    const isNight = isNightNow();
 
     const [hasError, setHasError] = useState(false);
-    const [isClosed, setIsClosed] = useState(false);
+    const [isClosed, setIsClosed] = useState(true);
 
     useEffect((): undefined | (() => void) => {
         if (!eventMap) {
@@ -101,7 +99,7 @@ export const Controls = (): JSX.Element => {
                 </div>
             )}
             <div
-                className={cn("map-controls", { closed: isClosed })}
+                className={cn("map-controls", { closed: isClosed, light: isNight })}
                 style={{
                     left:
                         isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth - 5 : undefined,
@@ -178,7 +176,10 @@ export const Controls = (): JSX.Element => {
                         width={inputWidth}
                         inline
                         name="number-simple"
-                        items={[EventType.LOCAL, EventType.GLOBAL]}
+                        items={[
+                            [EventType.LOCAL, <span className={cn({type: isNight})}>{EventType.LOCAL}</span>],
+                            [EventType.GLOBAL, <span className={cn({type: isNight})}>{EventType.GLOBAL}</span>],
+                        ]}
                     />
                 </RowStack>
                 <RowStack>
@@ -224,7 +225,7 @@ export const Controls = (): JSX.Element => {
                         )}
                     />
                 </RowStack>
-                <Button use="primary" title="Искать" onClick={onSubmit}>
+                <Button use={isNight ? "default" : "primary"} title="Искать" onClick={onSubmit}>
                     Отфильтровать
                 </Button>
                 <CommonLayout.Header className={cn("map-control-header")}>

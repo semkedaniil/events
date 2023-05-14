@@ -1,7 +1,7 @@
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
 
-import { isValidUsername } from "../Login/helpers";
-import { subtractYears } from "../Register/helpers";
+import { isValidUsername } from "../LoginPage/helpers";
+import { subtractYears } from "../RegisterPage/helpers";
 
 export const stringToColor = (str: string): string => {
     let hash = 0;

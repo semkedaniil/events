@@ -4,6 +4,9 @@ import cn from "./ColumnStack.less";
 
 interface ColumnStackProps {
     children: ReactNode;
+    className?: string;
 }
 
-export const ColumnStack = ({ children }: ColumnStackProps) => <div className={cn("column-stack")}>{children}</div>;
+export const ColumnStack = ({ children, className }: ColumnStackProps) => (
+    <div className={cn("column-stack", className)}>{children}</div>
+);

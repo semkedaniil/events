@@ -1,6 +1,6 @@
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
 
-import { isValidUsername } from "../Login/helpers";
+import { isValidUsername } from "../LoginPage/helpers";
 
 export const subtractYears = (date: Date, years: number): Date => {
     const dateCopy = new Date(date);

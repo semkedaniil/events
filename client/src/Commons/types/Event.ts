@@ -1,13 +1,13 @@
 export interface Event {
     id: number;
     name: string;
-    creator?: string;
     location: Location;
     dateRange: DateRange;
+    creator?: string;
     hidden?: boolean;
     tags?: string[];
     description?: string;
-    photos?: File[];
+    photos?: string[];
 }
 
 export interface Location {
@@ -16,10 +16,21 @@ export interface Location {
 }
 
 export interface DateRange {
-    startDate: Date;
-    endDate?: Date;
+    startDate: string;
+    endDate?: string;
 }
 
-export interface FilterRequest {
+export const enum EventType {
+    LOCAL = "Локальный",
+    GLOBAL = "Глобальный",
+}
 
+export interface SearchRequest {
+    location?: Location;
+    name?: string;
+    participantsCount?: number;
+    tags?: string[];
+    creatorName?: string;
+    type?: EventType;
+    dateRange?: DateRange;
 }
