@@ -22,15 +22,17 @@ export const ImageSlider = ({ slides }: ImageSliderProps): JSX.Element | null =>
         return null;
     }
 
+    const showLeftArrow = current !== 0;
+    const showRightArrow = current !== length - 1;
     return (
         <section className={cn("slider")}>
-            <FaArrowAltCircleLeft className={cn("left-arrow")} onClick={prevSlide} />
-            <FaArrowAltCircleRight className={cn("right-arrow")} onClick={nextSlide} />
+            { showLeftArrow && <FaArrowAltCircleLeft className={cn("arrow")} onClick={prevSlide} /> }
             {slides.map((slide, index) => (
                 <div className={cn("slide", { active: index === current })} key={index}>
                     {index === current && <img src={slide} alt="EventImage" className={cn("image")} />}
                 </div>
             ))}
+            { showRightArrow && <FaArrowAltCircleRight className={cn("arrow")} onClick={nextSlide} /> }
         </section>
     );
 };

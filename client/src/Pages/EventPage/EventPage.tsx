@@ -6,6 +6,7 @@ import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import cn from "./EventPage.less";
 import { ImageSlider } from "./PhotoSlider/Slider";
+import { RowStack } from "../../ui/components/RowStack/RowStack";
 
 export const EventPage = (): JSX.Element => {
     const { id = "" } = useParams<"id">();
@@ -52,17 +53,17 @@ export const EventPage = (): JSX.Element => {
                 <GoBackLink backUrl=".." />
                 <h1 className={cn("header")}>Событие {name}</h1>
             </CommonLayout.Header>
-            <div className={cn("event-page")}>
-                {photos && <ImageSlider slides={[...photos, ...photos, ...photos, ...photos]} />}
-                <div>{creator}</div>
-                <div>{photos?.[0]}</div>
-                <div>{startDate}</div>
-                <div>{endDate}</div>
-                <div>{description}</div>
-                <div>{latitude}</div>
-                <div>{longitude}</div>
-                <div>{hidden}</div>
-            </div>
+            <RowStack className={cn("event-page")}>
+                {photos && <ImageSlider slides={photos} />}
+                {creator && <RowStack>Создатель: {creator}</RowStack>}
+                <RowStack>Дата начала: {startDate}</RowStack>
+                {endDate && <RowStack>Дата конца: {endDate}</RowStack>}
+                {description && <RowStack>Описание: {description}</RowStack>}
+                <RowStack>
+                    Координаты: [{longitude}, {latitude}]
+                </RowStack>
+                {hidden && <RowStack>В данный момент событие скрыто на общей карте</RowStack>}
+            </RowStack>
         </CommonLayout>
     );
 };
