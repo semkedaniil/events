@@ -20,6 +20,7 @@ export const Cluster = ({ leaves, properties: { point_count } }: ClusterProps): 
                 </span>
                 <span>
                     {leaves.slice(0, 10).map(({ properties: { id } }, index) => {
+                        // todo create link to event page
                         return (
                             <div key={index.toString() + id}>
                                 {index + 1}. {id}
@@ -38,6 +39,7 @@ export const Cluster = ({ leaves, properties: { point_count } }: ClusterProps): 
                 style={{
                     width: size,
                     height: size,
+                    zIndex: 20,
                     cursor: "pointer",
                     fontSize: "16px",
                     backgroundColor: "#51bbd6",

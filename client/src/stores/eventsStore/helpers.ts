@@ -230,7 +230,7 @@ const customJsonData: Feature[] = [
     {
         type: "Feature",
         properties: { id: "ak16993695" },
-        geometry: { type: "Point", coordinates: [-151.5169, 63.083, 50] },
+        geometry: { type: "Point", coordinates: [-151.5169, 63.083, 70] },
     },
     {
         type: "Feature",

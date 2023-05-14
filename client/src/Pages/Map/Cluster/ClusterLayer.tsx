@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { Marker, Popup, useMap } from "react-map-gl";
 import { Location } from "../../../Commons/types/Event";
 
 import Supercluster from "supercluster";
 import cn from "../MapBox/MapBox.less";
+import { Tooltip } from "@skbkontur/react-ui";
+import set = Reflect.set;
 
 interface ClusterLayerProps {
     mapId: string;
@@ -13,12 +15,13 @@ interface ClusterLayerProps {
     onSelectMarker: any;
 }
 
+const img = <img src={`https://placekitten.com/g/150/200/`} alt="Event image" />;
 export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: ClusterLayerProps) => {
     const { [mapId]: mapRef } = useMap();
-    const [showPopup, setShowPopup] = useState(false);
     const bbox = mapRef?.getBounds().toArray().flat() as [number, number, number, number];
     const zoom = mapRef?.getZoom() ?? 0;
-
+    const [showPopup, setShowPopup] = useState<{ id: string } | null>(null);
+    const refSetTimeout = useRef<NodeJS.Timeout>();
     const SUPERCLUSTER: Supercluster = useMemo(() => new Supercluster({ radius: 40 }).load(data), [data]);
 
     const clusters = useMemo(() => {
@@ -32,48 +35,65 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
         onSelectMarker(nextZoom, coordinates);
     };
 
-    const renderMarker = ({ coordinates: [longitude, latitude] }: any, properties: any) => {
-        const [width, height] = properties.iconSize;
+    const renderMarkerTooltip = (id: string): JSX.Element => (
+        <div className={cn("event-tooltip")}>
+            {img}
+            <span>
+                Здесь событие <b>{id}</b>
+            </span>
+        </div>
+    );
+
+    const onMouseEnterHandler = (id: string) => {
+        clearTimeout(refSetTimeout.current);
+        setShowPopup({ id });
+    };
+
+    const onMouseLeaveHandler = () => {
+        refSetTimeout.current = setTimeout(() => {
+            setShowPopup(null);
+        }, 250);
+    };
+
+    const renderMarker = ({ coordinates: [longitude, latitude] }: any, { iconSize, id }: any) => {
+        const [width, height] = iconSize;
         return (
-            <Marker
-                key={properties.cartodb_id}
-                latitude={latitude}
-                longitude={longitude}
-                onClick={() => setShowPopup(true)}>
+            <Marker key={id} latitude={latitude} longitude={longitude}>
                 <div
-                    key={`marker-${properties.cartodb_id}`}
-                    style={{
-                        backgroundImage: `url(https://placekitten.com/g/${width}/${height}/)`,
-                        width: `${width}px`,
-                        height: `${height}px`,
-                        backgroundSize: "100%",
-                    }}
-                    className={cn("marker")}
-                />
-                {showPopup && (
-                    <Popup
-                        longitude={longitude}
-                        latitude={latitude}
-                        onClose={() => setShowPopup(false)}>
-                        You are here
-                    </Popup>
-                )}
+                    onMouseEnter={() => onMouseEnterHandler(id)}
+                    onMouseLeave={onMouseLeaveHandler}>
+                    <div
+                        key={`marker-${id}`}
+                        style={{
+                            backgroundImage: `url(https://placekitten.com/g/${width}/${height}/)`,
+                            width,
+                            height,
+                            backgroundSize: "100%",
+                        }}
+                        className={cn("marker")}
+                    />
+                    {showPopup?.id && id === showPopup?.id && (
+                        <Popup className={cn("popup")} latitude={latitude} longitude={longitude} closeButton={false}>
+                            {renderMarkerTooltip(id)}
+                        </Popup>
+                    )}
+                </div>
             </Marker>
         );
     };
     return (
         <>
-            {clusters.map(feature => {
+            {clusters.map((feature, index) => {
                 const { id, geometry, properties } = feature;
                 const { coordinates } = geometry;
                 const [longitude, latitude] = coordinates;
-                const clusterFeaturesProps = feature.properties as Supercluster.ClusterProperties;
+                const clusterFeaturesProps = properties as Supercluster.ClusterProperties;
                 if (clusterFeaturesProps.cluster) {
                     const { cluster_id: clusterId } = clusterFeaturesProps;
                     const leaves = SUPERCLUSTER.getLeaves(clusterId, Infinity);
                     return (
                         <Marker
-                            key={id}
+                            key={clusterId}
                             latitude={latitude}
                             longitude={longitude}
                             onClick={() => handleSelectMarker(clusterId, coordinates)}>
