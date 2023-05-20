@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
+
 import cn from "./Slider.less";
 
 interface ImageSliderProps {
@@ -14,7 +15,7 @@ export const ImageSlider = ({ slides }: ImageSliderProps): JSX.Element | null =>
         setCurrent(current === length - 1 ? 0 : current + 1);
     };
 
-    const prevSlide = () => {
+    const previousSlide = () => {
         setCurrent(current === 0 ? length - 1 : current - 1);
     };
 
@@ -26,7 +27,7 @@ export const ImageSlider = ({ slides }: ImageSliderProps): JSX.Element | null =>
     const showRightArrow = current !== length - 1;
     return (
         <section className={cn("slider")}>
-            { showLeftArrow && <FaArrowAltCircleLeft className={cn("arrow")} onClick={prevSlide} /> }
+            { showLeftArrow && <FaArrowAltCircleLeft className={cn("arrow")} onClick={previousSlide} /> }
             {slides.map((slide, index) => (
                 <div className={cn("slide", { active: index === current })} key={index}>
                     {index === current && <img src={slide} alt="EventImage" className={cn("image")} />}

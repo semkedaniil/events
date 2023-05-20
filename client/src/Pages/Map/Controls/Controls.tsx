@@ -7,10 +7,10 @@ import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWr
 import RightIcon from "../../../assets/arrow_right.svg";
 import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { CommonLayout } from "../../../ui/components/CommonLayout/CommonLayout";
-
-import cn from "./Controls.less";
 import { EventType } from "../../../Commons/types/Event";
 import { isNightNow } from "../MapBox/MapBox";
+
+import cn from "./Controls.less";
 
 const inputWidth = 270;
 const maxInputLength = 100;
@@ -34,7 +34,7 @@ export const Controls = (): JSX.Element => {
     const isNight = isNightNow();
 
     const [hasError, setHasError] = useState(false);
-    const [isClosed, setIsClosed] = useState(true);
+    const [isClosed, setIsClosed] = useState(false);
 
     useEffect((): undefined | (() => void) => {
         if (!eventMap) {
@@ -177,8 +177,18 @@ export const Controls = (): JSX.Element => {
                         inline
                         name="number-simple"
                         items={[
-                            [EventType.LOCAL, <span className={cn({type: isNight})}>{EventType.LOCAL}</span>],
-                            [EventType.GLOBAL, <span className={cn({type: isNight})}>{EventType.GLOBAL}</span>],
+                            [
+                                EventType.LOCAL,
+                                <span key={EventType.LOCAL} className={cn({ type: isNight })}>
+                                    {EventType.LOCAL}
+                                </span>,
+                            ],
+                            [
+                                EventType.GLOBAL,
+                                <span key={EventType.GLOBAL} className={cn({ type: isNight })}>
+                                    {EventType.GLOBAL}
+                                </span>,
+                            ],
                         ]}
                     />
                 </RowStack>

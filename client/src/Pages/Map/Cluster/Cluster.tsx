@@ -1,5 +1,6 @@
 import Supercluster from "supercluster";
 import { Tooltip } from "@skbkontur/react-ui";
+
 import { pluralize } from "../../../Commons/utlis";
 
 interface ClusterProps {
@@ -9,24 +10,22 @@ interface ClusterProps {
 
 const size = 60;
 
-export const Cluster = ({ leaves, properties: { point_count } }: ClusterProps): JSX.Element => {
+export const Cluster = ({ leaves, properties: { point_count: pointCount } }: ClusterProps): JSX.Element => {
     const renderTooltipMenu = () => {
-        const pluralString = pluralize(point_count, ["событие", "события", "событий"]);
-        const isMoreThan10 = point_count > 10;
+        const pluralString = pluralize(pointCount, ["событие", "события", "событий"]);
+        const isMoreThan10 = pointCount > 10;
         return (
             <div>
                 <span>
-                    Здесь всего {point_count} {pluralString}:
+                    Здесь всего {pointCount} {pluralString}:
                 </span>
                 <span>
-                    {leaves.slice(0, 10).map(({ properties: { name, id } }, index) => {
-                        return (
+                    {leaves.slice(0, 10).map(({ properties: { name, id } }, index) => (
                             <div key={index.toString() + id}>
                                 {index + 1}. {name}
                             </div>
-                        );
-                    })}
-                    {isMoreThan10 && <div>И еще {point_count - 10}...</div>}
+                        ))}
+                    {isMoreThan10 && <div>И еще {pointCount - 10}...</div>}
                 </span>
             </div>
         );
@@ -47,7 +46,7 @@ export const Cluster = ({ leaves, properties: { point_count } }: ClusterProps): 
                     justifyContent: "center",
                     alignItems: "center",
                 }}>
-                {point_count}
+                {pointCount}
             </div>
         </Tooltip>
     );

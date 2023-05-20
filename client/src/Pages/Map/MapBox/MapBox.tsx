@@ -1,21 +1,23 @@
 import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, ScaleControl, Popup } from "react-map-gl";
-import GeocoderControl from "../Controls/GeocoderControl";
-
-import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import mapboxgl from "mapbox-gl";
+import { Button } from "@skbkontur/react-ui";
+
+import GeocoderControl from "../Controls/GeocoderControl";
+import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";
 import { ClusterLayer } from "../Cluster/ClusterLayer";
 import { Cluster } from "../Cluster/Cluster";
 import { getAllEvents } from "../../../api/events/events";
 import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
-import { useLocation, useNavigate } from "react-router-dom";
-import mapboxgl from "mapbox-gl";
 import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
+
 import cn from "./MapBox.less";
-import { Button } from "@skbkontur/react-ui";
 
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
-const initialViewState = {
+export const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
+
+export const initialViewState = {
     latitude: 63.1016,
     longitude: -151.5129,
     zoom: 4,
@@ -63,12 +65,11 @@ export const MapBox = (): JSX.Element => {
             setShowCreatePopup({ coordinates, address });
         }
     };
-    const [_, rerender] = useState<string>("");
+    const [rerender, setRerender] = useState<string>("");
     const rerenderMap = ({ viewState: { latitude, longitude } }: any) => {
-        rerender(latitude + longitude);
+        setRerender(latitude + longitude);
     };
 
-    console.log(showCreatePopup);
     return (
         <Map
             key={key}
@@ -83,7 +84,9 @@ export const MapBox = (): JSX.Element => {
             mapboxAccessToken={MAPBOX_TOKEN}>
             {showCreatePopup && (
                 <Popup
-                    maxWidth={"400px"}
+                    closeButton
+                    className={cn("creation-popup")}
+                    maxWidth="400px"
                     longitude={showCreatePopup.coordinates?.lng}
                     latitude={showCreatePopup.coordinates?.lat}
                     onClose={() => setShowCreatePopup(null)}>
@@ -98,7 +101,7 @@ export const MapBox = (): JSX.Element => {
                                 </span>
                             </span>
                             <div>
-                                Это рядом с <i>{showCreatePopup.address}</i>
+                                Это рядом с <i>&ldquo;{showCreatePopup.address}&rdquo;</i>
                             </div>
                         </main>
                         <div className={cn("buttons")}>
@@ -136,13 +139,11 @@ export const MapBox = (): JSX.Element => {
 
 async function getNearestAddressByCoordinates(lon: string, lat: string): Promise<string> {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${MAPBOX_TOKEN}`;
-    console.log(url);
     const data = await fetch(url).then(x => x.json());
-    console.log(data);
     return data?.features?.[0].place_name ?? "";
 }
 
-function getMapTheme(): string {
+export function getMapTheme(): string {
     if (isNightNow()) {
         return "mapbox://styles/mapbox/navigation-night-v1";
     }

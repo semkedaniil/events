@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Map, { Marker } from "react-map-gl";
+import { IoIosWarning } from "react-icons/io";
+
 import { Event } from "../../Commons/types/Event";
 import { useEventsStore } from "../../stores/eventsStore/eventsStore";
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
+import { RowStack } from "../../ui/components/RowStack/RowStack";
+import { getMapTheme, MAPBOX_TOKEN } from "../Map/MapBox/MapBox";
+import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
+
 import cn from "./EventPage.less";
 import { ImageSlider } from "./PhotoSlider/Slider";
-import { RowStack } from "../../ui/components/RowStack/RowStack";
 
 export const EventPage = (): JSX.Element => {
     const { id = "" } = useParams<"id">();
@@ -30,7 +36,7 @@ export const EventPage = (): JSX.Element => {
                     <h1 className={cn("header")}>Вернуться на главную</h1>
                 </CommonLayout.Header>
                 <div className={cn("event-page")}>
-                    <p className={cn("title")}>
+                    <p className={cn("not-found-title")}>
                         К сожалению, событие с ID <b>{id}</b> не найдено.
                     </p>
                 </div>
@@ -48,21 +54,55 @@ export const EventPage = (): JSX.Element => {
         hidden,
     } = event;
     return (
-        <CommonLayout>
+        <CommonLayout style={{ width: "fit-content", margin: "0 auto" }}>
             <CommonLayout.Header>
                 <GoBackLink backUrl=".." />
                 <h1 className={cn("header")}>Событие {name}</h1>
             </CommonLayout.Header>
             <RowStack className={cn("event-page")}>
-                {photos && <ImageSlider slides={photos} />}
-                {creator && <RowStack>Создатель: {creator}</RowStack>}
-                <RowStack>Дата начала: {startDate}</RowStack>
-                {endDate && <RowStack>Дата конца: {endDate}</RowStack>}
-                {description && <RowStack>Описание: {description}</RowStack>}
-                <RowStack>
-                    Координаты: [{longitude}, {latitude}]
-                </RowStack>
-                {hidden && <RowStack>В данный момент событие скрыто на общей карте</RowStack>}
+                <div className={cn("column")}>
+                    {photos && <ImageSlider slides={photos} />}
+                    {creator && <RowStack>Создатель: {creator}</RowStack>}
+                    {description && (
+                        <ColumnStack>
+                            <span className={cn("title")}>Описание</span>
+                            <p className={cn("description")}>{description}</p>
+                        </ColumnStack>
+                    )}
+                    <RowStack>
+                        <span className={cn("title")}>Дата начала</span>
+                        <p>{startDate}</p>
+                    </RowStack>
+                    {endDate && <RowStack>Дата конца: {endDate}</RowStack>}
+                </div>
+                <div className={cn("column")}>
+                    <Map
+                        id="eventIdMap"
+                        initialViewState={{
+                            latitude,
+                            longitude,
+                            zoom: 0.55,
+                        }}
+                        projection="globe"
+                        style={{ width: "100%", height: "250px", borderRadius: "16px" }}
+                        mapStyle={getMapTheme()}
+                        mapboxAccessToken={MAPBOX_TOKEN}>
+                        <Marker longitude={longitude} latitude={latitude} />
+                    </Map>
+                    <RowStack>
+                        <span className={cn("title")}>
+                            Координаты: ({longitude}, {latitude}){" "}
+                        </span>
+                    </RowStack>
+                </div>
+                {hidden && (
+                    <RowStack>
+                        <span className={cn("title", "error")}>
+                            <IoIosWarning />
+                            <span>В данный момент событие скрыто на общей карте</span>
+                        </span>
+                    </RowStack>
+                )}
             </RowStack>
         </CommonLayout>
     );

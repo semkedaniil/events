@@ -1,13 +1,50 @@
 @import "src/ui/styles/variables";
 
 :local {
-  .event-page {
+  .header {
     width: 100%;
-    display: flex;
-    flex-direction: column;
+  }
+
+  @media (max-width: 600px) {
+    .header {
+      width: 400px;
+    }
+  }
+
+
+  .event-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: @base-size * 10;
+    font-size: 16px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: @base-size * 5;
+      height: 100%;
+    }
+
+    .not-found-title {
+      margin-bottom: @base-size * 4;
+    }
 
     .title {
-      margin-bottom: @base-size * 4;
+      font-weight: 500;
+    }
+
+    .error {
+      display: flex;
+      align-items: center;
+      color: #ff5e5e;
+    }
+
+    .description {
+
     }
 
     .each-slide-effect {

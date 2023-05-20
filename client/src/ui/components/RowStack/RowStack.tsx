@@ -6,10 +6,11 @@ interface RowStackProps {
     children: ReactNode;
     className?: string;
     align?: "center" | "right" | "left";
+    justify?: "center" | "right" | "left";
 }
 
-export const RowStack = ({ children, align, className }: RowStackProps) => (
-    <div style={{ justifyContent: align }} className={cn("row-stack", className)}>
+export const RowStack = ({ children, align, justify, className }: RowStackProps) => (
+    <div style={{ alignItems: align, justifyContent: justify }} className={cn("row-stack", className)}>
         {children}
     </div>
 );

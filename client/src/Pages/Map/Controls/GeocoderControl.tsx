@@ -63,42 +63,43 @@ export default function GeocoderControl(props: GeocoderControlProps) {
 
     // @ts-ignore (TS2339) private member
     if (geocoder._map) {
-        if (props?.proximity !== geocoder.getProximity()) {
+        if (geocoder.getProximity() !== props.proximity && props.proximity !== undefined) {
             geocoder.setProximity(props.proximity);
         }
-        if (props?.render !== geocoder.getRenderFunction()) {
+        if (geocoder.getRenderFunction() !== props.render && props.render !== undefined) {
             geocoder.setRenderFunction(props.render);
         }
-        if (props?.language !== geocoder.getLanguage()) {
+        if (geocoder.getLanguage() !== props.language && props.language !== undefined) {
             geocoder.setLanguage(props.language);
         }
-        if (props?.zoom !== geocoder.getZoom()) {
+        if (geocoder.getZoom() !== props.zoom && props.zoom !== undefined) {
             geocoder.setZoom(props.zoom);
         }
-        if (props?.flyTo !== geocoder.getFlyTo()) {
+        if (geocoder.getFlyTo() !== props.flyTo && props.flyTo !== undefined) {
             geocoder.setFlyTo(props.flyTo);
         }
-        if (props?.placeholder !== geocoder.getPlaceholder()) {
+        if (geocoder.getPlaceholder() !== props.placeholder && props.placeholder !== undefined) {
             geocoder.setPlaceholder(props.placeholder);
         }
-        if (props?.countries !== geocoder.getCountries()) {
+        if (geocoder.getCountries() !== props.countries && props.countries !== undefined) {
             geocoder.setCountries(props.countries);
         }
-        if (props?.types !== geocoder.getTypes()) {
+        if (geocoder.getTypes() !== props.types && props.types !== undefined) {
             geocoder.setTypes(props.types);
         }
-        if (props?.minLength !== geocoder.getMinLength()) {
+        if (geocoder.getMinLength() !== props.minLength && props.minLength !== undefined) {
             geocoder.setMinLength(props.minLength);
         }
-        if (props?.limit !== geocoder.getLimit()) {
+        if (geocoder.getLimit() !== props.limit && props.limit !== undefined) {
             geocoder.setLimit(props.limit);
         }
-        if (props?.filter !== geocoder.getFilter()) {
+        if (geocoder.getFilter() !== props.filter && props.filter !== undefined) {
             geocoder.setFilter(props.filter);
         }
-        if (props?.origin !== geocoder.getOrigin()) {
+        if (geocoder.getOrigin() !== props.origin && props.origin !== undefined) {
             geocoder.setOrigin(props.origin);
         }
+
     }
     return marker;
 }

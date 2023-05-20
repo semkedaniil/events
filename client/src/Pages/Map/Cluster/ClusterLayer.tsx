@@ -1,13 +1,12 @@
 import { useMemo, useRef, useState } from "react";
-import defaultImage from "../../../assets/avatar.jpg";
 import { Marker, Popup, useMap } from "react-map-gl";
-
 import Supercluster from "supercluster";
+import { Link } from "@skbkontur/react-ui";
+
+import defaultImage from "../../../assets/avatar.jpg";
 import cn from "../MapBox/MapBox.less";
 import { Feature } from "../../../stores/eventsStore/helpers";
 import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
-import { useNavigate } from "react-router-dom";
-import { Link } from "@skbkontur/react-ui";
 
 interface ClusterLayerProps {
     mapId: string;
@@ -18,11 +17,10 @@ interface ClusterLayerProps {
 
 export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: ClusterLayerProps) => {
     const { [mapId]: mapRef } = useMap();
-    const navigate = useNavigate();
     const bbox = mapRef?.getBounds().toArray().flat() as [number, number, number, number];
     const zoom = mapRef?.getZoom() ?? 0;
     const [showPopup, setShowPopup] = useState<{ id: number } | null>(null);
-    const refSetTimeout = useRef<NodeJS.Timeout>();
+    const referenceSetTimeout = useRef<NodeJS.Timeout>();
     const SUPERCLUSTER: Supercluster = useMemo(() => new Supercluster({ radius: 40 }).load(data), [data]);
 
     const clusters = useMemo(() => {
@@ -41,7 +39,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
         name,
         description,
         creator,
-        dateRange,
+        dateRange: { endDate, startDate },
         photos,
     }: Feature["properties"]): JSX.Element => (
         <div className={cn("event-tooltip")}>
@@ -54,8 +52,8 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
                 <footer>
                     {creator && <span className={cn("author")}>Автор: {creator}</span>}
                     <ColumnStack className={cn("date-range")}>
-                        <span>Начало: {dateRange.startDate}</span>
-                        {dateRange.endDate && <span>Конец: {dateRange.endDate}</span>}
+                        <span>Начало: {startDate}</span>
+                        {endDate && <span>Конец: {endDate}</span>}
                     </ColumnStack>
                 </footer>
             </div>
@@ -63,12 +61,12 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
     );
 
     const onMouseEnterHandler = (id: number) => {
-        clearTimeout(refSetTimeout.current);
+        clearTimeout(referenceSetTimeout.current);
         setShowPopup({ id });
     };
 
     const onMouseLeaveHandler = () => {
-        refSetTimeout.current = setTimeout(() => {
+        referenceSetTimeout.current = setTimeout(() => {
             setShowPopup(null);
         }, 250);
     };
