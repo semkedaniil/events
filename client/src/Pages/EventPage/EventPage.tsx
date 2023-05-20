@@ -44,7 +44,7 @@ export const EventPage = (): JSX.Element => {
         photos,
         description,
         dateRange: { endDate, startDate },
-        location: { latitude, longitude },
+        location: { lat: latitude, lng: longitude },
         hidden,
     } = event;
     return (

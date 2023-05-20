@@ -1,4 +1,4 @@
-import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, ScaleControl } from "react-map-gl";
+import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, ScaleControl, Popup } from "react-map-gl";
 import GeocoderControl from "../Controls/GeocoderControl";
 
 import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";
@@ -7,7 +7,11 @@ import { ClusterLayer } from "../Cluster/ClusterLayer";
 import { Cluster } from "../Cluster/Cluster";
 import { getAllEvents } from "../../../api/events/events";
 import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import mapboxgl from "mapbox-gl";
+import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
+import cn from "./MapBox.less";
+import { Button } from "@skbkontur/react-ui";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -21,8 +25,12 @@ export const MapBox = (): JSX.Element => {
     const map = useMap() as any;
     const [key, setKey] = useState<number>();
     const location = useLocation();
+    const navigate = useNavigate();
     const { setEvents } = useEventsStore();
     const [geoEvents, setGeoEvents] = useState<Feature[]>();
+    const [showCreatePopup, setShowCreatePopup] = useState<{ coordinates: mapboxgl.LngLat; address?: string } | null>(
+        null
+    );
 
     useEffect(() => {
         setKey(Math.random() * 5);
@@ -43,13 +51,28 @@ export const MapBox = (): JSX.Element => {
     const onSelectMarker = (nextZoom: number, coordinates: [number, number]) => {
         map.current?.flyTo({ zoom: nextZoom, center: coordinates });
     };
-    const [_, rerender] = useState<any>("");
-    const rerenderMap = ({ viewState: { zoom, latitude, longitude } }: any) => {
+
+    const onMapClick = async ({ lngLat: coordinates }: mapboxgl.MapLayerMouseEvent) => {
+        if (showCreatePopup) {
+            setShowCreatePopup(null);
+        } else {
+            const address = await getNearestAddressByCoordinates(
+                coordinates.lng.toString(),
+                coordinates.lat.toString()
+            );
+            setShowCreatePopup({ coordinates, address });
+        }
+    };
+    const [_, rerender] = useState<string>("");
+    const rerenderMap = ({ viewState: { latitude, longitude } }: any) => {
         rerender(latitude + longitude);
     };
+
+    console.log(showCreatePopup);
     return (
         <Map
             key={key}
+            onClick={onMapClick}
             onMoveEnd={rerenderMap}
             onZoomEnd={rerenderMap}
             ref={element => (map.current = element)}
@@ -58,6 +81,44 @@ export const MapBox = (): JSX.Element => {
             style={{ width: "100%", height: "100%" }}
             mapStyle={getMapTheme()}
             mapboxAccessToken={MAPBOX_TOKEN}>
+            {showCreatePopup && (
+                <Popup
+                    maxWidth={"400px"}
+                    longitude={showCreatePopup.coordinates?.lng}
+                    latitude={showCreatePopup.coordinates?.lat}
+                    onClose={() => setShowCreatePopup(null)}>
+                    <ColumnStack className={cn("creation-popup")}>
+                        <h2>Создать событие?</h2>
+                        <main>
+                            <span>
+                                Текущие координаты:{" "}
+                                <span className={cn("coordinates")}>
+                                    ({showCreatePopup.coordinates.lng.toFixed(3)},{" "}
+                                    {showCreatePopup.coordinates.lat.toFixed(3)})
+                                </span>
+                            </span>
+                            <div>
+                                Это рядом с <i>{showCreatePopup.address}</i>
+                            </div>
+                        </main>
+                        <div className={cn("buttons")}>
+                            <Button
+                                use="primary"
+                                width="50%"
+                                onClick={() =>
+                                    navigate(
+                                        `/event/create?lng=${showCreatePopup.coordinates.lng}&lat=${showCreatePopup.coordinates.lat}`
+                                    )
+                                }>
+                                Создать
+                            </Button>
+                            <Button use="default" width="50%" onClick={() => setShowCreatePopup(null)}>
+                                Закрыть
+                            </Button>
+                        </div>
+                    </ColumnStack>
+                </Popup>
+            )}
             <ScaleControl position="bottom-right" />
             <GeocoderControl mapboxAccessToken={MAPBOX_TOKEN || ""} position="top-left" />
             <NavigationControl position="bottom-right" />
@@ -72,6 +133,14 @@ export const MapBox = (): JSX.Element => {
         </Map>
     );
 };
+
+async function getNearestAddressByCoordinates(lon: string, lat: string): Promise<string> {
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${MAPBOX_TOKEN}`;
+    console.log(url);
+    const data = await fetch(url).then(x => x.json());
+    console.log(data);
+    return data?.features?.[0].place_name ?? "";
+}
 
 function getMapTheme(): string {
     if (isNightNow()) {

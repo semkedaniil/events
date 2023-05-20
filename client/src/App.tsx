@@ -15,6 +15,7 @@ import { useAuthStore } from "./stores/userStore/userStore";
 import { Verifying } from "./Pages/VerifyingPage/Verifying";
 import { ProfilePage } from "./Pages/ProfilePage/ProfilePage";
 import { EventPage } from "./Pages/EventPage/EventPage";
+import { EventCreationPage } from "./Pages/EventCreationPage/EventCreationPage";
 
 const routes = [
     { path: "/", element: <Map /> },
@@ -25,6 +26,7 @@ const routes = [
     { path: "/verify", element: <Verifying /> },
     { path: "/reset-password", element: <ResetPasswordPage /> },
     { path: "/event/:id", element: <EventPage /> },
+    { path: "/event/create", element: <EventCreationPage /> },
     { path: "/profile", element: <ProfilePage /> },
     { path: "*", element: <NotFoundPage /> },
 ];

@@ -10,9 +10,19 @@ export interface Event {
     photos?: string[];
 }
 
+export interface EventDto {
+    name: string;
+    location: Location;
+    dateRange: DateRange;
+    creator?: string;
+    tags?: string[];
+    description?: string;
+    photos?: File[];
+}
+
 export interface Location {
-    latitude: number;
-    longitude: number;
+    lat: number;
+    lng: number;
 }
 
 export interface DateRange {

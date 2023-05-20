@@ -14,3 +14,4 @@ declare module "*.jpg" {
 }
 
 declare type Nullable<T> = null | undefined | T;
+declare type DeepNullable<T> = null | undefined | T | {  [K in keyof T]: DeepNullable<T[K]> | null; };
