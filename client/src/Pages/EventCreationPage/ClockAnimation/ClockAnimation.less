@@ -1,0 +1,55 @@
+:local {
+  @border-color: rgba(0, 0, 0, 0.16);
+
+  .clock {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid @border-color;
+    align-self: flex-end;
+
+    hr {
+      width: 1px;
+      height: 1px;
+    }
+
+    .hours {
+      color: @border-color;
+      position: absolute;
+      left: calc(50% - 1px);
+      top: calc(50% - 12px);
+      height: 20px;
+      animation: anim 60s infinite linear forwards;
+      transform-origin: 50% calc(100% - 8px);
+      border-left: 1px solid @border-color;
+    }
+
+    .minutes {
+      position: absolute;
+      left: calc(50% - 1px);
+      top: calc(50% - 12px);
+      height: 20px;
+      animation: mins 10s infinite linear forwards;
+      transform-origin: 50% calc(100% - 8px);
+      transform: rotate(90deg);
+      border-left: 1px solid @border-color;
+      color: @border-color;
+    }
+  }
+}
+
+@keyframes anim {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mins {
+  100% {
+    transform: rotate(450deg);
+  }
+}
