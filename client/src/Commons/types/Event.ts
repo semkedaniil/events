@@ -2,7 +2,7 @@ export interface Event {
     id: number;
     name: string;
     location: Location;
-    dateRange: DateRange;
+    dateRange: DateRange<string>;
     creator?: string;
     hidden?: boolean;
     tags?: string[];
@@ -25,9 +25,9 @@ export interface Location {
     lng: number;
 }
 
-export interface DateRange {
-    startDate: string;
-    endDate?: string;
+export interface DateRange<T = string | Date> {
+    startDate: T;
+    endDate?: T;
 }
 
 export const enum EventType {

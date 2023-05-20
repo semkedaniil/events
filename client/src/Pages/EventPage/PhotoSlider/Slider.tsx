@@ -1,22 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
 
 import cn from "./Slider.less";
 
 interface ImageSliderProps {
     slides: string[];
+    className?: string;
 }
 
-export const ImageSlider = ({ slides }: ImageSliderProps): JSX.Element | null => {
+export const ImageSlider = ({ slides, className }: ImageSliderProps): JSX.Element | null => {
     const [current, setCurrent] = useState(0);
     const length = slides.length;
 
+    const keypressHandler = (event: KeyboardEvent) => {
+        if (event.code === "ArrowLeft") {
+            previousSlide();
+        }
+        if (event.code === "ArrowRight") {
+            nextSlide();
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("keydown", keypressHandler, false);
+        return () => {
+            window.removeEventListener("keydown", keypressHandler);
+        };
+    });
+
     const nextSlide = () => {
-        setCurrent(current === length - 1 ? 0 : current + 1);
+        setCurrent(current === length - 1 ? current : current + 1);
     };
 
     const previousSlide = () => {
-        setCurrent(current === 0 ? length - 1 : current - 1);
+        setCurrent(current === 0 ? current : current - 1);
     };
 
     if (!Array.isArray(slides) || slides.length <= 0) {
@@ -26,7 +43,7 @@ export const ImageSlider = ({ slides }: ImageSliderProps): JSX.Element | null =>
     const showLeftArrow = current !== 0;
     const showRightArrow = current !== length - 1;
     return (
-        <section className={cn("slider")}>
+        <section className={cn("slider", className)}>
             { showLeftArrow && <FaArrowAltCircleLeft className={cn("arrow")} onClick={previousSlide} /> }
             {slides.map((slide, index) => (
                 <div className={cn("slide", { active: index === current })} key={index}>

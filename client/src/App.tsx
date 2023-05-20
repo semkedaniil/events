@@ -54,7 +54,7 @@ export const App = (): JSX.Element => {
     }, []);
 
     return (
-        <Loader type="big" active={loading} className={cn("app")}>
+        <Loader type="big" active={loading} className={ cn("app")}>
             <Routes>
                 <Route element={<CommonPage />}>
                     {routes.map(

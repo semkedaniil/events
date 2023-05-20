@@ -9,3 +9,4 @@ export const pluralize = (count: number, forms: string[]) => {
     return forms[pluralType] ?? "";
 };
 
+export const isCorrectTime = (time: string): boolean => /^([01]?\d|2[0-3]):[0-5]\d$/.test(time);

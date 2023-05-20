@@ -34,10 +34,10 @@ export const ScoresContainer = (): JSX.Element => {
     return (
         <div className={cn("scoresContainer")}>
             <div className={cn("scores")}>
-                <ScoreBox title="SCORE" score={state.score} />
+                <ScoreBox title="Очки" score={state.score} />
                 <div className={cn("add-score")} id="additionScore"></div>
             </div>
-            <ScoreBox title="BEST" score={state.bestScore} />
+            <ScoreBox title="Лучший" score={state.bestScore} />
         </div>
     );
 };

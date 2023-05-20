@@ -25,12 +25,11 @@ import { UserAvatar } from "../../ui/components/UserAvatar/UserAvatar";
 
 import cn from "./ProfilePage.less";
 import { getValidationInfo } from "./helpers";
+import { PhotoUploader } from "../../Commons/components/PhotoUploader";
 
 const inputWidth = 400;
 
 const maxInputLength = 100;
-
-const imageExtensions = new Set(["jpg", "jpeg", "png"]);
 
 export const ProfilePage = () => {
     const { user, setToken } = useAuthStore();
@@ -66,10 +65,10 @@ export const ProfilePage = () => {
         }
     };
 
-    const onUploadFile = async (file: FileUploaderAttachedFile | null): Promise<void> => {
+    const onUploadFile = async ([file]: FileUploaderAttachedFile[]): Promise<void> => {
         setLoading(true);
         try {
-            if (file?.validationResult.isValid || file === null) {
+            if (file?.validationResult.isValid || Boolean(file)) {
                 const newToken = await updateUserAvatar(file?.originalFile ?? null);
                 setToken(newToken);
             }
@@ -95,7 +94,7 @@ export const ProfilePage = () => {
 
     const onDeleteAvatar = async () => {
         setShowModal(false);
-        await onUploadFile(null);
+        await onUploadFile([]);
     };
 
     return (
@@ -133,20 +132,10 @@ export const ProfilePage = () => {
                             )}
                             <Button size="medium" onClick={onFileUploaderClick}>
                                 <span>Изменить фото</span>
-                                <FileUploader
+                                <PhotoUploader
                                     ref={fileUploader}
-                                    style={{ display: "none" }}
-                                    capture="user"
-                                    accept="image/*"
                                     onError={() => setError(true)}
-                                    request={onUploadFile}
-                                    validateBeforeUpload={({ originalFile }) => {
-                                        const extension = originalFile.type.split("/")[1];
-                                        if (!imageExtensions.has(extension)) {
-                                            return Promise.resolve(`У файла ${originalFile.name} неверный формат`);
-                                        }
-                                        return Promise.resolve(null);
-                                    }}
+                                    onChangeFiles={onUploadFile}
                                 />
                             </Button>
                         </div>

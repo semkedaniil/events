@@ -1,15 +1,51 @@
 @import "src/ui/styles/variables";
 
 :local {
+  .row-stack {
+    margin: 0 auto;
+    gap: @base-size * 4;
+  }
+  .content-wrapper {
+    width: fit-content;
+  }
+
+  .preview-photos {
+    flex-grow: 1;
+  }
+  .image-slider {
+    justify-content: center;
+  }
+
+  .photo {
+    width: 450px;
+    height: 250px;
+    object-fit: fill;
+  }
+
   .stack {
     gap: @base-size;
   }
 
   .dates {
-    gap: @base-size * 4;
+    align-items: center;
   }
 
   .title {
     font-weight: 500;
+  }
+
+  .tokens {
+    min-height: 40px;
+    max-height: 500px;
+    overflow: auto;
+
+    > label {
+      display: flex;
+      align-items: center;
+    }
+
+    > * {
+      min-height: 40px;
+    }
   }
 }
