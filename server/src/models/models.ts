@@ -18,10 +18,6 @@ const Event = database.define("event", {
   isPrivate: { type: DataTypes.BOOLEAN, defaultValue: true },
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: false },
-  img: { type: DataTypes.STRING, allowNull: false },
-});
-
-const DateRange = database.define("dateRange", {
   startDate: { type: DataTypes.DATE, allowNull: false },
   endDate: { type: DataTypes.DATE, allowNull: true },
 });
@@ -31,9 +27,15 @@ const Location = database.define("location", {
   latitude: { type: DataTypes.DOUBLE, allowNull: false },
 });
 
+const Images = database.define("images", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  url: { type: DataTypes.STRING, allowNull: false },
+});
+
+
 const Tag = database.define("tag", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, allowNull: false },
+  name: { type: DataTypes.STRING, allowNull: false, unique: true },
 });
 
 const Subscription = database.define("subscription", {
@@ -48,14 +50,17 @@ const Mark = database.define("mark", {
 User.hasMany(Event);
 Event.belongsTo(User);
 
-Event.hasOne(DateRange);
-DateRange.belongsTo(Event);
-
 Event.hasOne(Location);
 Location.belongsTo(Event);
 
 Event.hasMany(Tag);
 Tag.belongsTo(Event);
+
+Event.hasMany(Images);
+Images.belongsTo(Event);
+
+User.hasMany(Subscription);
+Subscription.belongsTo(User);
 
 Event.hasMany(Subscription);
 Subscription.belongsTo(Event);
@@ -63,4 +68,4 @@ Subscription.belongsTo(Event);
 Event.hasMany(Mark);
 Mark.belongsTo(Event);
 
-export { User, Event, Mark, Location, Tag, DateRange };
+export { User, Event, Mark, Location, Tag, Images, Subscription };

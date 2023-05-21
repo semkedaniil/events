@@ -8,7 +8,6 @@ import { v4 } from "uuid";
 import { ApiError } from "../error/ApiError";
 import { User } from "../models/models";
 import { sendEmail } from "../utils/mailer";
-// import { sendEmail } from "../utils/mailer";
 
 const generateJwt = (id: string, username: string, email: string, role: string, birthday: string, avatarUrl?: string): string => {
   if (!process.env.SECRET_KEY) {
@@ -44,8 +43,6 @@ class AuthController {
         user.getDataValue("role"),
         user.getDataValue("birthday")
       );
-      // console.log(token);
-      // return response.json({ message: token });
       const status = await sendEmail(email, token);
       if (status === "") {
         return next(ApiError.internal("Сообщение не было отправлено"));
@@ -166,7 +163,6 @@ class AuthController {
       next(ApiError.badRequest(error.message));
     }
     return undefined;
-
   }
 
 
