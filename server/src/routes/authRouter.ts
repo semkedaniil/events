@@ -11,6 +11,7 @@ router.get("/verify", AuthController.verify);
 router.get("/auth", authMiddleware, AuthController.check);
 router.put("/update", authMiddleware, AuthController.update);
 router.post("/image", authMiddleware, AuthController.image);
+router.put("/image/delete", authMiddleware, AuthController.deleteUserAvatar);
 
 
 export { router };

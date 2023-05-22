@@ -10,20 +10,21 @@ export interface Event {
     photos?: string[];
 }
 
+export interface Location {
+    lat: number;
+    lng: number;
+}
+
 export interface EventDto {
     name: string;
     location: Location;
     dateRange: DateRange;
-    creator?: string;
     tags?: string[];
     description?: string;
     photos?: File[];
 }
 
-export interface Location {
-    lat: number;
-    lng: number;
-}
+
 
 export interface DateRange<T = string | Date> {
     startDate: T;

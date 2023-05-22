@@ -17,3 +17,8 @@ export const updateUserAvatar = async (avatar: File | null): Promise<string> => 
         }});
     return token;
 }
+
+export const deleteUserAvatar = async (): Promise<string> => {
+    const { data:  { token } } = await $authHost.put("api/user/image/delete");
+    return token;
+}

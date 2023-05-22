@@ -44,7 +44,7 @@ const Subscription = database.define("subscription", {
 
 const Mark = database.define("mark", {
   isLiked: { type: DataTypes.BOOLEAN, allowNull: false },
-  date: { type: DataTypes.DATE, allowNull: false },
+  date: { type: DataTypes.DATE, allowNull: true },
 });
 
 User.hasMany(Event);

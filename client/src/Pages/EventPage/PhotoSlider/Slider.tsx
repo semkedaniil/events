@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
+import { BsArrowLeftCircle, BsArrowRightCircle, BsTrash3 } from "react-icons/bs";
 
 import cn from "./Slider.less";
 
 interface ImageSliderProps {
     slides: string[];
     className?: string;
+    onRemoveImage?: (id: number) => void;
+    readonly?: boolean;
 }
 
-export const ImageSlider = ({ slides, className }: ImageSliderProps): JSX.Element | null => {
+export const ImageSlider = ({ slides, className, onRemoveImage, readonly }: ImageSliderProps): JSX.Element | null => {
     const [current, setCurrent] = useState(0);
     const length = slides.length;
 
@@ -44,13 +46,22 @@ export const ImageSlider = ({ slides, className }: ImageSliderProps): JSX.Elemen
     const showRightArrow = current !== length - 1;
     return (
         <section className={cn("slider", className)}>
-            { showLeftArrow && <FaArrowAltCircleLeft className={cn("arrow")} onClick={previousSlide} /> }
+            <BsArrowLeftCircle className={cn("arrow", { show: showLeftArrow })} onClick={previousSlide} />
             {slides.map((slide, index) => (
                 <div className={cn("slide", { active: index === current })} key={index}>
-                    {index === current && <img src={slide} alt="EventImage" className={cn("image")} />}
+                    {index === current && (
+                        <div className={cn("active-element")}>
+                            {!readonly && onRemoveImage && (
+                                <div className={cn("trash")} onClick={() => onRemoveImage(current)}>
+                                    <BsTrash3 size={32} />
+                                </div>
+                            )}
+                            <img src={slide} alt="EventImage" className={cn("image")} />
+                        </div>
+                    )}
                 </div>
             ))}
-            { showRightArrow && <FaArrowAltCircleRight className={cn("arrow")} onClick={nextSlide} /> }
+            <BsArrowRightCircle className={cn("arrow", { show: showRightArrow })} onClick={nextSlide} />
         </section>
     );
 };

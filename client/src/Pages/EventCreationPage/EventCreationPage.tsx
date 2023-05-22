@@ -3,7 +3,6 @@ import { ValidationWrapper, ValidationContainer } from "@skbkontur/react-ui-vali
 import _ from "lodash";
 import {
     Button,
-    DatePicker,
     FileUploaderAttachedFile,
     FileUploaderRef,
     Input,
@@ -37,6 +36,7 @@ import { ClockAnimation } from "./ClockAnimation/ClockAnimation";
 import { PhotoUploader } from "../../Commons/components/PhotoUploader";
 import { updateUserAvatar } from "../../api/userInfo/userInfo";
 import { ImageSlider } from "../EventPage/PhotoSlider/Slider";
+import { createEvent } from "../../api/events/events";
 
 const maxWidth = 450;
 const maxLength = 100;
@@ -106,31 +106,39 @@ export const EventCreationPage = () => {
         setPhotos(_.uniqBy(photos, "name"));
     };
 
-    const onCreateEvent = () => {
+    const onCreateEvent = async () => {
         const isValid = container.current?.validate();
         if (isValid && location && location.lng && location.lat && dateRange && !error) {
-            const newEvent: EventDto = {
-                name,
-                location: location as Location,
-                dateRange: {
-                    startDate: dateRange.startDate.toLocaleString(),
-                    endDate: dateRange.endDate?.toLocaleString() ?? undefined,
-                },
-                creator: user?.username,
-                tags,
-                description,
-                photos,
-            };
-            console.log(newEvent);
             setLoading(true);
+            let error = false;
             try {
-                // make api request
+                const newEvent: EventDto = {
+                    name,
+                    location: location as Location,
+                    dateRange,
+                    tags,
+                    description,
+                    photos,
+                };
+                await createEvent(newEvent);
+            } catch(err) {
+                if (err) {
+                    error = true;
+                }
             } finally {
                 setLoading(false);
+                if (!error) {
+                    Toast.push("Событие успешно создано!");
+                }
                 // navigate("..");
             }
         }
     };
+
+    const onRemoveImage = (id: number) => {
+        setPhotos(photos => photos.filter((_, index) => index !== id));
+        setPreviewPhotos(photos => photos.filter((_, index) => index !== id));
+    }
 
     return (
         <CommonLayout>
@@ -321,7 +329,11 @@ export const EventCreationPage = () => {
                             </ColumnStack>
                             <ColumnStack className={cn("preview-photos")}>
                                 {previewPhotos.length !== 0 && (
-                                    <ImageSlider slides={previewPhotos} className={cn("image-slider")} />
+                                    <ImageSlider
+                                        slides={previewPhotos}
+                                        className={cn("image-slider")}
+                                        onRemoveImage={onRemoveImage}
+                                    />
                                 )}
                             </ColumnStack>
                         </RowStack>

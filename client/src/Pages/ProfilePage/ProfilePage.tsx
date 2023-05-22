@@ -20,7 +20,7 @@ import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
 import { useAuthStore } from "../../stores/userStore/userStore";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
-import { updateUserAvatar, updateUserInfo } from "../../api/userInfo/userInfo";
+import { deleteUserAvatar, updateUserAvatar, updateUserInfo } from "../../api/userInfo/userInfo";
 import { UserAvatar } from "../../ui/components/UserAvatar/UserAvatar";
 
 import cn from "./ProfilePage.less";
@@ -58,6 +58,7 @@ export const ProfilePage = () => {
             const token = await updateUserInfo({ username, birthday });
             setToken(token);
         } finally {
+            fileUploader.current?.reset();
             setLoading(false);
             setTimeout(() => {
                 Toast.push("Изменения успешно сохранены!");
@@ -94,7 +95,9 @@ export const ProfilePage = () => {
 
     const onDeleteAvatar = async () => {
         setShowModal(false);
-        await onUploadFile([]);
+        const token = await deleteUserAvatar();
+        fileUploader.current?.reset();
+        setToken(token);
     };
 
     return (

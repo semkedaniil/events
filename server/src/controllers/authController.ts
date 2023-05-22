@@ -8,6 +8,7 @@ import { v4 } from "uuid";
 import { ApiError } from "../error/ApiError";
 import { User } from "../models/models";
 import { sendEmail } from "../utils/mailer";
+import * as fs from "fs";
 
 const generateJwt = (id: string, username: string, email: string, role: string, birthday: string, avatarUrl?: string): string => {
   if (!process.env.SECRET_KEY) {
@@ -163,6 +164,28 @@ class AuthController {
       next(ApiError.badRequest(error.message));
     }
     return undefined;
+  }
+
+  public async deleteUserAvatar(request: Request, response: Response, next: (args: any) => void) {
+      // @ts-ignore
+    const { user: { id, username, email, role, birthday, avatarUrl } } = request;
+      try {
+        const user = await User.findOne({ where: { username } });
+        user?.setDataValue("avatar", null);
+        await user?.save();
+        const avatarPath = path.join(__dirname, "..", "..", "static", avatarUrl);
+        fs.unlink(avatarPath, function(err) {
+          if (err) {
+            next(ApiError.badRequest(err.message));
+          }
+        });
+        const token = generateJwt(id, username, email, role, birthday, undefined);
+        return response.json({ token });
+      } catch (error) {
+          next(ApiError.badRequest(error.message));
+      }
+
+      return undefined;
   }
 
 
