@@ -2,16 +2,17 @@ import {ApiError} from "../error/ApiError";
 import {NextFunction} from "express";
 
 interface FindOptions {
-    Model: any,
-    include?: Array<any>,
-    where?: any,
-    next: NextFunction
+    Model: any;
+    include?: Array<any>;
+    where?: any;
+    next: NextFunction;
+    raw?: boolean;
 }
 
 export class BaseModelHelper {
-    public static async find({Model, include, next, where}: FindOptions) {
+    public static async find({Model, include, next, where, raw}: FindOptions) {
         try {
-            return await Model.findAll({include, where});
+            return await Model.findAll({include, where, raw });
         } catch (error) {
             next(ApiError.badRequest(error.message));
         }

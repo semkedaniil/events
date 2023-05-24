@@ -2,7 +2,7 @@ import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, Sc
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
-import { Button } from "@skbkontur/react-ui";
+import { Button, Loader } from "@skbkontur/react-ui";
 
 import GeocoderControl from "../Controls/GeocoderControl";
 import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";
@@ -14,17 +14,17 @@ import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
 
 import cn from "./MapBox.less";
 
-
 export const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 export const initialViewState = {
-    latitude: 63.1016,
-    longitude: -151.5129,
+    latitude: 56.6994910165526,
+    longitude: 60.81251133259357,
     zoom: 4,
 };
 
-export const MapBox = (): JSX.Element => {
+export const MapBox = (): JSX.Element | null => {
     const map = useMap() as any;
+    const [loading, setLoading] = useState(false);
     const [key, setKey] = useState<number>();
     const location = useLocation();
     const navigate = useNavigate();
@@ -39,11 +39,19 @@ export const MapBox = (): JSX.Element => {
     }, [location]);
 
     useEffect(() => {
-        getAllEvents().then(events => {
+        loadEvents();
+    }, []);
+
+    async function loadEvents() {
+        setLoading(true);
+        try {
+            const events = await getAllEvents();
             setEvents(events);
             setGeoEvents(mapEventsToGeoJson(events));
-        });
-    }, []);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const checkIfPositionInViewport = (lat: number, lng: number) => {
         const bounds = map.current?.getMap().getBounds();
@@ -54,7 +62,11 @@ export const MapBox = (): JSX.Element => {
         map.current?.flyTo({ zoom: nextZoom, center: coordinates });
     };
 
-    const onMapClick = async ({ lngLat: coordinates }: mapboxgl.MapLayerMouseEvent) => {
+    const onMapClick = async ({ lngLat: coordinates, originalEvent: { target } }: mapboxgl.MapLayerMouseEvent) => {
+        // @ts-ignore
+        if (target?.className !== "mapboxgl-canvas") {
+            return;
+        }
         if (showCreatePopup) {
             setShowCreatePopup(null);
         } else {
@@ -70,6 +82,9 @@ export const MapBox = (): JSX.Element => {
         setRerender(latitude + longitude);
     };
 
+    if (loading && !geoEvents) {
+        return null;
+    }
     return (
         <Map
             key={key}

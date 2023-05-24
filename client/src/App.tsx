@@ -36,18 +36,19 @@ const allowedRoutes = new Set(["/login", "/register", "/reset-password", "/help"
 export const App = (): JSX.Element => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const authStore = useAuthStore();
+    const { check, setUser, setToken } = useAuthStore();
     const { pathname } = useLocation();
     useEffect(() => {
         if (allowedRoutes.has(pathname)) {
             return;
         }
         setLoading(true);
-        authStore
-            .check()
+        check()
             .catch(error => {
-                if (error.response.status >= 400) {
+                if (error.response.status >= 400 && error.response.status < 500) {
                     navigate("/login");
+                    setUser(null);
+                    setToken("");
                 }
             })
             .finally(() => setLoading(false));

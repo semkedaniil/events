@@ -1,6 +1,5 @@
 import { $authHost } from "../index";
 import { EventDto, Event } from "../../Commons/types/Event";
-import { getFakeEvents } from "../../stores/eventsStore/helpers";
 
 export const createEvent = async ({
     name,
@@ -26,7 +25,11 @@ export const createEvent = async ({
 };
 
 export const getAllEvents = async (): Promise<Event[]> => {
-    const events = getFakeEvents();
-    return Promise.resolve(events);
-    // await $authHost.put("api/events");
+    const { data: events } = await $authHost.get("api/events");
+    return events as Event[];
+};
+
+export const getUserEvents = async (): Promise<Event[]> => {
+    const { data: events } = await $authHost.get("api/events/user");
+    return events as Event[];
 };

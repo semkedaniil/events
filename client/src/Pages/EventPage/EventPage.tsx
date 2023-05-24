@@ -50,11 +50,11 @@ export const EventPage = (): JSX.Element => {
         photos,
         description,
         dateRange: { endDate, startDate },
-        location: { lat: latitude, lng: longitude },
+        location: { latitude, longitude },
         hidden,
     } = event;
     return (
-        <CommonLayout style={{ width: "fit-content", margin: "0 auto" }}>
+        <CommonLayout style={{ width: "fit-content", margin: "0 auto", paddingBottom: "40px" }}>
             <CommonLayout.Header>
                 <GoBackLink backUrl=".." />
                 <h1 className={cn("header")}>Событие {name}</h1>
@@ -71,9 +71,14 @@ export const EventPage = (): JSX.Element => {
                     )}
                     <RowStack>
                         <span className={cn("title")}>Дата начала</span>
-                        <p>{startDate}</p>
+                        <p>{startDate.toLocaleString()}</p>
                     </RowStack>
-                    {endDate && <RowStack>Дата конца: {endDate}</RowStack>}
+                    {endDate && (
+                        <RowStack>
+                            <span className={cn("title")}>Дата конца</span>
+                            <p>{endDate.toLocaleString()}</p>
+                        </RowStack>
+                    )}
                 </div>
                 <div className={cn("column")}>
                     <Map

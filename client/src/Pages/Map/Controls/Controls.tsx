@@ -32,6 +32,7 @@ export const Controls = (): JSX.Element => {
     const container = useRef<ValidationContainer | null>(null);
     const controlsRef = useRef<HTMLDivElement>(null);
     const isNight = isNightNow();
+    const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
     const [hasError, setHasError] = useState(false);
     const [isClosed, setIsClosed] = useState(false);
@@ -238,16 +239,20 @@ export const Controls = (): JSX.Element => {
                 <Button use={isNight ? "default" : "primary"} title="Искать" onClick={onSubmit}>
                     Отфильтровать
                 </Button>
-                <CommonLayout.Header className={cn("map-control-header")}>
-                    <h2>Отфильтрованные события</h2>
-                </CommonLayout.Header>
-                <div className={cn("events")}>
-                    {Array.from({ length: 5 }, (x, index) => (
-                        <div key={index} className={cn("event")}>
-                            Здесь должна быть карточка события
+                {filteredEvents.length > 0 && (
+                    <>
+                        <CommonLayout.Header className={cn("map-control-header")}>
+                            <h2>Отфильтрованные события</h2>
+                        </CommonLayout.Header>
+                        <div className={cn("events")}>
+                            {Array.from({ length: 5 }, (x, index) => (
+                                <div key={index} className={cn("event")}>
+                                    Здесь должна быть карточка события
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </>
+                )}
             </div>
         </ValidationContainer>
     );

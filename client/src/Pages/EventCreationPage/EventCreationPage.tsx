@@ -61,8 +61,8 @@ export const EventCreationPage = () => {
     const [error, setError] = useState(false);
     const [photos, setPhotos] = useState<File[]>([]);
     const [location, setLocation] = useState<DeepNullable<Location>>({
-        lat: getLocationOrDefault(searchParams.get("lat")),
-        lng: getLocationOrDefault(searchParams.get("lng")),
+        latitude: getLocationOrDefault(searchParams.get("lat")),
+        longitude: getLocationOrDefault(searchParams.get("lng")),
     });
 
     const fileUploader = useRef<FileUploaderRef>(null);
@@ -77,8 +77,8 @@ export const EventCreationPage = () => {
         };
     }, [photos]);
 
-    const onMapClick = ({ lngLat: coordinates }: mapboxgl.MapLayerMouseEvent) => {
-        setNewLocationCoords(coordinates);
+    const onMapClick = ({ lngLat: { lat, lng } }: mapboxgl.MapLayerMouseEvent) => {
+        setNewLocationCoords({ latitude: lat, longitude: lng });
     };
     const onCloseModal = () => {
         setShowModal(false);
@@ -108,7 +108,7 @@ export const EventCreationPage = () => {
 
     const onCreateEvent = async () => {
         const isValid = container.current?.validate();
-        if (isValid && location && location.lng && location.lat && dateRange && !error) {
+        if (isValid && location && location.longitude && location.latitude && dateRange && !error) {
             setLoading(true);
             let error = false;
             try {
@@ -121,7 +121,7 @@ export const EventCreationPage = () => {
                     photos,
                 };
                 await createEvent(newEvent);
-            } catch(err) {
+            } catch (err) {
                 if (err) {
                     error = true;
                 }
@@ -130,7 +130,7 @@ export const EventCreationPage = () => {
                 if (!error) {
                     Toast.push("Событие успешно создано!");
                 }
-                // navigate("..");
+                navigate("..");
             }
         }
     };
@@ -138,7 +138,7 @@ export const EventCreationPage = () => {
     const onRemoveImage = (id: number) => {
         setPhotos(photos => photos.filter((_, index) => index !== id));
         setPreviewPhotos(photos => photos.filter((_, index) => index !== id));
-    }
+    };
 
     return (
         <CommonLayout>
@@ -167,9 +167,11 @@ export const EventCreationPage = () => {
                                         <Marker
                                             onClick={onMarkerClick}
                                             draggable
-                                            longitude={newLocationCoords.lng}
-                                            latitude={newLocationCoords.lat}
-                                            onDragEnd={({ lngLat }) => setNewLocationCoords(lngLat)}>
+                                            longitude={newLocationCoords.longitude}
+                                            latitude={newLocationCoords.latitude}
+                                            onDragEnd={({ lngLat: { lat, lng } }) =>
+                                                setNewLocationCoords({ latitude: lat, longitude: lng })
+                                            }>
                                             <img src={markerPng} width={35} height={35} alt="marker" />
                                         </Marker>
                                     )}
@@ -227,7 +229,7 @@ export const EventCreationPage = () => {
                                             <Input
                                                 {...defaultInputProps}
                                                 disabled
-                                                value={`${location?.lng}, ${location?.lat}`}
+                                                value={`${location?.longitude}, ${location?.latitude}`}
                                                 rightIcon={
                                                     <Button use="backless" onClick={() => setShowModal(true)}>
                                                         Изменить

@@ -2,17 +2,23 @@ export interface Event {
     id: number;
     name: string;
     location: Location;
-    dateRange: DateRange<string>;
+    dateRange: DateRange<Date>;
     creator?: string;
     hidden?: boolean;
+    marks: Marks,
     tags?: string[];
     description?: string;
     photos?: string[];
 }
 
+export interface Marks {
+    likes: number;
+    dislikes: number;
+}
+
 export interface Location {
-    lat: number;
-    lng: number;
+    latitude: number;
+    longitude: number;
 }
 
 export interface EventDto {

@@ -43,17 +43,17 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
         photos,
     }: Feature["properties"]): JSX.Element => (
         <div className={cn("event-tooltip")}>
-            <img className={cn("img")} src={photos?.[0] ?? defaultImage} height={100} alt={name} />
+            { photos?.[0] && <img className={cn("img")} src={photos?.[0]} height={100} alt={name} /> }
             <div className={cn("main-info")}>
                 <Link title="Открыть страницу события" href={`/event/${id}`}>
-                    <h2>{name}</h2>
+                    <h2 className={cn("name")}>{name}</h2>
                 </Link>
                 <main>{description}</main>
                 <footer>
                     {creator && <span className={cn("author")}>Автор: {creator}</span>}
                     <ColumnStack className={cn("date-range")}>
-                        <span>Начало: {startDate}</span>
-                        {endDate && <span>Конец: {endDate}</span>}
+                        <span>Начало: {startDate.toLocaleString()}</span>
+                        {endDate && <span>Конец: {endDate.toLocaleString()}</span>}
                     </ColumnStack>
                 </footer>
             </div>
@@ -79,7 +79,8 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
                     <div
                         key={`marker-${properties.id}`}
                         style={{
-                            backgroundImage: `url(https://placekitten.com/g/${width}/${height}/)`,
+                            backgroundImage: properties.photos?.[0],
+                            backgroundColor: "#0b0772",
                             width,
                             height,
                             backgroundSize: "100%",
@@ -87,7 +88,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
                         className={cn("marker")}
                     />
                     {showPopup?.id && properties.id === showPopup?.id && (
-                        <Popup className={cn("popup")} latitude={latitude} longitude={longitude} closeButton={false}>
+                        <Popup maxWidth="50vw" className={cn("popup")} latitude={latitude} longitude={longitude} closeButton={false}>
                             {renderMarkerTooltip(properties as any)}
                         </Popup>
                     )}
