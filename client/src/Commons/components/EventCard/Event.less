@@ -1,6 +1,16 @@
 @import "src/ui/styles/variables";
 
 :local {
+  .edit-button {
+    position: absolute;
+    right: 0;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 0 16px 0 16px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: @base-size * 2;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+  }
   .events {
     display: flex;
     flex-wrap: wrap;
@@ -36,6 +46,7 @@
       }
 
       .main-info {
+        height: 100%;
         overflow: auto;
         text-overflow: ellipsis;
         word-break: break-word;
