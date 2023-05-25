@@ -15,7 +15,7 @@ import {
     TokenInput,
     TokenInputType,
 } from "@skbkontur/react-ui";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {Navigate, useNavigate, useSearchParams} from "react-router-dom";
 import Map, { Marker } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 
@@ -28,15 +28,15 @@ import { DateRange, Location, EventDto } from "../../Commons/types/Event";
 import { getMapTheme, initialViewState, MAPBOX_TOKEN } from "../Map/MapBox/MapBox";
 import GeocoderControl from "../Map/Controls/GeocoderControl";
 import { useAuthStore } from "../../stores/userStore/userStore";
-
-import cn from "./EventCreationPage.less";
-import { getLocationOrDefault, getValidationInfo } from "./helpers";
 import { DateTimePicker } from "../../Commons/components/DateTimePicker";
-import { ClockAnimation } from "./ClockAnimation/ClockAnimation";
 import { PhotoUploader } from "../../Commons/components/PhotoUploader";
 import { updateUserAvatar } from "../../api/userInfo/userInfo";
 import { ImageSlider } from "../EventPage/PhotoSlider/Slider";
 import { createEvent } from "../../api/events/events";
+
+import { ClockAnimation } from "./ClockAnimation/ClockAnimation";
+import { getLocationOrDefault, getValidationInfo } from "./helpers";
+import cn from "./EventCreationPage.less";
 
 const maxWidth = 450;
 const maxLength = 100;
@@ -47,7 +47,7 @@ const defaultInputProps = {
 };
 
 export const EventCreationPage = () => {
-    const { user } = useAuthStore();
+    const { user, isAuth } = useAuthStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [searchParams] = useSearchParams();
@@ -121,8 +121,8 @@ export const EventCreationPage = () => {
                     photos,
                 };
                 await createEvent(newEvent);
-            } catch (err) {
-                if (err) {
+            } catch (error_) {
+                if (error_) {
                     error = true;
                 }
             } finally {
@@ -140,6 +140,11 @@ export const EventCreationPage = () => {
         setPreviewPhotos(photos => photos.filter((_, index) => index !== id));
     };
 
+
+    if (!isAuth) {
+        return <Navigate to="/login" />;
+    }
+    
     return (
         <CommonLayout>
             <CommonLayout.Header>
@@ -249,8 +254,8 @@ export const EventCreationPage = () => {
                                                 width="fit-content"
                                                 onChange={value => {
                                                     if (value) {
-                                                        setDateRange(prevState => ({
-                                                            ...prevState,
+                                                        setDateRange(previousState => ({
+                                                            ...previousState,
                                                             startDate: value,
                                                         }));
                                                     }
@@ -327,10 +332,18 @@ export const EventCreationPage = () => {
                                             </Token>
                                         )}
                                     />
+                                    <RowStack className={cn("footer")}>
+                                        <Button use="primary" size="medium" onClick={onCreateEvent}>
+                                            Создать
+                                        </Button>
+                                        <Button size="medium" onClick={() => navigate("..")}>
+                                            Закрыть
+                                        </Button>
+                                    </RowStack>
                                 </ColumnStack>
                             </ColumnStack>
                             <ColumnStack className={cn("preview-photos")}>
-                                {previewPhotos.length !== 0 && (
+                                {previewPhotos.length > 0 && (
                                     <ImageSlider
                                         slides={previewPhotos}
                                         className={cn("image-slider")}
@@ -342,16 +355,6 @@ export const EventCreationPage = () => {
                     </ValidationContainer>
                 </Loader>
             </CommonLayout.Content>
-            <CommonLayout.Footer>
-                <RowStack>
-                    <Button use="primary" size="medium" onClick={onCreateEvent}>
-                        Создать
-                    </Button>
-                    <Button size="medium" onClick={() => navigate("..")}>
-                        Закрыть
-                    </Button>
-                </RowStack>
-            </CommonLayout.Footer>
         </CommonLayout>
     );
 };

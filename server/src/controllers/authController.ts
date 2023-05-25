@@ -1,14 +1,15 @@
 import path from "node:path";
+import * as fs from "node:fs";
 
 import e, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 } from "uuid";
+import { Op } from "sequelize";
 
 import { ApiError } from "../error/ApiError";
 import { User } from "../models/models";
 import { sendEmail } from "../utils/mailer";
-import * as fs from "fs";
 
 const generateJwt = (id: string, username: string, email: string, role: string, birthday: string, avatarUrl?: string): string => {
   if (!process.env.SECRET_KEY) {
@@ -29,7 +30,7 @@ class AuthController {
       if (!username || !password) {
         return next(ApiError.badRequest("Некорректный логин или пароль"));
       }
-      const candidate = await User.findOne({ where: { username } });
+      const candidate = await User.findOne({ where: { [Op.or]: [{ username }, { email }] } });
       if (candidate) {
         return next(
           ApiError.badRequest("Пользователь с таким логином уже существует")
@@ -174,9 +175,9 @@ class AuthController {
         user?.setDataValue("avatar", null);
         await user?.save();
         const avatarPath = path.join(__dirname, "..", "..", "static", avatarUrl);
-        fs.unlink(avatarPath, function(err) {
-          if (err) {
-            next(ApiError.badRequest(err.message));
+        fs.unlink(avatarPath, (error) => {
+          if (error) {
+            next(ApiError.badRequest(error.message));
           }
         });
         const token = generateJwt(id, username, email, role, birthday, undefined);

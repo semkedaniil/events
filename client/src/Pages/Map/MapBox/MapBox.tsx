@@ -17,8 +17,8 @@ import cn from "./MapBox.less";
 export const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 export const initialViewState = {
-    latitude: 56.6994910165526,
-    longitude: 60.81251133259357,
+    latitude: 56.699_491_016_552_6,
+    longitude: 60.812_511_332_593_57,
     zoom: 4,
 };
 

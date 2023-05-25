@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
     Button,
     DatePicker,
-    FileUploader,
     FileUploaderAttachedFile,
     FileUploaderRef,
     Input,
@@ -14,6 +13,7 @@ import {
 } from "@skbkontur/react-ui";
 import { TiDeleteOutline } from "react-icons/ti";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
+import {Navigate} from "react-router-dom";
 
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
@@ -22,17 +22,17 @@ import { useAuthStore } from "../../stores/userStore/userStore";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
 import { deleteUserAvatar, updateUserAvatar, updateUserInfo } from "../../api/userInfo/userInfo";
 import { UserAvatar } from "../../ui/components/UserAvatar/UserAvatar";
+import { PhotoUploader } from "../../Commons/components/PhotoUploader";
 
 import cn from "./ProfilePage.less";
 import { getValidationInfo } from "./helpers";
-import { PhotoUploader } from "../../Commons/components/PhotoUploader";
 
 const inputWidth = 400;
 
 const maxInputLength = 100;
 
 export const ProfilePage = () => {
-    const { user, setToken } = useAuthStore();
+    const { user, setToken, isAuth } = useAuthStore();
     const [username, setUsername] = useState<string | undefined>(user?.username);
     const [birthday, setBirthday] = useState(user?.birthday ?? "Birthday");
     const [loading, setLoading] = useState(false);
@@ -99,6 +99,11 @@ export const ProfilePage = () => {
         fileUploader.current?.reset();
         setToken(token);
     };
+
+
+    if (!isAuth) {
+        return <Navigate to="/login" />;
+    }
 
     return (
         <ValidationContainer ref={container}>

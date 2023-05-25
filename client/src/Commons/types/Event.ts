@@ -6,14 +6,18 @@ export interface Event {
     creator?: string;
     hidden?: boolean;
     marks: Marks,
-    tags?: string[];
+    tags?: Array<{ name: string }>;
     description?: string;
     photos?: string[];
 }
 
+export interface Mark {
+    userId: string;
+    isLiked: boolean;
+}
 export interface Marks {
-    likes: number;
-    dislikes: number;
+    likes: Mark[];
+    dislikes: Mark[];
 }
 
 export interface Location {

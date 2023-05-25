@@ -33,3 +33,8 @@ export const getUserEvents = async (): Promise<Event[]> => {
     const { data: events } = await $authHost.get("api/events/user");
     return events as Event[];
 };
+
+export const getEvent = async (id: number): Promise<Event> => {
+    const { data: event } = await $authHost.get(`api/events/${id}`);
+    return event as Event;
+};

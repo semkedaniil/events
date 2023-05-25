@@ -17,7 +17,7 @@ const Event = database.define("event", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     isPrivate: {type: DataTypes.BOOLEAN, defaultValue: true},
     name: {type: DataTypes.STRING, allowNull: false},
-    description: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.TEXT, allowNull: false},
     startDate: {type: DataTypes.DATE, allowNull: false},
     endDate: {type: DataTypes.DATE, allowNull: true},
 });
@@ -43,7 +43,7 @@ const Subscription = database.define("subscription", {
 });
 
 const Mark = database.define("mark", {
-    isLiked: {type: DataTypes.BOOLEAN, allowNull: false},
+    isLiked: {type: DataTypes.BOOLEAN, allowNull: true},
     date: {type: DataTypes.DATE, allowNull: true},
 });
 
@@ -67,5 +67,8 @@ Subscription.belongsTo(Event);
 
 Event.hasMany(Mark);
 Mark.belongsTo(Event);
+
+User.hasMany(Mark);
+Mark.belongsTo(User);
 
 export {User, Event, Mark, Location, Tag, Images, Subscription};

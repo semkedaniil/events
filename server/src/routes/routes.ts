@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import { router as authRouter } from "./authRouter";
 import { router as eventsRouter } from "./eventsRouter";
 import { router as marksRouter } from "./marksRouter";
@@ -15,4 +16,5 @@ router.use("/tags", tagsRouter);
 router.use("/locations", locationRouter);
 router.use("/subscriptions", subscriptionsRouter);
 
+// eslint-disable-next-line import/no-default-export
 export default router;

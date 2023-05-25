@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import Map, { Marker } from "react-map-gl";
 import { IoIosWarning } from "react-icons/io";
 
 import { Event } from "../../Commons/types/Event";
-import { useEventsStore } from "../../stores/eventsStore/eventsStore";
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
 import { getMapTheme, MAPBOX_TOKEN } from "../Map/MapBox/MapBox";
 import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
+import { useAuthStore } from "../../stores/userStore/userStore";
+import { getEvent } from "../../api/events/events";
+import { MarksBlock } from "../../ui/components/MarksBlock/MarksBlock";
 
 import cn from "./EventPage.less";
 import { ImageSlider } from "./PhotoSlider/Slider";
 
 export const EventPage = (): JSX.Element => {
     const { id = "" } = useParams<"id">();
-    const { findById } = useEventsStore();
+    const { user } = useAuthStore();
     const [event, setEvent] = useState<Event>();
+    const { isAuth } = useAuthStore();
     useEffect(() => {
+        loadEvent();
+    }, []);
+
+    async function loadEvent() {
         const currentId = Number(id);
         if (!isNaN(currentId)) {
-            const event = findById(Number(id));
-            if (event) {
-                setEvent(event);
+            const serverEvent = await getEvent(currentId);
+            if (serverEvent) {
+                setEvent(serverEvent);
             }
         }
-    }, []);
+    }
+
+    if (!isAuth || !user) {
+        return <Navigate to="/login" />;
+    }
 
     if (!event) {
         return (
@@ -47,12 +58,17 @@ export const EventPage = (): JSX.Element => {
     const {
         name,
         creator,
+        tags,
         photos,
+        marks: { likes, dislikes },
         description,
         dateRange: { endDate, startDate },
         location: { latitude, longitude },
         hidden,
     } = event;
+    const start = new Date(startDate).toLocaleString();
+    const end = endDate && new Date(endDate).toLocaleString();
+
     return (
         <CommonLayout style={{ width: "fit-content", margin: "0 auto", paddingBottom: "40px" }}>
             <CommonLayout.Header>
@@ -62,7 +78,11 @@ export const EventPage = (): JSX.Element => {
             <RowStack className={cn("event-page")}>
                 <div className={cn("column")}>
                     {photos && <ImageSlider slides={photos} />}
-                    {creator && <RowStack>Создатель: {creator}</RowStack>}
+                    {creator && (
+                        <RowStack>
+                            <span className={cn("title")}>Создатель</span> {creator}
+                        </RowStack>
+                    )}
                     {description && (
                         <ColumnStack>
                             <span className={cn("title")}>Описание</span>
@@ -70,17 +90,27 @@ export const EventPage = (): JSX.Element => {
                         </ColumnStack>
                     )}
                     <RowStack>
-                        <span className={cn("title")}>Дата начала</span>
-                        <p>{startDate.toLocaleString()}</p>
+                        {tags?.map(({ name }) => (
+                            <span key={name}>#{name}</span>
+                        ))}
                     </RowStack>
-                    {endDate && (
-                        <RowStack>
-                            <span className={cn("title")}>Дата конца</span>
-                            <p>{endDate.toLocaleString()}</p>
-                        </RowStack>
-                    )}
+                    <RowStack align="start">
+                        <ColumnStack>
+                            <RowStack>
+                                <span className={cn("title")}>Дата начала</span>
+                                <p>{start}</p>
+                            </RowStack>
+                            {endDate && (
+                                <RowStack>
+                                    <span className={cn("title")}>Дата конца</span>
+                                    <p>{end}</p>
+                                </RowStack>
+                            )}
+                        </ColumnStack>
+                        <MarksBlock event={event} onValueChange={setEvent} />
+                    </RowStack>
                 </div>
-                <div className={cn("column")}>
+                <div className={cn("column", "event-map")}>
                     <Map
                         id="eventIdMap"
                         initialViewState={{
@@ -89,7 +119,7 @@ export const EventPage = (): JSX.Element => {
                             zoom: 0.55,
                         }}
                         projection="globe"
-                        style={{ width: "100%", height: "250px", borderRadius: "16px" }}
+                        style={{ width: "100%", height: "100%", borderRadius: "16px" }}
                         mapStyle={getMapTheme()}
                         mapboxAccessToken={MAPBOX_TOKEN}>
                         <Marker longitude={longitude} latitude={latitude} />

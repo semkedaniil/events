@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import EventController from "../controllers/eventController";
 import authMiddleware from "../middleware/AuthMiddleWare";
 const router = new (Router as any)();

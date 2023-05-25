@@ -46,6 +46,7 @@ export const useAuthStore = create<AuthStoreState>()(
             check: async () => {
                 const token = await check();
                 const user = jwtDecode(token) as User;
+                get().setIsAuth(true);
                 get().setUser(user);
             },
         }),

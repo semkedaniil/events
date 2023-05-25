@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import _ from "lodash";
+
 import { Event, SearchRequest } from "../../Commons/types/Event";
 
 interface EventsStore {
@@ -14,7 +15,7 @@ interface Actions {
     findById: (eventId: number) => Event | undefined;
     hideEvent: (eventId: number) => void;
     showEvent: (eventId: number) => void;
-    filterEvents: (params: SearchRequest) => void;
+    filterEvents: (parameters: SearchRequest) => void;
 }
 
 type EventsStoreState = EventsStore & Actions;
@@ -52,7 +53,7 @@ export const useEventsStore = create<EventsStoreState>()(
                     event.hidden = false;
                 }
             },
-            filterEvents: params => {
+            filterEvents: () => {
                 // some logic
             },
         }),
