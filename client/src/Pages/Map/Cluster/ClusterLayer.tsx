@@ -10,21 +10,20 @@ import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
 import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { useAuthStore } from "../../../stores/userStore/userStore";
 import { MarksBlock } from "../../../ui/components/MarksBlock/MarksBlock";
-import { getEvent } from "../../../api/events/events";
 
 interface ClusterLayerProps {
     mapId: string;
     data: any;
     ClusterComponent: any;
     onSelectMarker: any;
+    onValueChange: (event: Event) => void;
 }
 
 /* eslint-disable react-hooks/rules-of-hooks */
-export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: ClusterLayerProps) => {
+export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, onValueChange }: ClusterLayerProps) => {
     if (!data?.length) {
         return null;
     }
-    const { user } = useAuthStore();
     const { [mapId]: mapRef } = useMap();
     const bbox = mapRef?.getBounds().toArray().flat() as [number, number, number, number];
     const zoom = mapRef?.getZoom() ?? 0;
@@ -71,7 +70,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker }: 
                                 event={event}
                                 className={cn("marks")}
                                 withoutCaption
-                                onValueChange={setCurrentEvent}
+                                onValueChange={onValueChange}
                             />
                         </RowStack>
                     </footer>

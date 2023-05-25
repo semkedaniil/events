@@ -3,12 +3,17 @@ import { useMap } from "react-map-gl";
 import { Button, DatePicker, Input, RadioGroup, Token, TokenInput, TokenInputType } from "@skbkontur/react-ui";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
+import _ from "lodash";
+import { parse } from "date-fns";
 
 import RightIcon from "../../../assets/arrow_right.svg";
 import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { CommonLayout } from "../../../ui/components/CommonLayout/CommonLayout";
-import { EventType } from "../../../Commons/types/Event";
+import { EventType, Event } from "../../../Commons/types/Event";
 import { isNightNow } from "../MapBox/MapBox";
+import { getTags } from "../../../api/tags/tags";
+import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
+import { EventList } from "../../../Commons/components/EventCard/EventCard";
 
 import cn from "./Controls.less";
 
@@ -21,6 +26,7 @@ const parseDate = (date: string) => new Date(date.replace(pattern, "$3-$2-$1"));
 
 export const Controls = (): JSX.Element => {
     const { eventMap } = useMap();
+    const { events } = useEventsStore();
     const [coords, setCoords] = useState("");
     const [name, setName] = useState("");
     const [participantsCount, setParticipantsCount] = useState<Nullable<number>>(null);
@@ -59,11 +65,23 @@ export const Controls = (): JSX.Element => {
         setCoords(event.target.value);
     }, []);
 
-    const onSubmit = useCallback((): void => {
+    const onSubmit = (): void => {
         const isValid = container.current?.validate();
         if (!isValid) {
             return;
         }
+
+        const startDate = from !== "" && parse(from, "dd.MM.yyyy", new Date());
+        const endDate = to !== "" && new Date(to);
+        const filteredEvents: Event[] = events
+            .filter(event => (name?.trim() == null ? true : event.name.toLowerCase().includes(name.toLowerCase())))
+            .filter(event =>
+                creatorName.trim() ? event.creator?.toLowerCase()?.includes(creatorName.toLowerCase()) : true
+            )
+            .filter(event => (startDate ? new Date(event.dateRange.startDate) >= startDate : true))
+            .filter(event => (endDate && event.dateRange.endDate ? new Date(event.dateRange.endDate) <= endDate : true))
+            .filter(event => (tags && event.tags ? _.difference(tags, event.tags).length === 0 : true));
+        setFilteredEvents(filteredEvents);
         const [lng, lat] = coords.split(",").map(Number);
         if (Math.abs(lng) <= 180 && Math.abs(lat) <= 85 && eventMap) {
             eventMap.easeTo({
@@ -73,11 +91,21 @@ export const Controls = (): JSX.Element => {
         } else {
             setHasError(true);
         }
-    }, [eventMap, coords]);
+    };
 
     const onClickSwitchButton = (): void => {
         setIsClosed(!isClosed);
     };
+
+    const getTagsNames = (q: string) =>
+        getTags().then(
+            tags =>
+                tags
+                    .map(tag => tag.name)
+                    .filter(
+                        tagName => tagName.toLowerCase().includes(q.toLowerCase()) || tagName.toString() === q
+                    ) as never[]
+        );
     const validationInfo: ValidationInfo | null =
         (from && to && parseDate(from).getTime() - parseDate(to).getTime()) > 0
             ? {
@@ -161,7 +189,7 @@ export const Controls = (): JSX.Element => {
                         value={participantsCount?.toString() ?? ""}
                     />
                 </RowStack>
-                <RowStack>
+                <RowStack align="center">
                     <span className={cn("caption")}>Даты</span>с
                     <ValidationWrapper validationInfo={validationInfo}>
                         <DatePicker width={110} value={from} onValueChange={setFrom} enableTodayLink />
@@ -199,32 +227,7 @@ export const Controls = (): JSX.Element => {
                         width={inputWidth}
                         style={{ maxHeight: 200, overflow: "auto" }}
                         type={TokenInputType.Combined}
-                        getItems={q =>
-                            Promise.resolve(
-                                [
-                                    "First",
-                                    "Second",
-                                    "asdasdsad",
-                                    "Fourth",
-                                    "Fifth",
-                                    "Sixth",
-                                    "First1",
-                                    "Second1",
-                                    "Third1",
-                                    "Fourth1",
-                                    "Fifth1",
-                                    "Sixth1",
-                                    "First2",
-                                    "Second2",
-                                    "Third2",
-                                    "Fourth2",
-                                    "Fifth2",
-                                    "Sixth2",
-                                ].filter(
-                                    x => x.toLowerCase().includes(q.toLowerCase()) || x.toString() === q
-                                ) as never[]
-                            )
-                        }
+                        getItems={getTagsNames}
                         menuAlign="left"
                         menuWidth={tags.length === 10 ? "0px" : undefined}
                         selectedItems={tags}
@@ -244,13 +247,7 @@ export const Controls = (): JSX.Element => {
                         <CommonLayout.Header className={cn("map-control-header")}>
                             <h2>Отфильтрованные события</h2>
                         </CommonLayout.Header>
-                        <div className={cn("events")}>
-                            {Array.from({ length: 5 }, (x, index) => (
-                                <div key={index} className={cn("event")}>
-                                    Здесь должна быть карточка события
-                                </div>
-                            ))}
-                        </div>
+                        <EventList events={filteredEvents} className={cn("filtered-events")} />
                     </>
                 )}
             </div>

@@ -6,11 +6,14 @@ export interface Event {
     creator?: string;
     hidden?: boolean;
     marks: Marks,
-    tags?: Array<{ name: string }>;
+    tags?: Tag[];
     description?: string;
     photos?: string[];
 }
 
+export interface Tag {
+    name: string;
+}
 export interface Mark {
     userId: string;
     isLiked: boolean;

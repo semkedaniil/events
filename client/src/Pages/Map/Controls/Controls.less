@@ -1,6 +1,24 @@
 @import "src/ui/styles/variables";
 
 :local {
+  .filtered-events {
+    display: block;
+
+    > div {
+      margin-bottom: @base-size * 3;
+      overflow: hidden;
+      height: fit-content !important;
+
+      > :last-child {
+        padding: @base-size * 4 !important;
+      }
+
+      &:hover {
+        transform: none !important;
+      }
+    }
+  }
+
   .map-controls::-webkit-scrollbar-track {
     margin: 10px 0;
   }
@@ -28,6 +46,7 @@
   .type {
     color: #FAFAFA;
   }
+
   .map-controls {
     box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
     padding: @base-size * 8;
@@ -42,7 +61,7 @@
     flex-direction: column;
     margin-top: @base-size * 4;
     top: 50%;
-    transform:translateY(-50%);
+    transform: translateY(-50%);
     left: 0;
     gap: @base-size * 3;
     transition: left 0.5s ease;

@@ -2,8 +2,9 @@ import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, Sc
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
-import { Button, Loader } from "@skbkontur/react-ui";
+import { Button } from "@skbkontur/react-ui";
 
+import { Event } from "../../../Commons/types/Event";
 import GeocoderControl from "../Controls/GeocoderControl";
 import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";
 import { ClusterLayer } from "../Cluster/ClusterLayer";
@@ -28,7 +29,7 @@ export const MapBox = (): JSX.Element | null => {
     const [key, setKey] = useState<number>();
     const location = useLocation();
     const navigate = useNavigate();
-    const { setEvents } = useEventsStore();
+    const { setEvents, events } = useEventsStore();
     const [geoEvents, setGeoEvents] = useState<Feature[]>();
     const [showCreatePopup, setShowCreatePopup] = useState<{ coordinates: mapboxgl.LngLat; address?: string } | null>(
         null
@@ -81,6 +82,18 @@ export const MapBox = (): JSX.Element | null => {
     const rerenderMap = ({ viewState: { latitude, longitude } }: any) => {
         setRerender(latitude + longitude);
     };
+
+    const onValueChange = (updatedEvent: Event) => {
+        const event = events.find(event => event.id === updatedEvent.id);
+        const geoEvent = geoEvents?.find(event => event.properties.id === updatedEvent.id);
+        if (event) {
+            event.marks = { ...updatedEvent.marks };
+        }
+
+        if (geoEvent) {
+            geoEvent.properties.marks = { ...updatedEvent.marks };
+        }
+    }
 
     if (loading && !geoEvents) {
         return null;
@@ -145,6 +158,7 @@ export const MapBox = (): JSX.Element | null => {
             <ClusterLayer
                 mapId="eventMap"
                 data={geoEvents}
+                onValueChange={onValueChange}
                 onSelectMarker={onSelectMarker}
                 ClusterComponent={Cluster}
             />

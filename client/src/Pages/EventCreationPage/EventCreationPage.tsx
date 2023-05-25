@@ -15,7 +15,7 @@ import {
     TokenInput,
     TokenInputType,
 } from "@skbkontur/react-ui";
-import {Navigate, useNavigate, useSearchParams} from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import Map, { Marker } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 
@@ -37,6 +37,7 @@ import { createEvent } from "../../api/events/events";
 import { ClockAnimation } from "./ClockAnimation/ClockAnimation";
 import { getLocationOrDefault, getValidationInfo } from "./helpers";
 import cn from "./EventCreationPage.less";
+import { getTags } from "../../api/tags/tags";
 
 const maxWidth = 450;
 const maxLength = 100;
@@ -140,11 +141,20 @@ export const EventCreationPage = () => {
         setPreviewPhotos(photos => photos.filter((_, index) => index !== id));
     };
 
+    const getTagsNames = (q: string) =>
+        getTags().then(
+            tags =>
+                tags
+                    .map(tag => tag.name)
+                    .filter(
+                        tagName => tagName.toLowerCase().includes(q.toLowerCase()) || tagName.toString() === q
+                    ) as never[]
+        );
 
     if (!isAuth) {
         return <Navigate to="/login" />;
     }
-    
+
     return (
         <CommonLayout>
             <CommonLayout.Header>
@@ -293,33 +303,7 @@ export const EventCreationPage = () => {
                                         delimiters={[","]}
                                         className={cn("tokens")}
                                         type={TokenInputType.Combined}
-                                        getItems={q =>
-                                            // todo: create api method getTags
-                                            Promise.resolve(
-                                                [
-                                                    "First",
-                                                    "Second",
-                                                    "asdasdsad",
-                                                    "Fourth",
-                                                    "Fifth",
-                                                    "Sixth",
-                                                    "First1",
-                                                    "Second1",
-                                                    "Third1",
-                                                    "Fourth1",
-                                                    "Fifth1",
-                                                    "Sixth1",
-                                                    "First2",
-                                                    "Second2",
-                                                    "Third2",
-                                                    "Fourth2",
-                                                    "Fifth2",
-                                                    "Sixth2",
-                                                ].filter(
-                                                    x => x.toLowerCase().includes(q.toLowerCase()) || x.toString() === q
-                                                ) as never[]
-                                            )
-                                        }
+                                        getItems={getTagsNames}
                                         menuAlign="left"
                                         menuWidth={tags.length === 10 ? "0px" : undefined}
                                         selectedItems={tags}
