@@ -60,7 +60,6 @@ export const EventPage = (): JSX.Element => {
         creator,
         tags,
         photos,
-        marks: { likes, dislikes },
         description,
         dateRange: { endDate, startDate },
         location: { latitude, longitude },

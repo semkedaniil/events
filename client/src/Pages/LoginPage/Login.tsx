@@ -92,7 +92,7 @@ export const Login = (): JSX.Element => {
                             Войти
                         </Button>
                         <div className={cn("login-page-additional-info")}>
-                            <Link href="/reset-password">Забыли пароль?</Link>
+                            { false && <Link href="/reset-password">Забыли пароль?</Link> }
                             <Link href="register">Нет аккаунта? Зарегистрироваться</Link>
                         </div>
                     </div>

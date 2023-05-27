@@ -214,7 +214,9 @@ export const EventCreationPage = () => {
                                                         }));
                                                     }
                                                 }}
-                                                value={dateRange?.startDate}
+                                                value={
+                                                    (dateRange?.startDate && new Date(dateRange.startDate)) ?? undefined
+                                                }
                                             />
                                         </ValidationWrapper>
                                     </ColumnStack>
@@ -227,7 +229,7 @@ export const EventCreationPage = () => {
                                                 defaultTime=""
                                                 size="medium"
                                                 width="fit-content"
-                                                value={new Date(dateRange?.endDate ?? "")}
+                                                value={(dateRange?.endDate && new Date(dateRange.endDate)) ?? undefined}
                                                 onChange={value => {
                                                     if (dateRange?.startDate) {
                                                         setDateRange({

@@ -45,7 +45,9 @@ export const App = (): JSX.Element => {
             return;
         }
         setLoading(true);
+        console.log(isAuth, localStorage.getItem("token"));
         check()
+            .then(x => setIsAuth(true))
             .catch(error => {
                 if (error.response.status >= 400 && error.response.status < 500) {
                     navigate("/login");

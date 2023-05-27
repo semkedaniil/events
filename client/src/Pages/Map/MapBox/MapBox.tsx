@@ -14,6 +14,7 @@ import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
 import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
 
 import cn from "./MapBox.less";
+import { useSocket } from "../../../socket/socket";
 
 export const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -25,6 +26,7 @@ export const initialViewState = {
 
 export const MapBox = (): JSX.Element | null => {
     const map = useMap() as any;
+    const socket = useSocket();
     const [loading, setLoading] = useState(false);
     const [key, setKey] = useState<number>();
     const location = useLocation();
@@ -39,16 +41,32 @@ export const MapBox = (): JSX.Element | null => {
         setKey(Math.random() * 5);
     }, [location]);
 
+    const onConnect = () => {
+        console.info("Connected");
+    };
+    const onEventUpdated = (updatedEvent: Event) => {
+        setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
+    };
     useEffect(() => {
+        socket.timeout(5000).connect();
+        socket.on("connect", onConnect);
+        socket.on("event updated", onEventUpdated);
         loadEvents();
+        return () => {
+            socket.off("connect", onConnect);
+            socket.off("event updated", onEventUpdated);
+        };
     }, []);
+
+    useEffect(() => {
+        setGeoEvents(mapEventsToGeoJson(events));
+    }, [events]);
 
     async function loadEvents() {
         setLoading(true);
         try {
             const events = await getAllEvents();
             setEvents(events);
-            setGeoEvents(mapEventsToGeoJson(events));
         } finally {
             setLoading(false);
         }
@@ -93,7 +111,7 @@ export const MapBox = (): JSX.Element | null => {
         if (geoEvent) {
             geoEvent.properties.marks = { ...updatedEvent.marks };
         }
-    }
+    };
 
     if (loading && !geoEvents) {
         return null;

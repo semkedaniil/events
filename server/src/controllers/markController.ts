@@ -1,10 +1,11 @@
 import e, { NextFunction, Request, Response } from "express";
-
+import { io } from "../index";
 import { Mark } from "../models/models";
 import { ApiError } from "../error/ApiError";
 
 import { BaseModelHelper } from "./BaseModelHelper";
 import {CustomRequest} from "../models/types";
+import {EventController} from "./eventController";
 
 class MarkController {
   public async getMarks(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
@@ -18,11 +19,14 @@ class MarkController {
       const markModel = await Mark.findOne({ where: { eventId, userId: id } });
       if (markModel) {
         await Mark.update({ isLiked, date: new Date() }, { where: { eventId, userId: id } });
-        response.json();
       } else {
         await Mark.create({ eventId, userId: id, isLiked, date: new Date() });
-        response.json();
       }
+      if (eventId) {
+        const event = await EventController.getEventById(eventId);
+        io.emit("event updated", event);
+      }
+      response.json({ message: "Ok"});
     } catch (error) {
       next(ApiError.badRequest(error.message));
     }

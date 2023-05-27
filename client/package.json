@@ -171,6 +171,7 @@
     "resolve-url-loader": "^4.0.0",
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
+    "socket.io-client": "^4.6.1",
     "source-map-loader": "^3.0.0",
     "style-loader": "0.23.1",
     "supercluster": "^8.0.1",

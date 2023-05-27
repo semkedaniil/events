@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-
+import { io } from "../index";
 import e, { NextFunction, Request, Response } from "express";
 import { v4 } from "uuid";
 
@@ -27,8 +27,29 @@ const mapEventModelsToEventDTO = (eventModel: any[]) => eventModel?.map((event: 
   photos: event?.images.map((image: any) => `${serverUrl}${image.url}`)
 })).filter((event: any) => event.location != null);
 
-class EventController {
+export class EventController {
   public async getEvents(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+    const events = await EventController.getAllEvents(next);
+    return response.json(events);
+  }
+
+  public static async getEventById(id: string) {
+    const event = await Event.findOne({
+      where: { id }, include: [{ model: User, attributes: ["username"] }, Images, {
+        model: Location,
+        attributes: ["latitude", "longitude"]
+      }, {
+        model: Tag,
+        attributes: ["name"]
+      }, {
+        model: Mark,
+        attributes: ["isLiked", "userId"]
+      }]
+    });
+    return mapEventModelsToEventDTO([event])[0];
+  }
+
+  private static async getAllEvents(next: (...args: any[]) => void) {
     const events = await BaseModelHelper.find({
       Model: Event,
       next,
@@ -43,25 +64,16 @@ class EventController {
         attributes: ["isLiked", "userId"]
       }]
     });
-    return response.json(mapEventModelsToEventDTO(events));
+    return mapEventModelsToEventDTO(events);
   }
 
   public async getEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     const { id } = request.params;
     try {
-      const event = await Event.findOne({
-        where: { id }, include: [{ model: User, attributes: ["username"] }, Images, {
-          model: Location,
-          attributes: ["latitude", "longitude"]
-        }, {
-          model: Tag,
-          attributes: ["name"]
-        }, {
-          model: Mark,
-          attributes: ["isLiked", "userId"]
-        }]
-      });
-      return response.json(mapEventModelsToEventDTO([event])[0]);
+      if (id) {
+        const event = await EventController.getEventById(id);
+        return response.json(event);
+      }
     } catch (error) {
       next(ApiError.badRequest(error.message));
     }
@@ -69,7 +81,6 @@ class EventController {
   }
 
   public async getUserEvents(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
-    // @ts-ignore
     const { user: { id: userId } } = request;
     const events = await BaseModelHelper.find({
       Model: Event,
@@ -90,7 +101,6 @@ class EventController {
   }
 
   public async updateEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
-    // @ts-ignore
     const { user: { id: userId }, body } = request;
     const { id, name, description, dateRange, tags: tagsJson, location } = body;
     const tags = JSON.parse(tagsJson);
@@ -126,6 +136,9 @@ class EventController {
           }
         }
       }
+
+      const event = await EventController.getEventById(id);
+      io.emit("event updated", event);
       return response.json({ message: "Создан"});
     } catch (error) {
       next(ApiError.badRequest(error.message));
@@ -144,6 +157,8 @@ class EventController {
           next(ApiError.badRequest(error.message));
         }
       });
+      const event = await EventController.getEventById(eventId);
+      io.emit("event updated", event);
       return response.json({ message: "Сообщение удалено" });
     } catch (error) {
       next(ApiError.badRequest(error.message));
@@ -153,8 +168,7 @@ class EventController {
   }
 
   public async createEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
-    // @ts-ignore
-    const { user: { id: userId, username: creator }, body } = request;
+    const { user: { id: userId }, body } = request;
     const { name, description, dateRange, tags: tagsJson, location } = body;
     const tags = JSON.parse(tagsJson);
     const { startDate, endDate } = JSON.parse(dateRange);
@@ -186,6 +200,7 @@ class EventController {
           }
         }
       }
+      io.emit("event updated", event);
       return response.json(event);
     } catch (error) {
       next(ApiError.badRequest(error.message));
