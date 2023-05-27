@@ -6,7 +6,7 @@ import cn from "./Slider.less";
 interface ImageSliderProps {
     slides: string[];
     className?: string;
-    onRemoveImage?: (id: number) => void;
+    onRemoveImage?: (url: string, id: number) => void;
     readonly?: boolean;
 }
 
@@ -30,13 +30,18 @@ export const ImageSlider = ({ slides, className, onRemoveImage, readonly }: Imag
         };
     });
 
-    const nextSlide = () => {
+    function nextSlide() {
         setCurrent(current === length - 1 ? current : current + 1);
-    };
+    }
 
-    const previousSlide = () => {
+    function previousSlide() {
         setCurrent(current === 0 ? current : current - 1);
-    };
+    }
+
+    const onRemove = (slide: string) => {
+        onRemoveImage?.(slide, current);
+        previousSlide();
+    }
 
     if (!Array.isArray(slides) || slides.length <= 0) {
         return null;
@@ -48,11 +53,11 @@ export const ImageSlider = ({ slides, className, onRemoveImage, readonly }: Imag
         <section className={cn("slider", className)}>
             <BsArrowLeftCircle className={cn("arrow", { show: showLeftArrow })} onClick={previousSlide} />
             {slides.map((slide, index) => (
-                <div className={cn("slide", { active: index === current })} key={index}>
+                <div className={cn("slide", { active: index === current })} key={slide}>
                     {index === current && (
                         <div className={cn("active-element")}>
                             {!readonly && onRemoveImage && (
-                                <div className={cn("trash")} onClick={() => onRemoveImage(current)}>
+                                <div className={cn("trash")} onClick={() => onRemove(slide)}>
                                     <BsTrash3 size={32} />
                                 </div>
                             )}

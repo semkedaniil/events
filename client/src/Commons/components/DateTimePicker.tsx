@@ -1,9 +1,10 @@
 import { DatePicker as DefaultPicker } from "@skbkontur/react-ui";
-import { DatePicker, DatePickerProps } from "./CustomDatePicker/CustomDatePicker";
 import { forwardRef, SyntheticEvent, useEffect, useMemo, useState } from "react";
 
-import { Time, TimePicker } from "./TimePicker";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
+
+import { DatePicker, DatePickerProps } from "./CustomDatePicker/CustomDatePicker";
+import { Time, TimePicker } from "./TimePicker";
 import { formatDate } from "./helpers";
 
 const datePickerDefaultProps = {
@@ -19,8 +20,8 @@ interface DateTimePickerProps extends DatePickerProps {
 }
 
 export const DateTimePicker = forwardRef<DefaultPicker, DateTimePickerProps>((props, forwardedRef) => {
-    const { error, timeError, defaultTime, disabled, size, onChange, warning, ...rest } = props;
-    const [value, setValue] = useState<Nullable<Date>>(null);
+    const { error, timeError, defaultTime, disabled, size, onChange, warning, value: initialValue, ...rest } = props;
+    const [value, setValue] = useState<Nullable<Date>>(initialValue);
     const [time, setTime] = useState<Nullable<string>>(null);
     useEffect(() => {
         const time = value ? formatDate(value, "HH:mm") : defaultTime;

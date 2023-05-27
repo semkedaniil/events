@@ -8,7 +8,6 @@ import {
     Input,
     InputSize,
     Loader,
-    Modal,
     Textarea,
     Toast,
     Token,
@@ -16,45 +15,39 @@ import {
     TokenInputType,
 } from "@skbkontur/react-ui";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import Map, { Marker } from "react-map-gl";
-import mapboxgl from "mapbox-gl";
 
-import markerPng from "../../assets/marker.png";
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
 import { DateRange, Location, EventDto } from "../../Commons/types/Event";
-import { getMapTheme, initialViewState, MAPBOX_TOKEN } from "../Map/MapBox/MapBox";
-import GeocoderControl from "../Map/Controls/GeocoderControl";
 import { useAuthStore } from "../../stores/userStore/userStore";
 import { DateTimePicker } from "../../Commons/components/DateTimePicker";
 import { PhotoUploader } from "../../Commons/components/PhotoUploader";
-import { updateUserAvatar } from "../../api/userInfo/userInfo";
 import { ImageSlider } from "../EventPage/PhotoSlider/Slider";
 import { createEvent } from "../../api/events/events";
+import { getTags } from "../../api/tags/tags";
+import { MapCoordsPicker } from "../../Commons/components/MapCoordsPicker/MapCoordsPicker";
 
 import { ClockAnimation } from "./ClockAnimation/ClockAnimation";
 import { getLocationOrDefault, getValidationInfo } from "./helpers";
 import cn from "./EventCreationPage.less";
-import { getTags } from "../../api/tags/tags";
 
 const maxWidth = 450;
 const maxLength = 100;
-const defaultInputProps = {
+export const defaultInputProps = {
     size: "medium" as InputSize,
     maxLength,
     width: maxWidth,
 };
 
 export const EventCreationPage = () => {
-    const { user, isAuth } = useAuthStore();
+    const { isAuth } = useAuthStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [searchParams] = useSearchParams();
     const [showModal, setShowModal] = useState(false);
     const [description, setDescription] = useState("");
-    const [newLocationCoords, setNewLocationCoords] = useState<Location | null>(null);
     const [tags, setTags] = useState([]);
     const [dateRange, setDateRange] = useState<DateRange<Date> | null>(null);
     const container = useRef<ValidationContainer>(null);
@@ -78,24 +71,15 @@ export const EventCreationPage = () => {
         };
     }, [photos]);
 
-    const onMapClick = ({ lngLat: { lat, lng } }: mapboxgl.MapLayerMouseEvent) => {
-        setNewLocationCoords({ latitude: lat, longitude: lng });
-    };
     const onCloseModal = () => {
         setShowModal(false);
-        setNewLocationCoords(null);
     };
 
     const onFileUploaderClick = () => {
         fileUploader.current?.getRootNode()?.getElementsByTagName("input")[0].click();
     };
 
-    const onMarkerClick = (event: mapboxgl.MapboxEvent<MouseEvent>) => {
-        event.originalEvent.stopPropagation();
-        setNewLocationCoords(null);
-    };
-
-    const onSaveCoordinates = () => {
+    const onSaveCoordinates = (newLocationCoords: Location | null) => {
         if (newLocationCoords) {
             setLocation(newLocationCoords);
         }
@@ -136,7 +120,7 @@ export const EventCreationPage = () => {
         }
     };
 
-    const onRemoveImage = (id: number) => {
+    const onRemoveImage = (url: string, id: number) => {
         setPhotos(photos => photos.filter((_, index) => index !== id));
         setPreviewPhotos(photos => photos.filter((_, index) => index !== id));
     };
@@ -163,47 +147,7 @@ export const EventCreationPage = () => {
             </CommonLayout.Header>
             <CommonLayout.Content>
                 <Loader active={loading}>
-                    {showModal && (
-                        <Modal onClose={onCloseModal}>
-                            <Modal.Header>
-                                <b>Выберите новое местоположение</b>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Map
-                                    onClick={onMapClick}
-                                    id="eventCreationMap"
-                                    initialViewState={initialViewState}
-                                    projection="globe"
-                                    style={{ width: "100%", height: "250px", borderRadius: "16px" }}
-                                    mapStyle={getMapTheme()}
-                                    mapboxAccessToken={MAPBOX_TOKEN}>
-                                    <GeocoderControl mapboxAccessToken={MAPBOX_TOKEN || ""} position="top-left" />
-                                    {newLocationCoords && (
-                                        <Marker
-                                            onClick={onMarkerClick}
-                                            draggable
-                                            longitude={newLocationCoords.longitude}
-                                            latitude={newLocationCoords.latitude}
-                                            onDragEnd={({ lngLat: { lat, lng } }) =>
-                                                setNewLocationCoords({ latitude: lat, longitude: lng })
-                                            }>
-                                            <img src={markerPng} width={35} height={35} alt="marker" />
-                                        </Marker>
-                                    )}
-                                </Map>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <RowStack>
-                                    <Button use="primary" size="medium" onClick={onSaveCoordinates}>
-                                        Сохранить
-                                    </Button>
-                                    <Button use="default" size="medium" onClick={onCloseModal}>
-                                        Закрыть
-                                    </Button>
-                                </RowStack>
-                            </Modal.Footer>
-                        </Modal>
-                    )}
+                    {showModal && <MapCoordsPicker onSaveCoordinates={onSaveCoordinates} onCloseModal={onCloseModal} />}
                     <ValidationContainer ref={container}>
                         <RowStack className={cn("row-stack")}>
                             <ColumnStack className={cn("content-wrapper")}>
@@ -283,7 +227,7 @@ export const EventCreationPage = () => {
                                                 defaultTime=""
                                                 size="medium"
                                                 width="fit-content"
-                                                value={new Date(dateRange?.startDate ?? "")}
+                                                value={new Date(dateRange?.endDate ?? "")}
                                                 onChange={value => {
                                                     if (dateRange?.startDate) {
                                                         setDateRange({

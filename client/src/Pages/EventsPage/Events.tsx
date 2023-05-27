@@ -11,7 +11,6 @@ import {EventList} from "../../Commons/components/EventCard/EventCard";
 
 export const Events = (): JSX.Element => {
     const { isAuth } = useAuthStore();
-
     const [userEvents, setUserEvents] = useState<Event[]>([]);
 
     useEffect(() => {

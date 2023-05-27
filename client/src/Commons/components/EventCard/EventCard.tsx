@@ -23,8 +23,13 @@ export const EventList = ({ events, className }: EventListProps) => {
     const navigate = useNavigate();
     const onValueChange = (updatedEvent: Event) => {
         const event = originalEvents.find(event => event.id === updatedEvent.id);
+        const currentEvent = events.find(event => event.id === updatedEvent.id);
         if (event) {
             event.marks = { ...updatedEvent.marks };
+        }
+
+        if (currentEvent) {
+            currentEvent.marks = { ...updatedEvent.marks };
         }
     };
 

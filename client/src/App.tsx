@@ -16,6 +16,7 @@ import { Verifying } from "./Pages/VerifyingPage/Verifying";
 import { ProfilePage } from "./Pages/ProfilePage/ProfilePage";
 import { EventPage } from "./Pages/EventPage/EventPage";
 import { EventCreationPage } from "./Pages/EventCreationPage/EventCreationPage";
+import { EventEditingPage } from "./Pages/EventEditingPage/EventEditingPage";
 
 const routes = [
     { path: "/", element: <Map /> },
@@ -26,6 +27,7 @@ const routes = [
     { path: "/verify", element: <Verifying /> },
     { path: "/reset-password", element: <ResetPasswordPage /> },
     { path: "/event/:id", element: <EventPage /> },
+    { path: "/event/:id/edit", element: <EventEditingPage /> },
     { path: "/event/create", element: <EventCreationPage /> },
     { path: "/profile", element: <ProfilePage /> },
     { path: "*", element: <NotFoundPage /> },
@@ -39,14 +41,12 @@ export const App = (): JSX.Element => {
     const { check, setUser, setToken, setIsAuth, isAuth } = useAuthStore();
     const { pathname } = useLocation();
     useEffect(() => {
-        if (isAuth || allowedRoutes.has(pathname)) {
+        if (allowedRoutes.has(pathname)) {
             return;
         }
-        console.log(isAuth);
         setLoading(true);
         check()
             .catch(error => {
-                console.log(error);
                 if (error.response.status >= 400 && error.response.status < 500) {
                     navigate("/login");
                     setUser(null);

@@ -1,4 +1,5 @@
 import path from "node:path";
+import fs from "node:fs";
 
 import e, { NextFunction, Request, Response } from "express";
 import { v4 } from "uuid";
@@ -87,16 +88,67 @@ class EventController {
     return response.json(mapEventModelsToEventDTO(events));
   }
 
-  public async searchEvents(): Promise<e.Response | void> {
-    // todo
-    // const { /*...*/ } = request.body;
-    // const events = await BaseModelHelper.find({
-    //     Model: Event,
-    //     next,
-    //     where: {id},
-    //     include: [Images, Location, Tag, Mark]
-    // });
-    // return response.json(events);
+  public async updateEvent(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+    // @ts-ignore
+    const { user: { id: userId }, body } = request;
+    const { id, name, description, dateRange, tags: tagsJson, location } = body;
+    const tags = JSON.parse(tagsJson);
+    const { startDate, endDate } = JSON.parse(dateRange);
+    const { longitude, latitude } = JSON.parse(location);
+    const { files } = request;
+    try {
+      await Event.update({
+        userId,
+        name,
+        description,
+        startDate,
+        endDate
+      }, { where: { id } });
+      await Tag.destroy({
+        where: {
+          eventId: id
+        }
+      });
+      await Tag.bulkCreate(tags.map((tag: string) => ({ eventId: id, name: tag })));
+      await Location.update({ longitude, latitude },
+        { where: { eventId: id } });
+      if (files) {
+        for (const photo of Object.values(files)) {
+          if (!Array.isArray(photo)) {
+            try {
+              const filename = `${v4().toString()}.${photo?.mimetype.split("/")[1]}`;
+              await photo.mv(path.join(__dirname, "..", "..", "static", filename));
+              await Images.create({ eventId: id, url: filename });
+            } catch {
+              // ignore
+            }
+          }
+        }
+      }
+      return response.json({ message: "Создан"});
+    } catch (error) {
+      next(ApiError.badRequest(error.message));
+    }
+    return undefined;
+  }
+
+  public async deleteEventImage(request: Request, response: Response, next: NextFunction) {
+    const { eventId, url } = request.body;
+    const imageUrl = url.split(serverUrl)[1];
+    try {
+      await Images.destroy({ where: { eventId, url: imageUrl } });
+      const avatarPath = path.join(__dirname, "..", "..", "static", imageUrl);
+      fs.unlink(avatarPath, (error) => {
+        if (error) {
+          next(ApiError.badRequest(error.message));
+        }
+      });
+      return response.json({ message: "Сообщение удалено" });
+    } catch (error) {
+      next(ApiError.badRequest(error.message));
+    }
+
+    return undefined;
   }
 
   public async createEvent(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {

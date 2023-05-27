@@ -94,7 +94,7 @@ export const EventPage = (): JSX.Element => {
                             <span key={name}>#{name}</span>
                         ))}
                     </RowStack>
-                    <RowStack align="start">
+                    <RowStack align="center">
                         <ColumnStack>
                             <RowStack>
                                 <span className={cn("title")}>Дата начала</span>

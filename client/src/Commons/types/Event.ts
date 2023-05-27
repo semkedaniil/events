@@ -29,6 +29,7 @@ export interface Location {
 }
 
 export interface EventDto {
+    id?: string;
     name: string;
     location: Location;
     dateRange: DateRange;
