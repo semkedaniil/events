@@ -1,9 +1,10 @@
-import e, { Request, Response } from "express";
+import e, { Response } from "express";
 import jwt from "jsonwebtoken";
+import {CustomRequest, UserModel} from "../models/types";
 
 // eslint-disable-next-line import/no-default-export
 export default function (
-  request: Request,
+  request: CustomRequest,
   response: Response,
   next: (args?: any) => void
 ): undefined | e.Response {
@@ -23,8 +24,7 @@ export default function (
       );
     }
 
-    // @ts-ignore
-    request.user = jwt.verify(token, process.env.SECRET_KEY);
+    request.user = jwt.verify(token, process.env.SECRET_KEY) as UserModel;
     next();
   } catch (error) {
     response.status(401).json({ message: "Не авторизован" });

@@ -8,6 +8,7 @@ import { Event, Mark, Location, Tag, Images, User } from "../models/models";
 import { ApiError } from "../error/ApiError";
 
 import { BaseModelHelper } from "./BaseModelHelper";
+import {CustomRequest} from "../models/types";
 
 const serverUrl = process.env.BASE_SERVER_URL;
 const mapEventModelsToEventDTO = (eventModel: any[]) => eventModel?.map((event: any) => ({
@@ -45,7 +46,7 @@ class EventController {
     return response.json(mapEventModelsToEventDTO(events));
   }
 
-  public async getEvent(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+  public async getEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     const { id } = request.params;
     try {
       const event = await Event.findOne({
@@ -67,7 +68,7 @@ class EventController {
     return undefined;
   }
 
-  public async getUserEvents(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+  public async getUserEvents(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     // @ts-ignore
     const { user: { id: userId } } = request;
     const events = await BaseModelHelper.find({
@@ -88,7 +89,7 @@ class EventController {
     return response.json(mapEventModelsToEventDTO(events));
   }
 
-  public async updateEvent(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+  public async updateEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     // @ts-ignore
     const { user: { id: userId }, body } = request;
     const { id, name, description, dateRange, tags: tagsJson, location } = body;
@@ -132,7 +133,7 @@ class EventController {
     return undefined;
   }
 
-  public async deleteEventImage(request: Request, response: Response, next: NextFunction) {
+  public async deleteEventImage(request: CustomRequest, response: Response, next: NextFunction) {
     const { eventId, url } = request.body;
     const imageUrl = url.split(serverUrl)[1];
     try {
@@ -151,7 +152,7 @@ class EventController {
     return undefined;
   }
 
-  public async createEvent(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+  public async createEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     // @ts-ignore
     const { user: { id: userId, username: creator }, body } = request;
     const { name, description, dateRange, tags: tagsJson, location } = body;

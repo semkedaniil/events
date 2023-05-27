@@ -4,7 +4,7 @@ import path from "node:path";
 import {Images} from "../models/models";
 
 class ImagesController {
-    public async getImage(request: Request, response: Response): Promise<e.Response | void> {
+    public async getImage(request: CustomRequest, response: Response): Promise<e.Response | void> {
         const {id} = request.body;
         const imagesUrl = await Images.findAll({
             where: {
@@ -14,7 +14,7 @@ class ImagesController {
         return response.json(imagesUrl);
     }
 
-    public async getImageByEventId(request: Request, response: Response): Promise<e.Response | void> {
+    public async getImageByEventId(request: CustomRequest, response: Response): Promise<e.Response | void> {
         const {eventId} = request.params;
         const imagesUrls = await Images.findAll({
             where: {
@@ -24,7 +24,7 @@ class ImagesController {
         return response.json(imagesUrls);
     }
 
-    public async createImage(request: Request, response: Response): Promise<e.Response | void> {
+    public async createImage(request: CustomRequest, response: Response): Promise<e.Response | void> {
         const {
             files,
             eventId

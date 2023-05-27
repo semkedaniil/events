@@ -4,6 +4,7 @@ import { Mark } from "../models/models";
 import { ApiError } from "../error/ApiError";
 
 import { BaseModelHelper } from "./BaseModelHelper";
+import {CustomRequest} from "../models/types";
 
 class MarkController {
   public async getMarks(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
@@ -11,8 +12,7 @@ class MarkController {
     return response.json(marks);
   }
 
-  public async createMark(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
-    // @ts-ignore
+  public async createMark(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     const { user: { id }, body: { isLiked }, params: { eventId } } = request;
     try {
       const markModel = await Mark.findOne({ where: { eventId, userId: id } });
@@ -29,8 +29,7 @@ class MarkController {
     return undefined;
   }
 
-  public async updateMark(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
-    // @ts-ignore
+  public async updateMark(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     const { user: { id }, body: { isLiked }, params: { eventId } } = request;
     try {
       const mark = await Mark.update({ isLiked, date: new Date() }, { where: { eventId, userId: id } });

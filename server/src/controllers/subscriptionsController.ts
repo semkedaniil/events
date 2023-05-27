@@ -1,6 +1,7 @@
 import e, {NextFunction, Request, Response} from "express";
 import {Subscription} from "../models/models";
 import {BaseModelHelper} from "./BaseModelHelper";
+import {CustomRequest} from "../models/types";
 
 class SubscriptionsController {
     public async getSubscriptions(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
@@ -8,7 +9,7 @@ class SubscriptionsController {
         return response.json(subscriptions);
     }
 
-    public async createSubscription(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+    public async createSubscription(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
         const {eventId, userId, subscriptionDate} = request.body;
         const subscription = await BaseModelHelper.create({
             Model: Subscription,

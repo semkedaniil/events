@@ -1,6 +1,7 @@
 import e, {NextFunction, Request, Response} from "express";
 import {Tag} from "../models/models";
 import {BaseModelHelper} from "./BaseModelHelper";
+import {CustomRequest} from "../models/types";
 
 class TagsController {
     public async getTags(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
@@ -8,7 +9,7 @@ class TagsController {
         return response.json(tags);
     }
 
-    public async createTag(request: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+    public async createTag(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
         const {name} = request.body;
         const tag = await BaseModelHelper.create({Model: Tag, next, values: {name}});
         return response.json(tag);
