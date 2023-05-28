@@ -1,7 +1,8 @@
-import e, {Request, Response} from "express";
+import e, {Response} from "express";
 import {v4} from "uuid";
 import path from "node:path";
 import {Images} from "../models/models";
+import {CustomRequest} from "../models/types";
 
 class ImagesController {
     public async getImage(request: CustomRequest, response: Response): Promise<e.Response | void> {

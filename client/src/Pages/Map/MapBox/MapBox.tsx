@@ -1,5 +1,5 @@
 import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, ScaleControl, Popup } from "react-map-gl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 // @ts-ignore
@@ -44,22 +44,24 @@ export const MapBox = (): JSX.Element | null => {
         setKey(Math.random() * 5);
     }, [location]);
 
-    const onEventUpdated = (updatedEvent: Event) => {
+    const onEventUpdated = useCallback((updatedEvent: Event) => {
+        console.log(updatedEvent);
         const newEvents = events.filter(x => x.id !== updatedEvent.id);
         newEvents.push(updatedEvent);
+        console.log(newEvents);
         setEvents(newEvents);
-    };
+    }, [events]);
     useEffect(() => {
-        socket.timeout(5000).connect();
-        socket.on("event updated", onEventUpdated);
         loadEvents();
-        return () => {
-            socket.off("event updated", onEventUpdated);
-        };
     }, []);
 
     useEffect(() => {
         setGeoEvents(mapEventsToGeoJson(events));
+        socket.timeout(5000).connect();
+        socket.on("event updated", onEventUpdated);
+        return () => {
+            socket.off("event updated", onEventUpdated);
+        };
     }, [events]);
 
     async function loadEvents() {
