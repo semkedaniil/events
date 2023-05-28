@@ -24,7 +24,7 @@ export const Login = (): JSX.Element => {
     const [isKeepLogin, setIsKeepLogin] = useState(false);
     const container = useRef<ValidationContainer | null>(null);
 
-    const { setToken } = useAuthStore();
+    const { setToken, setIsAuth } = useAuthStore();
 
     const signIn = async (): Promise<void> => {
         const isValid = await container.current?.validate();
@@ -35,6 +35,7 @@ export const Login = (): JSX.Element => {
         try {
             const token = await login(username, password);
             setToken(token);
+            setIsAuth(true);
             navigate("/");
         } catch {
             setError(true);
