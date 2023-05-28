@@ -15,7 +15,6 @@ export const HeaderMenu = ({ onClose }: HeaderMenuProps): JSX.Element => {
     const { isAuth, setIsAuth, setUser, user } = useAuthStore();
     const navigate = useNavigate();
     const logout = () => {
-
         setUser(null);
         setIsAuth(false);
         setLocalStorage(TOKEN_KEY, "");
@@ -35,10 +34,7 @@ export const HeaderMenu = ({ onClose }: HeaderMenuProps): JSX.Element => {
                 <>
                     <div className={cn("credentials-wrapper")}>
                         <Tooltip render={renderTooltip}>
-                            <UserAvatar
-                                onClick={onClickCredentials}
-                                className={cn("user-avatar")}
-                            />
+                            <UserAvatar onClick={onClickCredentials} className={cn("user-avatar")} />
                         </Tooltip>
                         <div className={cn("credentials")}>
                             <span className={cn("username")}>{user?.username}</span>

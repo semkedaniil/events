@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import {Property} from "csstype";
+import { Property } from "csstype";
 
 import cn from "./RowStack.less";
 

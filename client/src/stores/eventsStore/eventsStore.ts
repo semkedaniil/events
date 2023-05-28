@@ -57,8 +57,8 @@ export const useEventsStore = create<EventsStoreState>()(
                 // some logic
             },
         }),
-        { name: "global" },
-    ),
+        { name: "global" }
+    )
 );
 
 function mergeArrays(original: Event[], updated: Event[]): Event[] {

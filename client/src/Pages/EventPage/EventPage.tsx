@@ -120,7 +120,8 @@ export const EventPage = (): JSX.Element => {
                         projection="globe"
                         style={{ width: "100%", height: "100%", borderRadius: "16px" }}
                         mapStyle={getMapTheme()}
-                        mapboxAccessToken={MAPBOX_TOKEN}>
+                        mapboxAccessToken={MAPBOX_TOKEN}
+                    >
                         <Marker longitude={longitude} latitude={latitude} />
                     </Map>
                     <RowStack>

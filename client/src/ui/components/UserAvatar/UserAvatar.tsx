@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import { stringToColor } from "../../../Pages/ProfilePage/helpers";
 import defaultImage from "../../../assets/avatar.jpg";
+import { useAuthStore } from "../../../stores/userStore/userStore";
 
 import cn from "./UserAvatar.less";
-import { useAuthStore } from "../../../stores/userStore/userStore";
 
 interface UserAvatarProps {
     onClick?: () => void;
@@ -34,7 +34,8 @@ export const UserAvatar = ({ onClick, className, username }: UserAvatarProps): J
             <div
                 className={cn(className, "avatar")}
                 onClick={onClick}
-                style={{ backgroundColor: stringToColor(currentUsername ?? "default") }}>
+                style={{ backgroundColor: stringToColor(currentUsername ?? "default") }}
+            >
                 {currentUsername?.trim()[0].toUpperCase()}
             </div>
         );

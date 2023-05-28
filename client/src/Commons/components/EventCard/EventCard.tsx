@@ -46,7 +46,7 @@ export const EventList = ({ events, className }: EventListProps) => {
                     photos,
                     description,
                     creator,
-                    tags
+                    tags,
                 } = event;
                 const start = new Date(startDate).toLocaleString();
                 const end = endDate && new Date(endDate).toLocaleString();
@@ -56,7 +56,8 @@ export const EventList = ({ events, className }: EventListProps) => {
                             <div
                                 className={cn("edit-button")}
                                 title="Редактировать событие"
-                                onClick={() => onEditButtonClick(id)}>
+                                onClick={() => onEditButtonClick(id)}
+                            >
                                 <BsGearWideConnected size={32} />
                             </div>
                         )}

@@ -99,7 +99,6 @@ export default function GeocoderControl(props: GeocoderControlProps) {
         if (geocoder.getOrigin() !== props.origin && props.origin !== undefined) {
             geocoder.setOrigin(props.origin);
         }
-
     }
     return marker;
 }

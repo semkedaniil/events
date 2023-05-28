@@ -12,6 +12,6 @@ export interface Feature {
 export const mapEventsToGeoJson = (events: Event[]): Feature[] =>
     events.map(({ id, location: { latitude, longitude }, ...restProps }) => ({
         type: "Feature",
-        properties: { id: id, ...restProps, iconSize: [50, 50] },
+        properties: { id, ...restProps, iconSize: [50, 50] },
         geometry: { type: "Point", coordinates: [longitude, latitude, 50] },
     }));

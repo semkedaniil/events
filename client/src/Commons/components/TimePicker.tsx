@@ -1,7 +1,8 @@
 import { FC, SyntheticEvent, useEffect, useState } from "react";
 import { tooltip, ValidationInfo, ValidationWrapper } from "@skbkontur/react-ui-validations";
-import { isCorrectTime } from "../utlis";
 import { Input } from "@skbkontur/react-ui";
+
+import { isCorrectTime } from "../utlis";
 
 export type Time = string;
 
@@ -83,7 +84,8 @@ export const TimePicker: FC<TimePickerProps> = ({
     return (
         <ValidationWrapper
             validationInfo={timeValidate(time, isFocused, date, error)}
-            renderMessage={tooltip("top left")}>
+            renderMessage={tooltip("top left")}
+        >
             <Input
                 data-tid="Input"
                 mask="99:99"

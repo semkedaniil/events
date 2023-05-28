@@ -90,7 +90,8 @@ export const Register = (): JSX.Element => {
                         <LocaleContext.Provider
                             value={{
                                 langCode: LangCodes.ru_RU,
-                            }}>
+                            }}
+                        >
                             <ValidationWrapper validationInfo={validationInfo.birthdate}>
                                 <DatePicker
                                     width="100%"

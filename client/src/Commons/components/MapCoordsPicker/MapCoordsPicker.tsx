@@ -28,7 +28,7 @@ export const MapCoordsPicker = ({ onSaveCoordinates, onCloseModal }: MapCoordsPi
     const onCLose = () => {
         setNewLocationCoords(null);
         onCloseModal();
-    }
+    };
 
     return (
         <Modal onClose={onCLose}>
@@ -43,7 +43,8 @@ export const MapCoordsPicker = ({ onSaveCoordinates, onCloseModal }: MapCoordsPi
                     projection="globe"
                     style={{ width: "100%", height: "250px", borderRadius: "16px" }}
                     mapStyle={getMapTheme()}
-                    mapboxAccessToken={MAPBOX_TOKEN}>
+                    mapboxAccessToken={MAPBOX_TOKEN}
+                >
                     <GeocoderControl mapboxAccessToken={MAPBOX_TOKEN || ""} position="top-left" />
                     {newLocationCoords && (
                         <Marker
@@ -53,7 +54,8 @@ export const MapCoordsPicker = ({ onSaveCoordinates, onCloseModal }: MapCoordsPi
                             latitude={newLocationCoords.latitude}
                             onDragEnd={({ lngLat: { lat, lng } }) =>
                                 setNewLocationCoords({ latitude: lat, longitude: lng })
-                            }>
+                            }
+                        >
                             <img src={markerPng} width={35} height={35} alt="marker" />
                         </Marker>
                     )}

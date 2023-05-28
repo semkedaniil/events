@@ -1,5 +1,6 @@
 import { DatePicker as DefaultDatePicker } from "@skbkontur/react-ui";
 import { forwardRef, ReactText } from "react";
+
 import { formatDate, parseDate } from "../helpers";
 import { Time } from "../TimePicker";
 
@@ -26,10 +27,7 @@ export interface DatePickerProps {
     menuAlign?: "left" | "right";
 }
 
-function convertStringToDate(
-    newStringifiedDate: string,
-    defaultTime?: Time,
-): Date {
+function convertStringToDate(newStringifiedDate: string, defaultTime?: Time): Date {
     const date = parseDate(newStringifiedDate);
     const ISODate = formatDate(date, "yyyy-MM-dd");
     const time = defaultTime || "00:00";

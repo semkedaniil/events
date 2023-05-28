@@ -13,7 +13,7 @@ import {
 } from "@skbkontur/react-ui";
 import { TiDeleteOutline } from "react-icons/ti";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
-import {Navigate} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
@@ -100,7 +100,6 @@ export const ProfilePage = () => {
         setToken(token);
     };
 
-
     if (!isAuth) {
         return <Navigate to="/login" />;
     }
@@ -165,7 +164,8 @@ export const ProfilePage = () => {
                                 <LocaleContext.Provider
                                     value={{
                                         langCode: LangCodes.ru_RU,
-                                    }}>
+                                    }}
+                                >
                                     <ValidationWrapper validationInfo={validationInfo.birthdate}>
                                         <DatePicker
                                             width="100%"

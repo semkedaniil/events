@@ -1,7 +1,7 @@
 import type { LayerProps } from "react-map-gl";
-import {BackgroundLayer} from "mapbox-gl";
+import { BackgroundLayer } from "mapbox-gl";
 
-const sourceId = "events"
+const sourceId = "events";
 export const clusterLayer: LayerProps = {
     id: "clusters",
     type: "circle",
@@ -15,14 +15,13 @@ export const clusterLayer: LayerProps = {
     },
 };
 
-
 export const clusterCountLayer: LayerProps = {
     id: "cluster-count",
     type: "symbol",
     source: sourceId,
     filter: ["has", "point_count"],
     layout: {
-        "text-field": ['get', 'point_count_abbreviated'],
+        "text-field": ["get", "point_count_abbreviated"],
         "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
         "text-size": 14,
     },
@@ -35,6 +34,6 @@ export const unclusteredSymbolLayer: LayerProps = {
     filter: ["!", ["has", "point_count"]],
     layout: {
         "icon-image": "event",
-        'icon-size': 0.25
-    }
+        "icon-size": 0.25,
+    },
 };

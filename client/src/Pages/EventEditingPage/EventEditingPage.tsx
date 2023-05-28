@@ -71,10 +71,13 @@ export const EventEditingPage = () => {
     };
 
     const onUploadFile = async (files: FileUploaderAttachedFile[]): Promise<void> => {
-        const photos = _.uniqBy(files.filter(file => file.validationResult.isValid).map(file => file.originalFile), "name");
+        const photos = _.uniqBy(
+            files.filter(file => file.validationResult.isValid).map(file => file.originalFile),
+            "name"
+        );
         setPhotos(photos);
         const objectsUrls = photos.map(URL.createObjectURL);
-        setPreviewPhotos([...event?.photos ?? [], ...objectsUrls]);
+        setPreviewPhotos([...(event?.photos ?? []), ...objectsUrls]);
     };
 
     const onSaveCoordinates = (newLocationCoords: Location | null) => {
@@ -285,7 +288,8 @@ export const EventEditingPage = () => {
                                             </Button>
                                             <Button
                                                 size="medium"
-                                                onClick={() => event && setCurrentEvent({ ...event })}>
+                                                onClick={() => event && setCurrentEvent({ ...event })}
+                                            >
                                                 Отменить
                                             </Button>
                                         </RowStack>

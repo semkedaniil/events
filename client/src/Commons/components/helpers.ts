@@ -1,6 +1,7 @@
 import { addMinutes, format, isBefore, isMatch, isSameDay, isSameMinute, isValid, parse } from "date-fns";
 import { parseISO } from "date-fns/fp";
 import { ru } from "date-fns/locale";
+
 import { DateRange } from "../types/Event";
 
 const datePickerFormat = "dd.MM.yyyy";
@@ -11,7 +12,6 @@ export function formatDate(date: Date | string, dateFormat: string): string {
         locale: ru,
     });
 }
-
 
 export function isValidISODate(date: Nullable<string | Date>): date is Date {
     if (!date) {
@@ -59,7 +59,6 @@ export function toTimeZone(date: Date | string): Date {
     const dateDate = new Date(date);
     return addMinutes(dateDate, dateDate.getTimezoneOffset());
 }
-
 
 export function fromDateOrISOString(value: Nullable<Date | string>): Nullable<Date> {
     return typeof value === "string" ? new Date(value) : value;

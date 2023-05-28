@@ -12,9 +12,9 @@ import { Cluster } from "../Cluster/Cluster";
 import { getAllEvents } from "../../../api/events/events";
 import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
 import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
+import { useSocket } from "../../../socket/socket";
 
 import cn from "./MapBox.less";
-import { useSocket } from "../../../socket/socket";
 
 export const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -41,19 +41,14 @@ export const MapBox = (): JSX.Element | null => {
         setKey(Math.random() * 5);
     }, [location]);
 
-    const onConnect = () => {
-        console.info("Connected");
-    };
     const onEventUpdated = (updatedEvent: Event) => {
-        setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
+        setEvents(events.map(event => (event.id === updatedEvent.id ? updatedEvent : event)));
     };
     useEffect(() => {
         socket.timeout(5000).connect();
-        socket.on("connect", onConnect);
         socket.on("event updated", onEventUpdated);
         loadEvents();
         return () => {
-            socket.off("connect", onConnect);
             socket.off("event updated", onEventUpdated);
         };
     }, []);
@@ -127,7 +122,8 @@ export const MapBox = (): JSX.Element | null => {
             initialViewState={initialViewState}
             style={{ width: "100%", height: "100%" }}
             mapStyle={getMapTheme()}
-            mapboxAccessToken={MAPBOX_TOKEN}>
+            mapboxAccessToken={MAPBOX_TOKEN}
+        >
             {showCreatePopup && (
                 <Popup
                     closeButton
@@ -135,7 +131,8 @@ export const MapBox = (): JSX.Element | null => {
                     maxWidth="400px"
                     longitude={showCreatePopup.coordinates?.lng}
                     latitude={showCreatePopup.coordinates?.lat}
-                    onClose={() => setShowCreatePopup(null)}>
+                    onClose={() => setShowCreatePopup(null)}
+                >
                     <ColumnStack className={cn("creation-popup")}>
                         <h2>Создать событие?</h2>
                         <main>
@@ -158,7 +155,8 @@ export const MapBox = (): JSX.Element | null => {
                                     navigate(
                                         `/event/create?lng=${showCreatePopup.coordinates.lng}&lat=${showCreatePopup.coordinates.lat}`
                                     )
-                                }>
+                                }
+                            >
                                 Создать
                             </Button>
                             <Button use="default" width="50%" onClick={() => setShowCreatePopup(null)}>

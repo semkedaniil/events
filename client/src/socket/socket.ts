@@ -14,12 +14,13 @@ export const useSocket = () => {
             reconnectionDelay: 5000,
         })
     );
-    useEffect(() => {
-        return () => {
+    useEffect(
+        () => () => {
             if (socket) {
                 socket.close();
             }
-        };
-    }, [socket]);
+        },
+        [socket]
+    );
     return socket;
 };

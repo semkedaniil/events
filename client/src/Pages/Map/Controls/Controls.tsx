@@ -70,8 +70,6 @@ export const Controls = (): JSX.Element => {
         if (!isValid) {
             return;
         }
-        console.log(tags);
-        console.log(events);
         const startDate = from !== "" && parse(from, "dd.MM.yyyy", new Date());
         const endDate = to !== "" && new Date(to);
         const filteredEvents: Event[] = events
@@ -81,7 +79,14 @@ export const Controls = (): JSX.Element => {
             )
             .filter(event => (startDate ? new Date(event.dateRange.startDate) >= startDate : true))
             .filter(event => (endDate && event.dateRange.endDate ? new Date(event.dateRange.endDate) <= endDate : true))
-            .filter(event => (tags && event.tags ? _.difference(tags, event.tags.map(x => x.name)).length === 0 : true));
+            .filter(event =>
+                tags && event.tags
+                    ? _.difference(
+                          tags,
+                          event.tags.map(x => x.name)
+                      ).length === 0
+                    : true
+            );
         setFilteredEvents(filteredEvents);
         const [lng, lat] = coords.split(",").map(Number);
         if (Math.abs(lng) <= 180 && Math.abs(lat) <= 85 && eventMap) {
@@ -124,7 +129,8 @@ export const Controls = (): JSX.Element => {
                         left: isClosed ? 0 : menuWidth - 18,
                     }}
                     className={cn("switch-button", { closed: !isClosed })}
-                    onClick={onClickSwitchButton}>
+                    onClick={onClickSwitchButton}
+                >
                     <img src={RightIcon} alt="switch-button" />
                 </div>
             )}
@@ -134,7 +140,8 @@ export const Controls = (): JSX.Element => {
                     left:
                         isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth - 5 : undefined,
                 }}
-                ref={controlsRef}>
+                ref={controlsRef}
+            >
                 <CommonLayout.Header className={cn("map-control-header")}>
                     <h2>Фильтрация событий</h2>
                 </CommonLayout.Header>

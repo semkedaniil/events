@@ -41,7 +41,7 @@ export const ImageSlider = ({ slides, className, onRemoveImage, readonly }: Imag
     const onRemove = (slide: string) => {
         onRemoveImage?.(slide, current);
         previousSlide();
-    }
+    };
 
     if (!Array.isArray(slides) || slides.length <= 0) {
         return null;

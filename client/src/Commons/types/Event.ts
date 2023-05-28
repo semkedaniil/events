@@ -5,7 +5,7 @@ export interface Event {
     dateRange: DateRange<Date>;
     creator?: string;
     hidden?: boolean;
-    marks: Marks,
+    marks: Marks;
     tags?: Tag[];
     description?: string;
     photos?: string[];
@@ -37,8 +37,6 @@ export interface EventDto {
     description?: string;
     photos?: File[];
 }
-
-
 
 export interface DateRange<T = string | Date> {
     startDate: T;

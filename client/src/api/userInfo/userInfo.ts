@@ -11,14 +11,20 @@ export const updateUserInfo = async (userInfo: Partial<User>): Promise<string> =
 export const updateUserAvatar = async (avatar: File | null): Promise<string> => {
     const formData = new FormData();
     formData.append("avatar", avatar ?? "");
-    const { data:  { token } } = await $authHost.post("api/user/image", formData, { headers: {
+    const {
+        data: { token },
+    } = await $authHost.post("api/user/image", formData, {
+        headers: {
             Accept: "application/json",
-            "Content-Type": "multipart/form-data"
-        }});
+            "Content-Type": "multipart/form-data",
+        },
+    });
     return token;
-}
+};
 
 export const deleteUserAvatar = async (): Promise<string> => {
-    const { data:  { token } } = await $authHost.put("api/user/image/delete");
+    const {
+        data: { token },
+    } = await $authHost.put("api/user/image/delete");
     return token;
-}
+};

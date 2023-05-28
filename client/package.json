@@ -10,7 +10,7 @@
     "lint:prettier": "prettier . --check",
     "lint:tsc": "npx tsc --noEmit",
     "lint": "run-p lint:*",
-    "fix:eslint": "eslint --ext=.ts,.tsx . --fix",
+    "fix:eslint": "eslint --ext=.ts,.tsx . --fix --quiet",
     "fix:prettier": "prettier . --write"
   },
   "eslintConfig": {

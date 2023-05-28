@@ -15,9 +15,10 @@ export const createEvent = async ({
     formData.append("dateRange", JSON.stringify(dateRange));
     formData.append("tags", JSON.stringify(tags));
     formData.append("description", description ?? "");
-    photos?.forEach(photo => {
-        formData.append(photo.name, photo);
-    });
+    if (photos)
+        for (const photo of photos) {
+            formData.append(photo.name, photo);
+        }
     await $authHost.post("api/events/create", formData, {
         headers: {
             Accept: "application/json",
@@ -57,9 +58,10 @@ export const updateEvent = async ({
     formData.append("dateRange", JSON.stringify(dateRange));
     formData.append("tags", JSON.stringify(tags));
     formData.append("description", description ?? "");
-    photos?.forEach(photo => {
-        formData.append(photo.name, photo);
-    });
+    if (photos)
+        for (const photo of photos) {
+            formData.append(photo.name, photo);
+        }
     await $authHost.put(`api/events/${id}`, formData, {
         headers: {
             Accept: "application/json",
@@ -70,4 +72,4 @@ export const updateEvent = async ({
 
 export const deleteEventImage = async (url: string, eventId: number): Promise<void> => {
     await $authHost.put(`api/events/image/delete`, { url, eventId });
-}
+};

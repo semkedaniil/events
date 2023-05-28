@@ -16,7 +16,12 @@ interface MarksBlockProps {
     withoutCaption?: boolean;
 }
 
-export const MarksBlock = ({ className, event, onValueChange, withoutCaption }: MarksBlockProps): JSX.Element | null => {
+export const MarksBlock = ({
+    className,
+    event,
+    onValueChange,
+    withoutCaption,
+}: MarksBlockProps): JSX.Element | null => {
     const { user } = useAuthStore();
     const [isLiked, setIsLiked] = useState(false);
     const [isDisliked, setIsDisliked] = useState(false);
@@ -32,7 +37,8 @@ export const MarksBlock = ({ className, event, onValueChange, withoutCaption }: 
     }
 
     const {
-        marks: { likes, dislikes }, id,
+        marks: { likes, dislikes },
+        id,
     } = event;
     const onLike = async () => {
         if (isLiked) {
@@ -67,7 +73,7 @@ export const MarksBlock = ({ className, event, onValueChange, withoutCaption }: 
                 <a className={cn("link", { liked: isLiked })}>
                     <RowStack align="center">
                         <BsFillHeartFill color="red" />
-                        { !withoutCaption && <span>Лайк</span> }
+                        {!withoutCaption && <span>Лайк</span>}
                         <span>{likes?.length}</span>
                     </RowStack>
                 </a>
@@ -76,7 +82,7 @@ export const MarksBlock = ({ className, event, onValueChange, withoutCaption }: 
                 <a className={cn("link", { disliked: isDisliked })}>
                     <RowStack align="center">
                         <BsHeartbreakFill color="red" />
-                        { !withoutCaption && <span>Дизлайк</span> }
+                        {!withoutCaption && <span>Дизлайк</span>}
                         <span>{dislikes?.length}</span>
                     </RowStack>
                 </a>

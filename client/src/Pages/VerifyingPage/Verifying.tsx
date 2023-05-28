@@ -14,11 +14,13 @@ export const Verifying = () => {
     useEffect(() => {
         const token = searchParams.get("token");
         if (token) {
-            verify(token).then(x => {
-                setIsConfirmed(x);
-            }).catch(() => {
-                setIsConfirmed(false);
-            });
+            verify(token)
+                .then(x => {
+                    setIsConfirmed(x);
+                })
+                .catch(() => {
+                    setIsConfirmed(false);
+                });
         }
     }, [searchParams]);
 
