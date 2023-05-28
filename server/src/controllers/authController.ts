@@ -48,6 +48,7 @@ class AuthController {
             );
             const status = await sendEmail(email, token);
             if (status === "") {
+                await user.destroy();
                 return next(ApiError.internal("Сообщение не было отправлено"));
             }
             return response.json({message: status});

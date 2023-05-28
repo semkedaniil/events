@@ -42,7 +42,9 @@ export const MapBox = (): JSX.Element | null => {
     }, [location]);
 
     const onEventUpdated = (updatedEvent: Event) => {
-        setEvents(events.map(event => (event.id === updatedEvent.id ? updatedEvent : event)));
+        const newEvents = events.filter(x => x.id !== updatedEvent.id);
+        newEvents.push(updatedEvent);
+        setEvents(newEvents);
     };
     useEffect(() => {
         socket.timeout(5000).connect();

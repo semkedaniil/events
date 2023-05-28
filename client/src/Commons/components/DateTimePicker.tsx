@@ -54,7 +54,7 @@ export const DateTimePicker = forwardRef<DefaultPicker, DateTimePickerProps>((pr
                     size={size}
                     data-tid="Time"
                     value={time === defaultTime ? null : time}
-                    error={timeError}
+                    error={timeError || error}
                     warning={warning}
                     defaultTime={defaultTime}
                     disabled={disabled || !value}

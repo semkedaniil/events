@@ -23,6 +23,7 @@ export const sendEmail = async (email: string, token: string): Promise<string> =
     await mail.sendMail(mailOptions);
     return `Подтверждение аккаунта было отправлено на этот адресс - ${email}. Эта ссылка будет действительно в течение 1 дня.`;
   } catch (error) {
+    console.log(error.message);
     return "";
   }
 };

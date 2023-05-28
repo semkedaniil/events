@@ -41,7 +41,6 @@ export const getValidationInfo = (
         validationInfo.dateRangeLeft = { message: "Укажите дату начала события", type: "submit" };
     }
 
-    // @ts-ignore
     if (dateRange?.endDate && differenceInHours(new Date(dateRange?.endDate), new Date(dateRange?.startDate)) < 0) {
         validationInfo.dateRangeRight = { message: "Укажите корректный временной промежуток", type: "submit" };
     }

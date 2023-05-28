@@ -5,6 +5,7 @@ dotenv.config();
 
 // @ts-ignore
 import models from "./models/models";
+import RateLimit from "express-rate-limit";
 import {db} from "./database/db";
 import cors from "cors";
 import router from "./routes/routes";
@@ -14,9 +15,15 @@ import fileUploader from "express-fileupload";
 import ErrorHandlingMiddleware from "./middleware/ErrorHandlingMiddleware";
 import {createServer} from "http";
 
+const limiter = RateLimit({
+    windowMs: 60 * 1000,
+    max: 100,
+});
+
 const port = process.env.PORT || 5000;
 const app = express();
 app.use(cors());
+app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({extended: false, limit: '20mb'}))
 app.use(fileUploader({limits: {fileSize: 20 * 1024 * 1024}}));

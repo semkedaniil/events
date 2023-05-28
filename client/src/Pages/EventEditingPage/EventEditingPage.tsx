@@ -97,11 +97,11 @@ export const EventEditingPage = () => {
                     ) as never[]
         );
     const onSaveEvent = async () => {
-        setLoading(true);
-        const isValid = container.current?.validate();
-        let error = false;
-        try {
-            if (isValid && currentEvent && !error) {
+        const isValid = await container.current?.validate();
+        let uploadError = false;
+        if (isValid && currentEvent && !error) {
+            setLoading(true);
+            try {
                 const newEventDto: EventDto = {
                     id: currentEvent.id.toString(),
                     name: currentEvent.name,
@@ -113,18 +113,18 @@ export const EventEditingPage = () => {
                 };
                 setEvent(currentEvent);
                 await updateEvent(newEventDto);
+            } catch (error) {
+                if (error) {
+                    uploadError = true;
+                }
+            } finally {
+                setLoading(false);
+                if (!uploadError) {
+                    Toast.push("Событие успешно создано!");
+                }
+                fileUploader.current?.reset();
+                navigate("/events");
             }
-        } catch (error_) {
-            if (error_) {
-                error = true;
-            }
-        } finally {
-            setLoading(false);
-            if (!error) {
-                Toast.push("Событие успешно создано!");
-            }
-            fileUploader.current?.reset();
-            navigate("/events");
         }
     };
 
@@ -136,6 +136,8 @@ export const EventEditingPage = () => {
             await deleteEventImage(url, event?.id);
         }
     };
+
+    console.log(validationInfo);
     return (
         <CommonLayout>
             <CommonLayout.Header>
