@@ -13,6 +13,7 @@ import {Server} from 'socket.io'
 import fileUploader from "express-fileupload";
 import ErrorHandlingMiddleware from "./middleware/ErrorHandlingMiddleware";
 import {createServer} from "http";
+import path from "path";
 
 const limiter = RateLimit({
     windowMs: 60 * 1000,
@@ -24,7 +25,7 @@ const app = express();
 app.use(cors());
 app.use(limiter);
 app.use(express.json());
-app.use('/static', express.static("static"));
+app.use('/static', express.static(path.join(__dirname, "../static")));
 app.use(express.urlencoded({extended: false, limit: '20mb'}))
 app.use(fileUploader({limits: {fileSize: 20 * 1024 * 1024}}));
 app.use(ErrorHandlingMiddleware);
@@ -48,7 +49,7 @@ io.on('connect', (socket) => {
         console.log('user disconnected');
     });
 })
-export { io };
+export {io};
 
 const startServer = async (): Promise<void> => {
     try {
