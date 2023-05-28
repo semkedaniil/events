@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "set \"CI=false\" && react-scripts build",
+    "build": "react-scripts build",
     "test": "node scripts/test.js",
     "lint:eslint": "eslint --ext=.ts,.tsx . --cache --quiet",
     "lint:prettier": "prettier . --check",
