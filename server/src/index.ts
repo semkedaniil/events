@@ -9,7 +9,6 @@ import RateLimit from "express-rate-limit";
 import {db} from "./database/db";
 import cors from "cors";
 import router from "./routes/routes";
-import path from "path";
 import {Server} from 'socket.io'
 import fileUploader from "express-fileupload";
 import ErrorHandlingMiddleware from "./middleware/ErrorHandlingMiddleware";
@@ -25,9 +24,9 @@ const app = express();
 app.use(cors());
 app.use(limiter);
 app.use(express.json());
+app.use('/static', express.static("static"));
 app.use(express.urlencoded({extended: false, limit: '20mb'}))
 app.use(fileUploader({limits: {fileSize: 20 * 1024 * 1024}}));
-app.use('/static', express.static(path.resolve(__dirname, "..", "static")));
 app.use(ErrorHandlingMiddleware);
 
 const server = createServer(app);
