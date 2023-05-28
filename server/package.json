@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "npm run tsc",
     "start": "node dist/index.js",
     "prebuild": "npm run lint",
     "lint:fix": "eslint --cache --ext .ts . --fix",
