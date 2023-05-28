@@ -122,7 +122,7 @@ export const MapBox = (): JSX.Element | null => {
             onClick={onMapClick}
             onMoveEnd={rerenderMap}
             onZoomEnd={rerenderMap}
-            ref={element => (map.current = element)}
+            ref={map}
             id="eventMap"
             initialViewState={initialViewState}
             style={{ width: "100%", height: "100%" }}

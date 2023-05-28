@@ -61,6 +61,11 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
                     <main>{event.description}</main>
                     <footer>
                         {event.creator && <span className={cn("author")}>Автор: {event.creator}</span>}
+                        <RowStack>
+                            {event.tags?.map(({ name }) => (
+                                <span className={cn("author")} key={name}>#{name}</span>
+                            ))}
+                        </RowStack>
                         <RowStack align="center" className={cn("marks-wrapper")}>
                             <ColumnStack className={cn("date-range")}>
                                 <span>Начало: {start}</span>

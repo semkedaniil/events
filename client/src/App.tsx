@@ -45,7 +45,6 @@ export const App = (): JSX.Element => {
             return;
         }
         setLoading(true);
-        console.log(isAuth, localStorage.getItem("token"));
         check()
             .then(x => setIsAuth(true))
             .catch(error => {

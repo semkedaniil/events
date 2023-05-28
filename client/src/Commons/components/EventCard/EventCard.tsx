@@ -46,6 +46,7 @@ export const EventList = ({ events, className }: EventListProps) => {
                     photos,
                     description,
                     creator,
+                    tags
                 } = event;
                 const start = new Date(startDate).toLocaleString();
                 const end = endDate && new Date(endDate).toLocaleString();
@@ -67,6 +68,11 @@ export const EventList = ({ events, className }: EventListProps) => {
                             <main>{description}</main>
                             <footer>
                                 {creator && <span className={cn("author")}>Автор {creator}</span>}
+                                <RowStack>
+                                    {tags?.map(({ name }) => (
+                                        <span key={name}>#{name}</span>
+                                    ))}
+                                </RowStack>
                                 <RowStack align="center" className={cn("marks-wrapper")}>
                                     <ColumnStack className={cn("date-range")}>
                                         <span>Начало {start}</span>

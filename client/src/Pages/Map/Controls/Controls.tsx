@@ -70,7 +70,8 @@ export const Controls = (): JSX.Element => {
         if (!isValid) {
             return;
         }
-
+        console.log(tags);
+        console.log(events);
         const startDate = from !== "" && parse(from, "dd.MM.yyyy", new Date());
         const endDate = to !== "" && new Date(to);
         const filteredEvents: Event[] = events
@@ -80,7 +81,7 @@ export const Controls = (): JSX.Element => {
             )
             .filter(event => (startDate ? new Date(event.dateRange.startDate) >= startDate : true))
             .filter(event => (endDate && event.dateRange.endDate ? new Date(event.dateRange.endDate) <= endDate : true))
-            .filter(event => (tags && event.tags ? _.difference(tags, event.tags).length === 0 : true));
+            .filter(event => (tags && event.tags ? _.difference(tags, event.tags.map(x => x.name)).length === 0 : true));
         setFilteredEvents(filteredEvents);
         const [lng, lat] = coords.split(",").map(Number);
         if (Math.abs(lng) <= 180 && Math.abs(lat) <= 85 && eventMap) {
