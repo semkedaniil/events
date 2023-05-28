@@ -1,7 +1,6 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "start": "node scripts/start.js",
     "build": "react-scripts build",
