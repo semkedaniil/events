@@ -24,7 +24,7 @@ const mapEventModelsToEventDTO = (eventModel: any[]) => eventModel?.map((event: 
   hidden: false,
   tags: event?.tags,
   description: event?.description,
-  photos: event?.images.map((image: any) => `${serverUrl}${image.url}`)
+  photos: event?.images.filter((x: any) => x.url != null).map((image: any) => `${serverUrl}/static/${image.url}`)
 })).filter((event: any) => event.location != null);
 
 export class EventController {

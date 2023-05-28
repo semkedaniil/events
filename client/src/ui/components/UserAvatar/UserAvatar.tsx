@@ -18,7 +18,7 @@ export const UserAvatar = ({ onClick, className, username }: UserAvatarProps): J
     const [imageUrl, setImageUrl] = useState<Nullable<string>>(user?.avatarUrl);
     useEffect(() => {
         if (user?.avatarUrl) {
-            setImageUrl(`${process.env.REACT_APP_API_URL}${user?.avatarUrl}`);
+            setImageUrl(`${process.env.REACT_APP_API_URL}/static/${user?.avatarUrl}`);
         } else {
             setImageUrl(null);
         }

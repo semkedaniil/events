@@ -27,7 +27,7 @@ app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({extended: false, limit: '20mb'}))
 app.use(fileUploader({limits: {fileSize: 20 * 1024 * 1024}}));
-app.use(express.static(path.resolve(__dirname, "..", "static")));
+app.use('/static', express.static(path.resolve(__dirname, "..", "static")));
 app.use(ErrorHandlingMiddleware);
 
 const server = createServer(app);
