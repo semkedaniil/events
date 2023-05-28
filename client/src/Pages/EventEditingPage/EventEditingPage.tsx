@@ -137,7 +137,6 @@ export const EventEditingPage = () => {
         }
     };
 
-    console.log(validationInfo);
     return (
         <CommonLayout>
             <CommonLayout.Header>
