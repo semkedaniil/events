@@ -2,8 +2,9 @@ import Map, { useMap, NavigationControl, FullscreenControl, GeolocateControl, Sc
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
+// @ts-ignore
+import MapboxWorker from "mapbox-gl/dist/mapbox-gl-csp-worker";
 import { Button } from "@skbkontur/react-ui";
-
 import { Event } from "../../../Commons/types/Event";
 import GeocoderControl from "../Controls/GeocoderControl";
 import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";
@@ -23,6 +24,8 @@ export const initialViewState = {
     longitude: 60.812_511_332_593_57,
     zoom: 4,
 };
+// @ts-ignore
+mapboxgl.workerClass = MapboxWorker;
 
 export const MapBox = (): JSX.Element | null => {
     const map = useMap() as any;
@@ -124,8 +127,7 @@ export const MapBox = (): JSX.Element | null => {
             initialViewState={initialViewState}
             style={{ width: "100%", height: "100%" }}
             mapStyle={getMapTheme()}
-            mapboxAccessToken={MAPBOX_TOKEN}
-        >
+            mapboxAccessToken={MAPBOX_TOKEN}>
             {showCreatePopup && (
                 <Popup
                     closeButton
@@ -133,8 +135,7 @@ export const MapBox = (): JSX.Element | null => {
                     maxWidth="400px"
                     longitude={showCreatePopup.coordinates?.lng}
                     latitude={showCreatePopup.coordinates?.lat}
-                    onClose={() => setShowCreatePopup(null)}
-                >
+                    onClose={() => setShowCreatePopup(null)}>
                     <ColumnStack className={cn("creation-popup")}>
                         <h2>Создать событие?</h2>
                         <main>
@@ -157,8 +158,7 @@ export const MapBox = (): JSX.Element | null => {
                                     navigate(
                                         `/event/create?lng=${showCreatePopup.coordinates.lng}&lat=${showCreatePopup.coordinates.lat}`
                                     )
-                                }
-                            >
+                                }>
                                 Создать
                             </Button>
                             <Button use="default" width="50%" onClick={() => setShowCreatePopup(null)}>

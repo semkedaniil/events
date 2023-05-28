@@ -2,6 +2,8 @@ import { Button, Modal } from "@skbkontur/react-ui";
 import Map, { Marker } from "react-map-gl";
 import React, { useState } from "react";
 import mapboxgl from "mapbox-gl";
+// @ts-ignore
+import MapboxWorker from "mapbox-gl/dist/mapbox-gl-csp-worker";
 
 import { getMapTheme, initialViewState, MAPBOX_TOKEN } from "../../../Pages/Map/MapBox/MapBox";
 import GeocoderControl from "../../../Pages/Map/Controls/GeocoderControl";
@@ -14,6 +16,8 @@ interface MapCoordsPickerProps {
     onCloseModal: () => void;
 }
 
+// @ts-ignore
+mapboxgl.workerClass = MapboxWorker;
 export const MapCoordsPicker = ({ onSaveCoordinates, onCloseModal }: MapCoordsPickerProps) => {
     const [newLocationCoords, setNewLocationCoords] = useState<Location | null>(null);
     const onMapClick = ({ lngLat: { lat, lng } }: mapboxgl.MapLayerMouseEvent) => {
@@ -43,8 +47,7 @@ export const MapCoordsPicker = ({ onSaveCoordinates, onCloseModal }: MapCoordsPi
                     projection="globe"
                     style={{ width: "100%", height: "250px", borderRadius: "16px" }}
                     mapStyle={getMapTheme()}
-                    mapboxAccessToken={MAPBOX_TOKEN}
-                >
+                    mapboxAccessToken={MAPBOX_TOKEN}>
                     <GeocoderControl mapboxAccessToken={MAPBOX_TOKEN || ""} position="top-left" />
                     {newLocationCoords && (
                         <Marker
@@ -54,8 +57,7 @@ export const MapCoordsPicker = ({ onSaveCoordinates, onCloseModal }: MapCoordsPi
                             latitude={newLocationCoords.latitude}
                             onDragEnd={({ lngLat: { lat, lng } }) =>
                                 setNewLocationCoords({ latitude: lat, longitude: lng })
-                            }
-                        >
+                            }>
                             <img src={markerPng} width={35} height={35} alt="marker" />
                         </Marker>
                     )}
