@@ -4,11 +4,16 @@ export interface Event {
     location: Location;
     dateRange: DateRange<Date>;
     creator?: string;
+    subscriptions?: Subscription[];
     hidden?: boolean;
     marks: Marks;
     tags?: Tag[];
     description?: string;
     photos?: string[];
+}
+
+export interface Subscription {
+    userId: string;
 }
 
 export interface Tag {

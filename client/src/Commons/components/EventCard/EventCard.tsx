@@ -1,5 +1,5 @@
 import { Link } from "@skbkontur/react-ui";
-import React from "react";
+import React, { useMemo } from "react";
 import { BsGearWideConnected, BsTrash3 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,9 @@ import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { MarksBlock } from "../../../ui/components/MarksBlock/MarksBlock";
 import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
 import { useAuthStore } from "../../../stores/userStore/userStore";
-import {deleteEvent} from "../../../api/events/events";
+import { deleteEvent } from "../../../api/events/events";
+import { subscribe, unsubscribe } from "../../../api/subscriptions/subscriptions";
+import { SubscribeButton } from "../../../ui/components/SubscribeButton/SubscribeButton";
 
 import cn from "./Event.less";
 
@@ -42,7 +44,15 @@ export const EventList = ({ events, className, onDeleteEvent }: EventListProps) 
     const onDelete = async (eventId: number) => {
         await deleteEvent(eventId);
         onDeleteEvent?.(eventId);
-    }
+    };
+
+    const onSubscribe = async (eventId: number) => {
+        await subscribe(eventId);
+    };
+
+    const onUnsubscribe = async (eventId: number) => {
+        await unsubscribe(eventId);
+    };
 
     return (
         <div className={cn("events", className)}>
@@ -54,20 +64,21 @@ export const EventList = ({ events, className, onDeleteEvent }: EventListProps) 
                     photos,
                     description,
                     creator,
+                    subscriptions,
                     tags,
                 } = event;
                 const start = new Date(startDate).toLocaleString();
                 const end = endDate && new Date(endDate).toLocaleString();
                 const canDelete = user?.username === creator && onDeleteEvent;
+                const isUserSubscribed = Boolean(subscriptions?.find(x => x.userId === user?.id));
                 return (
                     <div key={id} className={cn("event")}>
                         <div className={cn("buttons")}>
                             {user?.username === creator && (
                                 <div
-                                    className={cn("edit-button", { "with-delete": canDelete})}
+                                    className={cn("edit-button", { "with-delete": canDelete })}
                                     title="Редактировать событие"
-                                    onClick={() => onEditButtonClick(id)}
-                                >
+                                    onClick={() => onEditButtonClick(id)}>
                                     <BsGearWideConnected size={32} />
                                 </div>
                             )}
@@ -75,8 +86,7 @@ export const EventList = ({ events, className, onDeleteEvent }: EventListProps) 
                                 <div
                                     className={cn("delete-button")}
                                     title="Удалить событие"
-                                    onClick={() => onDelete(id)}
-                                >
+                                    onClick={() => onDelete(id)}>
                                     <BsTrash3 size={32} />
                                 </div>
                             )}
@@ -89,13 +99,26 @@ export const EventList = ({ events, className, onDeleteEvent }: EventListProps) 
                             </Link>
                             <main>{description}</main>
                             <footer>
-                                {creator && <span className={cn("author")}>Автор {creator}</span>}
-                                <RowStack>
+                                {creator && (
+                                    <RowStack className={cn("author")}>
+                                        <span>Автор {creator}</span>
+                                        {creator !== user?.username && (
+                                            <div className={cn("sub-button")}>
+                                                <SubscribeButton
+                                                    isUserSubscribed={isUserSubscribed}
+                                                    onSubscribe={() => onSubscribe(id)}
+                                                    onUnsubscribe={() => onUnsubscribe(id)}
+                                                />
+                                            </div>
+                                        )}
+                                    </RowStack>
+                                )}
+                                <RowStack className={cn("tags-wrapper")}>
                                     {tags?.map(({ name }) => (
                                         <span key={name}>#{name}</span>
                                     ))}
                                 </RowStack>
-                                <RowStack align="center" className={cn("marks-wrapper")}>
+                                <RowStack justify="space-between" align="center" className={cn("marks-wrapper")}>
                                     <ColumnStack className={cn("date-range")}>
                                         <span>Начало {start}</span>
                                         {endDate && <span>Конец {end}</span>}

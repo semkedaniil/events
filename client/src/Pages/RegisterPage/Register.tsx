@@ -5,8 +5,8 @@ import { AiOutlineMail } from "react-icons/ai";
 import { BsKey } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
-import { login, registration } from "../../api/auth/auth";
-import { useAuthStore } from "../../stores/userStore/userStore";
+import { registration } from "../../api/auth/auth";
+import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
 
 import cn from "./Register.less";
 import { getRegistrationValidationInfo } from "./helpers";
@@ -87,19 +87,21 @@ export const Register = (): JSX.Element => {
                                 detectCapsLock
                             />
                         </ValidationWrapper>
-                        <LocaleContext.Provider
-                            value={{
-                                langCode: LangCodes.ru_RU,
-                            }}
-                        >
-                            <ValidationWrapper validationInfo={validationInfo.birthdate}>
-                                <DatePicker
-                                    width="100%"
-                                    onValueChange={(value): void => setBirthDate(value)}
-                                    value={birthDate}
-                                />
-                            </ValidationWrapper>
-                        </LocaleContext.Provider>
+                        <ColumnStack>
+                            <span className={cn("birthday-caption")}>Дата рождения</span>
+                            <LocaleContext.Provider
+                                value={{
+                                    langCode: LangCodes.ru_RU,
+                                }}>
+                                <ValidationWrapper validationInfo={validationInfo.birthdate}>
+                                    <DatePicker
+                                        width="100%"
+                                        onValueChange={(value): void => setBirthDate(value)}
+                                        value={birthDate}
+                                    />
+                                </ValidationWrapper>
+                            </LocaleContext.Provider>
+                        </ColumnStack>
                         <Button use="primary" size="medium" onClick={signIn}>
                             Зарегистрироваться
                         </Button>

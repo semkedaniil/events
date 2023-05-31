@@ -12,6 +12,9 @@
       background-color: rgba(255, 255, 255, 0.95);
       padding: @base-size * 2;
       border: 1px solid rgba(0, 0, 0, 0.16);
+      &:hover {
+        background-color: #e3e3e3;
+      }
     }
 
     .edit-button {
@@ -24,6 +27,15 @@
     .delete-button {
       border-radius: 0 16px 0 0;
     }
+  }
+
+  .author {
+    margin-bottom: @base-size * 4;
+  }
+  .sub-button {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
   }
 
   .events {
@@ -51,7 +63,11 @@
       }
 
       .name {
+        padding: 0 @base-size * 2;
         border: inherit;
+        &:hover {
+          background-color: #f3f3f3;
+        }
       }
 
       .img {

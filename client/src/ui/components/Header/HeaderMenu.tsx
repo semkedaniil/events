@@ -47,6 +47,9 @@ export const HeaderMenu = ({ onClose }: HeaderMenuProps): JSX.Element => {
                     <Link href="/events" className={cn("menu-item")}>
                         Мои события
                     </Link>
+                    <Link href="/subscriptions" className={cn("menu-item")}>
+                        Мои подписки
+                    </Link>
                 </>
             )}
             <Link href="/help" className={cn("menu-item")}>

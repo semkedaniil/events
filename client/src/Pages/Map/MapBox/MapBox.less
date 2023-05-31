@@ -8,6 +8,12 @@
     }
   }
 
+  .sub-button {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    margin-bottom: @base-size * 4;
+  }
   .marks-wrapper {
     justify-content: space-between;
   }
@@ -40,7 +46,7 @@
     }
 
     .author {
-      font-size: 12px;
+      font-size: 14px;
     }
 
     .name {
@@ -92,6 +98,7 @@
   }
 
   .popup {
+    z-index: 2;
     padding: 0;
     animation: anim 0.5s;
     transition: visibility 0.5s;

@@ -42,7 +42,7 @@ const Images = database.define("images", {
 
 const Tag = database.define("tag", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, allowNull: false, unique: true},
+    name: {type: DataTypes.STRING, allowNull: false },
 });
 
 const Subscription = database.define("subscription", {

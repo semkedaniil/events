@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import Map, { Marker } from "react-map-gl";
 import { IoIosWarning } from "react-icons/io";
 
@@ -9,9 +9,11 @@ import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
 import { getMapTheme, MAPBOX_TOKEN } from "../Map/MapBox/MapBox";
 import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
-import { useAuthStore } from "../../stores/userStore/userStore";
 import { getEvent } from "../../api/events/events";
 import { MarksBlock } from "../../ui/components/MarksBlock/MarksBlock";
+import { SubscribeButton } from "../../ui/components/SubscribeButton/SubscribeButton";
+import { useAuthStore } from "../../stores/userStore/userStore";
+import {subscribe, unsubscribe} from "../../api/subscriptions/subscriptions";
 
 import cn from "./EventPage.less";
 import { ImageSlider } from "./PhotoSlider/Slider";
@@ -19,9 +21,12 @@ import { ImageSlider } from "./PhotoSlider/Slider";
 export const EventPage = (): JSX.Element => {
     const { id = "" } = useParams<"id">();
     const [event, setEvent] = useState<Event>();
+    const { user } = useAuthStore();
     useEffect(() => {
         loadEvent();
     }, []);
+
+    const isUserSubscribed = useMemo(() => event?.subscriptions?.find(x => x.userId === user?.id) != null, [event]);
 
     async function loadEvent() {
         const currentId = Number(id);
@@ -32,6 +37,18 @@ export const EventPage = (): JSX.Element => {
             }
         }
     }
+
+    const onSubscribe = async () => {
+        if (event?.id) {
+            await subscribe(event.id);
+        }
+    };
+
+    const onUnsubscribe = async () => {
+        if (event?.id) {
+            await unsubscribe(event.id);
+        }
+    };
 
     if (!event) {
         return (
@@ -82,10 +99,15 @@ export const EventPage = (): JSX.Element => {
                             <p className={cn("description")}>{description}</p>
                         </ColumnStack>
                     )}
-                    <RowStack>
+                    <RowStack align="center">
                         {tags?.map(({ name }) => (
                             <span key={name}>#{name}</span>
                         ))}
+                        {creator !== user?.username && (
+                            <div className={cn("sub-button")}>
+                                <SubscribeButton isUserSubscribed={isUserSubscribed} onSubscribe={onSubscribe} onUnsubscribe={onUnsubscribe} />
+                            </div>
+                        )}
                     </RowStack>
                     <RowStack align="center">
                         <ColumnStack>
@@ -100,7 +122,7 @@ export const EventPage = (): JSX.Element => {
                                 </RowStack>
                             )}
                         </ColumnStack>
-                        <MarksBlock event={event} onValueChange={setEvent} />
+                        <MarksBlock className={cn("marks")} event={event} onValueChange={setEvent} />
                     </RowStack>
                 </div>
                 <div className={cn("column", "event-map")}>
@@ -114,8 +136,7 @@ export const EventPage = (): JSX.Element => {
                         projection="globe"
                         style={{ width: "100%", height: "100%", borderRadius: "16px" }}
                         mapStyle={getMapTheme()}
-                        mapboxAccessToken={MAPBOX_TOKEN}
-                    >
+                        mapboxAccessToken={MAPBOX_TOKEN}>
                         <Marker longitude={longitude} latitude={latitude} />
                     </Map>
                     <RowStack>

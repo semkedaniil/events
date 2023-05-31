@@ -25,6 +25,7 @@ const mapEventModelsToEventDTO = (eventModel: any[]) => eventModel?.map((event: 
   hidden: false,
   tags: event?.tags,
   description: event?.description,
+  subscriptions: event?.subscriptions,
   photos: event?.images.filter((x: any) => x.url != null).map((image: any) => `${serverUrl}/static/${image.url}`)
 })).filter((event: any) => event.location != null);
 
@@ -48,6 +49,25 @@ export class EventController {
     return mapEventModelsToEventDTO([event])[0];
   }
 
+  public static async getEventsByIds(ids: number[]) {
+    const events = await Event.findAll({
+      where: { id: ids }, include: [{ model: User, attributes: ["username"] }, Images, {
+        model: Location,
+        attributes: ["latitude", "longitude"]
+      }, {
+        model: Tag,
+        attributes: ["name"]
+      }, {
+        model: Mark,
+        attributes: ["isLiked", "userId"]
+      }, {
+        model: Subscription,
+        attributes: ["userId"]
+      }]
+    });
+    return mapEventModelsToEventDTO(events);
+  }
+
   private static async getAllEvents(next: (...args: any[]) => void) {
     const events = await BaseModelHelper.find({
       Model: Event,
@@ -61,6 +81,9 @@ export class EventController {
       }, {
         model: Mark,
         attributes: ["isLiked", "userId"]
+      }, {
+        model: Subscription,
+        attributes: ["userId"]
       }]
     });
     return mapEventModelsToEventDTO(events);
@@ -73,7 +96,7 @@ export class EventController {
 
 
   public async getEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
-    const { id } = request.params;
+    const { params: { id }} = request;
     try {
       if (id) {
         const event = await EventController.getEventById(id);
@@ -158,8 +181,8 @@ export class EventController {
     const { eventId, url } = request.body;
     const imageUrl = url.split(serverUrl)[1];
     try {
-      await Images.destroy({ where: { eventId, url: imageUrl } });
-      const avatarPath = path.join(__dirname, "..", "..", "static", imageUrl);
+      await Images.destroy({ where: { eventId, url: imageUrl.split("static/")[1] } });
+      const avatarPath = path.join(__dirname, "..", "..", imageUrl);
       fs.unlink(avatarPath, (error) => {
         if (error) {
           next(ApiError.badRequest(error.message));
@@ -167,7 +190,7 @@ export class EventController {
       });
       const event = await EventController.getEventById(eventId);
       io.emit("event updated", event);
-      return response.json({ message: "Сообщение удалено" });
+      return response.json({ message: "Изображение удалено" });
     } catch (error) {
       next(ApiError.badRequest(error.message));
     }

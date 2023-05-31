@@ -68,10 +68,11 @@ export const MapBox = (): JSX.Element | null => {
     useEffect(() => {
         setGeoEvents(mapEventsToGeoJson(events));
         socket.timeout(5000).connect();
-        socket.on("event updated", onEventUpdated);
         socket.on("event deleted", onEventDeleted);
+        socket.on("event updated", onEventUpdated);
         return () => {
             socket.off("event updated", onEventUpdated);
+            socket.off("event deleted", onEventDeleted);
         };
     }, [events]);
 
@@ -118,10 +119,12 @@ export const MapBox = (): JSX.Element | null => {
         const event = events.find(event => event.id === updatedEvent.id);
         const geoEvent = geoEvents?.find(event => event.properties.id === updatedEvent.id);
         if (event) {
+            event.subscriptions = updatedEvent.subscriptions;
             event.marks = { ...updatedEvent.marks };
         }
 
         if (geoEvent) {
+            geoEvent.properties.subscriptions = updatedEvent.subscriptions;
             geoEvent.properties.marks = { ...updatedEvent.marks };
         }
     };
@@ -159,9 +162,11 @@ export const MapBox = (): JSX.Element | null => {
                                     {showCreatePopup.coordinates.lat.toFixed(3)})
                                 </span>
                             </span>
-                            <div>
-                                Это рядом с <i>&ldquo;{showCreatePopup.address}&rdquo;</i>
-                            </div>
+                            {showCreatePopup.address && (
+                                <div>
+                                    Это рядом с <i>&ldquo;{showCreatePopup.address}&rdquo;</i>
+                                </div>
+                            )}
                         </main>
                         <div className={cn("buttons")}>
                             <Button
@@ -200,7 +205,7 @@ export const MapBox = (): JSX.Element | null => {
 async function getNearestAddressByCoordinates(lon: string, lat: string): Promise<string> {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${MAPBOX_TOKEN}`;
     const data = await fetch(url).then(x => x.json());
-    return data?.features?.[0].place_name ?? "";
+    return data?.features?.[0]?.place_name ?? "";
 }
 
 export function getMapTheme(): string {

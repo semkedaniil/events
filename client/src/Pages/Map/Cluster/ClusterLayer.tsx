@@ -9,6 +9,10 @@ import { Event } from "../../../Commons/types/Event";
 import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
 import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { MarksBlock } from "../../../ui/components/MarksBlock/MarksBlock";
+import { stringToColor } from "../../ProfilePage/helpers";
+import { SubscribeButton } from "../../../ui/components/SubscribeButton/SubscribeButton";
+import { useAuthStore } from "../../../stores/userStore/userStore";
+import { subscribe, unsubscribe } from "../../../api/subscriptions/subscriptions";
 
 interface ClusterLayerProps {
     mapId: string;
@@ -23,6 +27,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
     if (!data?.length) {
         return null;
     }
+    const { user } = useAuthStore();
     const { [mapId]: mapRef } = useMap();
     const bbox = mapRef?.getBounds().toArray().flat() as [number, number, number, number];
     const zoom = mapRef?.getZoom() ?? 0;
@@ -41,12 +46,39 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
         onSelectMarker(nextZoom, coordinates);
     };
 
+    const onSubscribe = async (eventId: number) => {
+        try {
+            await subscribe(eventId);
+        } finally {
+            if (user?.id && currentEvent?.subscriptions) {
+                onValueChange({
+                    ...currentEvent,
+                    subscriptions: [...currentEvent.subscriptions, { userId: user?.id }],
+                });
+            }
+        }
+    };
+
+    const onUnsubscribe = async (eventId: number) => {
+        try {
+            await unsubscribe(eventId);
+        } finally {
+            if (user?.id && currentEvent?.subscriptions) {
+                onValueChange({
+                    ...currentEvent,
+                    subscriptions: currentEvent.subscriptions.filter(x => x.userId !== user.id),
+                });
+            }
+        }
+    };
+
     const renderMarkerTooltip = ({ id }: Feature["properties"]): JSX.Element | null => {
         if (!currentEvent) {
             return null;
         }
         const start = new Date(currentEvent.dateRange.startDate).toLocaleString();
         const end = currentEvent.dateRange.endDate && new Date(currentEvent.dateRange.endDate).toLocaleString();
+        const isUserSubscribed = Boolean(currentEvent.subscriptions?.find(x => x.userId === user?.id));
         return (
             <div className={cn("event-tooltip")}>
                 {currentEvent.photos?.[0] && (
@@ -58,13 +90,28 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
                     </Link>
                     <main>{currentEvent.description}</main>
                     <footer>
-                        {currentEvent.creator && <span className={cn("author")}>Автор: {currentEvent.creator}</span>}
                         <RowStack>
-                            {currentEvent.tags?.map(({ name }) => (
-                                <span className={cn("author")} key={name}>
-                                    #{name}
-                                </span>
-                            ))}
+                            <ColumnStack>
+                                {currentEvent.creator && (
+                                    <RowStack className={cn("author")}>Автор: {currentEvent.creator}</RowStack>
+                                )}
+                                <RowStack>
+                                    {currentEvent.tags?.map(({ name }) => (
+                                        <span className={cn("author")} key={name}>
+                                            #{name}
+                                        </span>
+                                    ))}
+                                </RowStack>
+                            </ColumnStack>
+                            {currentEvent.creator !== user?.username && (
+                                <div className={cn("sub-button")}>
+                                    <SubscribeButton
+                                        isUserSubscribed={isUserSubscribed}
+                                        onSubscribe={() => onSubscribe(id)}
+                                        onUnsubscribe={() => onUnsubscribe(id)}
+                                    />
+                                </div>
+                            )}
                         </RowStack>
                         <RowStack align="center" className={cn("marks-wrapper")}>
                             <ColumnStack className={cn("date-range")}>
@@ -104,7 +151,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
                         key={`marker-${properties.id}`}
                         style={{
                             backgroundImage: `url(${properties.photos?.[0]})`,
-                            backgroundColor: "#0b0772",
+                            backgroundColor: stringToColor(properties.name),
                             border: "1px solid rgba(0, 0, 0, 0.5)",
                             width,
                             height,

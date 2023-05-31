@@ -17,10 +17,12 @@ import { ProfilePage } from "./Pages/ProfilePage/ProfilePage";
 import { EventPage } from "./Pages/EventPage/EventPage";
 import { EventCreationPage } from "./Pages/EventCreationPage/EventCreationPage";
 import { EventEditingPage } from "./Pages/EventEditingPage/EventEditingPage";
+import { SubscriptionsPage } from "./Pages/SubscriptionsPage/SubscriptionsPage";
 
 const routes = [
     { path: "/", element: <Map /> },
     { path: "/help", element: <Help /> },
+    { path: "/subscriptions", element: <SubscriptionsPage /> },
     { path: "/events", element: <Events /> },
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
@@ -38,7 +40,7 @@ const allowedRoutes = new Set(["/login", "/register", "/reset-password", "/help"
 export const App = (): JSX.Element => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { check, setUser, setToken, setIsAuth, isAuth } = useAuthStore();
+    const { check, setUser, setToken, setIsAuth } = useAuthStore();
     const { pathname } = useLocation();
     useEffect(() => {
         if (allowedRoutes.has(pathname)) {
@@ -46,7 +48,7 @@ export const App = (): JSX.Element => {
         }
         setLoading(true);
         check()
-            .then(x => setIsAuth(true))
+            .then(() => setIsAuth(true))
             .catch(error => {
                 if (error.response.status >= 400 && error.response.status < 500) {
                     navigate("/login");

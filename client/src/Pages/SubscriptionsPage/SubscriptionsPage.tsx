@@ -1,35 +1,35 @@
 import { useEffect, useState } from "react";
 
-import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
-import { Event } from "../../Commons/types/Event";
-import { getUserEvents } from "../../api/events/events";
+import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { EventList } from "../../Commons/components/EventCard/EventCard";
+import { Event } from "../../Commons/types/Event";
+import { getSubscriptionEventsByUserId } from "../../api/subscriptions/subscriptions";
+import { useAuthStore } from "../../stores/userStore/userStore";
 
-export const Events = (): JSX.Element => {
+export const SubscriptionsPage = () => {
+    const { user } = useAuthStore();
     const [userEvents, setUserEvents] = useState<Event[]>([]);
 
     useEffect(() => {
         loadEvents();
     }, []);
-
-    const onDeleteEvent = (eventId: number) => {
-        setUserEvents(userEvents.filter(event => event.id !== eventId))
-    }
     return (
         <CommonLayout>
             <CommonLayout.Header>
                 <GoBackLink backUrl=".." />
-                <h1>Мои события</h1>
+                <h1>Мои подписки</h1>
             </CommonLayout.Header>
             <CommonLayout.Content>
-                <EventList events={userEvents} onDeleteEvent={onDeleteEvent}/>
+                <EventList events={userEvents} />
             </CommonLayout.Content>
         </CommonLayout>
     );
 
     async function loadEvents() {
-        const events = await getUserEvents();
-        setUserEvents(events);
+        if (user?.id) {
+            const events = await getSubscriptionEventsByUserId(user?.id);
+            setUserEvents(events);
+        }
     }
 };

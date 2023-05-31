@@ -79,7 +79,7 @@ export const Controls = (): JSX.Element => {
         setFrom("");
         setTo("");
         setFilteredEvents([]);
-    }
+    };
     const onSubmit = (): void => {
         const isValid = container.current?.validate();
         if (!isValid) {
@@ -94,6 +94,11 @@ export const Controls = (): JSX.Element => {
             )
             .filter(event => (startDate ? new Date(event.dateRange.startDate) >= startDate : true))
             .filter(event => (endDate && event.dateRange.endDate ? new Date(event.dateRange.endDate) <= endDate : true))
+            .filter(event =>
+                participantsCount != null && event.subscriptions
+                    ? event.subscriptions?.length >= participantsCount
+                    : true
+            )
             .filter(event =>
                 tags && event.tags
                     ? _.difference(
@@ -243,7 +248,7 @@ export const Controls = (): JSX.Element => {
                         width={inputWidth}
                         style={{ maxHeight: 200, overflow: "auto" }}
                         type={TokenInputType.Combined}
-                        getItems={async (q) => getTagsNames(q)}
+                        getItems={async q => getTagsNames(q)}
                         menuAlign="left"
                         menuWidth={tags.length === 10 ? "0px" : undefined}
                         selectedItems={tags}
