@@ -5,6 +5,7 @@ import mapboxgl from "mapbox-gl";
 // @ts-ignore
 import MapboxWorker from "mapbox-gl/dist/mapbox-gl-csp-worker";
 import { Button } from "@skbkontur/react-ui";
+
 import { Event } from "../../../Commons/types/Event";
 import GeocoderControl from "../Controls/GeocoderControl";
 import { Feature, mapEventsToGeoJson } from "../../../stores/eventsStore/helpers";

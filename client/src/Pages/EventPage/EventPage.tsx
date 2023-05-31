@@ -18,9 +18,7 @@ import { ImageSlider } from "./PhotoSlider/Slider";
 
 export const EventPage = (): JSX.Element => {
     const { id = "" } = useParams<"id">();
-    const { user } = useAuthStore();
     const [event, setEvent] = useState<Event>();
-    const { isAuth } = useAuthStore();
     useEffect(() => {
         loadEvent();
     }, []);
@@ -33,10 +31,6 @@ export const EventPage = (): JSX.Element => {
                 setEvent(serverEvent);
             }
         }
-    }
-
-    if (!isAuth || !user) {
-        return <Navigate to="/login" />;
     }
 
     if (!event) {

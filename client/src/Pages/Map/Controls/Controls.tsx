@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, SetStateAction, useRef, memo } from "react";
+import { SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { useMap } from "react-map-gl";
 import { Button, DatePicker, Input, RadioGroup, Token, TokenInput, TokenInputType } from "@skbkontur/react-ui";
 import { ValidationContainer, ValidationWrapper } from "@skbkontur/react-ui-validations";
@@ -9,7 +9,7 @@ import { parse } from "date-fns";
 import RightIcon from "../../../assets/arrow_right.svg";
 import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { CommonLayout } from "../../../ui/components/CommonLayout/CommonLayout";
-import { EventType, Event } from "../../../Commons/types/Event";
+import { Event, EventType, Tag } from "../../../Commons/types/Event";
 import { isNightNow } from "../MapBox/MapBox";
 import { getTags } from "../../../api/tags/tags";
 import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
@@ -32,7 +32,7 @@ export const Controls = (): JSX.Element => {
     const [participantsCount, setParticipantsCount] = useState<Nullable<number>>(null);
     const [tags, setTags] = useState([]);
     const [creatorName, setCreatorName] = useState("");
-    const [type, setType] = useState<EventType>(EventType.LOCAL);
+    const [type, setType] = useState<EventType>(EventType.GLOBAL);
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
     const container = useRef<ValidationContainer | null>(null);
@@ -42,6 +42,11 @@ export const Controls = (): JSX.Element => {
 
     const [hasError, setHasError] = useState(false);
     const [isClosed, setIsClosed] = useState(false);
+    const [loadedTags, setLoadedTags] = useState<Tag[]>([]);
+
+    useEffect(() => {
+        getTags().then(setLoadedTags);
+    }, []);
 
     useEffect((): undefined | (() => void) => {
         if (!eventMap) {
@@ -65,6 +70,16 @@ export const Controls = (): JSX.Element => {
         setCoords(event.target.value);
     }, []);
 
+    const onResetFilter = () => {
+        setName("");
+        setParticipantsCount(null);
+        setTags([]);
+        setCreatorName("");
+        setType(EventType.GLOBAL);
+        setFrom("");
+        setTo("");
+        setFilteredEvents([]);
+    }
     const onSubmit = (): void => {
         const isValid = container.current?.validate();
         if (!isValid) {
@@ -103,15 +118,10 @@ export const Controls = (): JSX.Element => {
         setIsClosed(!isClosed);
     };
 
-    const getTagsNames = (q: string) =>
-        getTags().then(
-            tags =>
-                tags
-                    .map(tag => tag.name)
-                    .filter(
-                        tagName => tagName.toLowerCase().includes(q.toLowerCase()) || tagName.toString() === q
-                    ) as never[]
-        );
+    const getTagsNames = (q: string): never[] =>
+        loadedTags
+            .map(tag => tag.name)
+            .filter(tagName => tagName.toLowerCase().includes(q.toLowerCase()) || tagName.toString() === q) as never[];
     const validationInfo: ValidationInfo | null =
         (from && to && parseDate(from).getTime() - parseDate(to).getTime()) > 0
             ? {
@@ -129,8 +139,7 @@ export const Controls = (): JSX.Element => {
                         left: isClosed ? 0 : menuWidth - 18,
                     }}
                     className={cn("switch-button", { closed: !isClosed })}
-                    onClick={onClickSwitchButton}
-                >
+                    onClick={onClickSwitchButton}>
                     <img src={RightIcon} alt="switch-button" />
                 </div>
             )}
@@ -140,8 +149,7 @@ export const Controls = (): JSX.Element => {
                     left:
                         isClosed && controlsRef.current?.clientWidth ? -controlsRef.current.clientWidth - 5 : undefined,
                 }}
-                ref={controlsRef}
-            >
+                ref={controlsRef}>
                 <CommonLayout.Header className={cn("map-control-header")}>
                     <h2>Фильтрация событий</h2>
                 </CommonLayout.Header>
@@ -235,7 +243,7 @@ export const Controls = (): JSX.Element => {
                         width={inputWidth}
                         style={{ maxHeight: 200, overflow: "auto" }}
                         type={TokenInputType.Combined}
-                        getItems={getTagsNames}
+                        getItems={async (q) => getTagsNames(q)}
                         menuAlign="left"
                         menuWidth={tags.length === 10 ? "0px" : undefined}
                         selectedItems={tags}
@@ -247,9 +255,15 @@ export const Controls = (): JSX.Element => {
                         )}
                     />
                 </RowStack>
-                <Button use={isNight ? "default" : "primary"} title="Искать" onClick={onSubmit}>
-                    Отфильтровать
-                </Button>
+                <RowStack>
+                    <Button use={isNight ? "default" : "primary"} title="Искать" onClick={onSubmit}>
+                        Отфильтровать
+                    </Button>
+                    <Button use={isNight ? "primary" : "default"} title="Искать" onClick={onResetFilter}>
+                        Сбросить фильтр
+                    </Button>
+                </RowStack>
+
                 {filteredEvents.length > 0 && (
                     <>
                         <CommonLayout.Header className={cn("map-control-header")}>

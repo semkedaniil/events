@@ -8,7 +8,6 @@ import { Feature } from "../../../stores/eventsStore/helpers";
 import { Event } from "../../../Commons/types/Event";
 import { ColumnStack } from "../../../ui/components/ColumnStack/ColumnStack";
 import { RowStack } from "../../../ui/components/RowStack/RowStack";
-import { useAuthStore } from "../../../stores/userStore/userStore";
 import { MarksBlock } from "../../../ui/components/MarksBlock/MarksBlock";
 
 interface ClusterLayerProps {
@@ -46,23 +45,22 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
         if (!currentEvent) {
             return null;
         }
-        const event = currentEvent;
-        const start = new Date(event.dateRange.startDate).toLocaleString();
-        const end = event.dateRange.endDate && new Date(event.dateRange.endDate).toLocaleString();
+        const start = new Date(currentEvent.dateRange.startDate).toLocaleString();
+        const end = currentEvent.dateRange.endDate && new Date(currentEvent.dateRange.endDate).toLocaleString();
         return (
             <div className={cn("event-tooltip")}>
-                {event.photos?.[0] && (
-                    <img className={cn("img")} src={event.photos?.[0]} height={150} alt={event.name} />
+                {currentEvent.photos?.[0] && (
+                    <img className={cn("img")} src={currentEvent.photos?.[0]} height={150} alt={currentEvent.name} />
                 )}
                 <div className={cn("main-info")}>
                     <Link title="Открыть страницу события" href={`/event/${id}`}>
-                        <h2 className={cn("name")}>{event.name}</h2>
+                        <h2 className={cn("name")}>{currentEvent.name}</h2>
                     </Link>
-                    <main>{event.description}</main>
+                    <main>{currentEvent.description}</main>
                     <footer>
-                        {event.creator && <span className={cn("author")}>Автор: {event.creator}</span>}
+                        {currentEvent.creator && <span className={cn("author")}>Автор: {currentEvent.creator}</span>}
                         <RowStack>
-                            {event.tags?.map(({ name }) => (
+                            {currentEvent.tags?.map(({ name }) => (
                                 <span className={cn("author")} key={name}>
                                     #{name}
                                 </span>
@@ -71,10 +69,10 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
                         <RowStack align="center" className={cn("marks-wrapper")}>
                             <ColumnStack className={cn("date-range")}>
                                 <span>Начало: {start}</span>
-                                {event.dateRange.endDate && <span>Конец: {end}</span>}
+                                {currentEvent.dateRange.endDate && <span>Конец: {end}</span>}
                             </ColumnStack>
                             <MarksBlock
-                                event={event}
+                                event={currentEvent}
                                 className={cn("marks")}
                                 withoutCaption
                                 onValueChange={onValueChange}
@@ -119,10 +117,10 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
                             maxWidth="50vw"
                             className={cn("popup")}
                             latitude={latitude}
+                            onClose={() => setCurrentEvent(null)}
                             onOpen={() => setCurrentEvent(properties as any)}
                             longitude={longitude}
-                            closeButton={false}
-                        >
+                            closeButton={false}>
                             {renderMarkerTooltip(properties as any)}
                         </Popup>
                     )}
@@ -132,7 +130,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
     };
     return (
         <>
-            {clusters.map((feature, index) => {
+            {clusters.map(feature => {
                 const { id, geometry, properties } = feature;
                 const { coordinates } = geometry;
                 const [longitude, latitude] = coordinates;
@@ -145,8 +143,7 @@ export const ClusterLayer = ({ mapId, data, ClusterComponent, onSelectMarker, on
                             key={clusterId}
                             latitude={latitude}
                             longitude={longitude}
-                            onClick={() => handleSelectMarker(clusterId, coordinates)}
-                        >
+                            onClick={() => handleSelectMarker(clusterId, coordinates)}>
                             <ClusterComponent key={`cluster${id}`} properties={clusterFeaturesProps} leaves={leaves} />
                         </Marker>
                     );

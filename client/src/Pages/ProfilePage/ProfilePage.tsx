@@ -100,10 +100,6 @@ export const ProfilePage = () => {
         setToken(token);
     };
 
-    if (!isAuth) {
-        return <Navigate to="/login" />;
-    }
-
     return (
         <ValidationContainer ref={container}>
             <Loader active={loading} delayBeforeSpinnerShow={0} minimalDelayBeforeSpinnerHide={1000}>

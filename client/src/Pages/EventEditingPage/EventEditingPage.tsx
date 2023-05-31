@@ -17,7 +17,6 @@ import _ from "lodash";
 
 import { deleteEventImage, getEvent, updateEvent } from "../../api/events/events";
 import { Event, EventDto, Location } from "../../Commons/types/Event";
-import { useAuthStore } from "../../stores/userStore/userStore";
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import cn from "../EventCreationPage/EventCreationPage.less";
@@ -34,7 +33,6 @@ import { getTags } from "../../api/tags/tags";
 
 export const EventEditingPage = () => {
     const navigate = useNavigate();
-    const { user, isAuth } = useAuthStore();
     const { id = "" } = useParams<"id">();
     const [event, setEvent] = useState<Event>();
     const [loading, setLoading] = useState(false);
@@ -59,9 +57,6 @@ export const EventEditingPage = () => {
         []
     );
 
-    if (!isAuth || !user) {
-        return <Navigate to="/login" />;
-    }
     const onCloseModal = () => {
         setShowModal(false);
     };

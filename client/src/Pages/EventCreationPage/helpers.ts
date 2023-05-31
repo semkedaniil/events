@@ -1,5 +1,5 @@
 import { ValidationInfo } from "@skbkontur/react-ui-validations/src/ValidationWrapper";
-import { differenceInHours } from "date-fns";
+import { differenceInSeconds } from "date-fns";
 
 import { DateRange, Location } from "../../Commons/types/Event";
 
@@ -41,7 +41,7 @@ export const getValidationInfo = (
         validationInfo.dateRangeLeft = { message: "Укажите дату начала события", type: "submit" };
     }
 
-    if (dateRange?.endDate && differenceInHours(new Date(dateRange?.endDate), new Date(dateRange?.startDate)) < 0) {
+    if (dateRange?.endDate && differenceInSeconds(new Date(dateRange?.endDate), new Date(dateRange?.startDate)) < 0) {
         validationInfo.dateRangeRight = { message: "Укажите корректный временной промежуток", type: "submit" };
     }
 

@@ -14,14 +14,13 @@ import {
     TokenInput,
     TokenInputType,
 } from "@skbkontur/react-ui";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { CommonLayout } from "../../ui/components/CommonLayout/CommonLayout";
 import { GoBackLink } from "../../ui/components/GoBackLink/GoBackLink";
 import { ColumnStack } from "../../ui/components/ColumnStack/ColumnStack";
 import { RowStack } from "../../ui/components/RowStack/RowStack";
-import { DateRange, Location, EventDto } from "../../Commons/types/Event";
-import { useAuthStore } from "../../stores/userStore/userStore";
+import { DateRange, Location, EventDto, Tag } from "../../Commons/types/Event";
 import { DateTimePicker } from "../../Commons/components/DateTimePicker";
 import { PhotoUploader } from "../../Commons/components/PhotoUploader";
 import { ImageSlider } from "../EventPage/PhotoSlider/Slider";
@@ -42,7 +41,6 @@ export const defaultInputProps = {
 };
 
 export const EventCreationPage = () => {
-    const { isAuth } = useAuthStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [searchParams] = useSearchParams();
@@ -54,6 +52,7 @@ export const EventCreationPage = () => {
     const [name, setName] = useState("");
     const [error, setError] = useState(false);
     const [photos, setPhotos] = useState<File[]>([]);
+    const [loadedTags, setLoadedTags] = useState<Tag[]>([]);
     const [location, setLocation] = useState<DeepNullable<Location>>({
         latitude: getLocationOrDefault(searchParams.get("lat")),
         longitude: getLocationOrDefault(searchParams.get("lng")),
@@ -70,6 +69,10 @@ export const EventCreationPage = () => {
             previewPhotos.map(URL.revokeObjectURL);
         };
     }, [photos]);
+
+    useEffect(() => {
+        getTags().then(setLoadedTags);
+    }, []);
 
     const onCloseModal = () => {
         setShowModal(false);
@@ -92,7 +95,7 @@ export const EventCreationPage = () => {
     };
 
     const onCreateEvent = async () => {
-        const isValid = container.current?.validate();
+        const isValid = await container.current?.validate();
         if (isValid && location && location.longitude && location.latitude && dateRange && !error) {
             setLoading(true);
             let error = false;
@@ -125,19 +128,10 @@ export const EventCreationPage = () => {
         setPreviewPhotos(photos => photos.filter((_, index) => index !== id));
     };
 
-    const getTagsNames = (q: string) =>
-        getTags().then(
-            tags =>
-                tags
-                    .map(tag => tag.name)
-                    .filter(
-                        tagName => tagName.toLowerCase().includes(q.toLowerCase()) || tagName.toString() === q
-                    ) as never[]
-        );
-
-    if (!isAuth) {
-        return <Navigate to="/login" />;
-    }
+    const getTagsNames = (q: string): never[] =>
+        loadedTags
+            .map(tag => tag.name)
+            .filter(tagName => tagName.toLowerCase().includes(q.toLowerCase()) || tagName.toString() === q) as never[];
 
     return (
         <CommonLayout>
@@ -249,7 +243,7 @@ export const EventCreationPage = () => {
                                         delimiters={[","]}
                                         className={cn("tokens")}
                                         type={TokenInputType.Combined}
-                                        getItems={getTagsNames}
+                                        getItems={async (q) => getTagsNames(q)}
                                         menuAlign="left"
                                         menuWidth={tags.length === 10 ? "0px" : undefined}
                                         selectedItems={tags}

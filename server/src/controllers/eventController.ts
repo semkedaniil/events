@@ -1,14 +1,15 @@
 import path from "node:path";
 import fs from "node:fs";
-import { io } from "../index";
+
 import e, { NextFunction, Request, Response } from "express";
 import { v4 } from "uuid";
 
+import { io } from "../index";
 import { Event, Mark, Location, Tag, Images, User } from "../models/models";
 import { ApiError } from "../error/ApiError";
+import { CustomRequest } from "../models/types";
 
 import { BaseModelHelper } from "./BaseModelHelper";
-import {CustomRequest} from "../models/types";
 
 const serverUrl = process.env.BASE_SERVER_URL;
 const mapEventModelsToEventDTO = (eventModel: any[]) => eventModel?.map((event: any) => ({
@@ -28,11 +29,6 @@ const mapEventModelsToEventDTO = (eventModel: any[]) => eventModel?.map((event: 
 })).filter((event: any) => event.location != null);
 
 export class EventController {
-  public async getEvents(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
-    const events = await EventController.getAllEvents(next);
-    return response.json(events);
-  }
-
   public static async getEventById(id: string) {
     const event = await Event.findOne({
       where: { id }, include: [{ model: User, attributes: ["username"] }, Images, {
@@ -66,6 +62,12 @@ export class EventController {
     });
     return mapEventModelsToEventDTO(events);
   }
+
+  public async getEvents(_: Request, response: Response, next: NextFunction): Promise<e.Response | void> {
+    const events = await EventController.getAllEvents(next);
+    return response.json(events);
+  }
+
 
   public async getEvent(request: CustomRequest, response: Response, next: NextFunction): Promise<e.Response | void> {
     const { id } = request.params;
@@ -139,7 +141,7 @@ export class EventController {
 
       const event = await EventController.getEventById(id);
       io.emit("event updated", event);
-      return response.json({ message: "Создан"});
+      return response.json({ message: "Создан" });
     } catch (error) {
       next(ApiError.badRequest(error.message));
     }
@@ -200,7 +202,8 @@ export class EventController {
           }
         }
       }
-      io.emit("event updated", event);
+      const newEvent = await EventController.getEventById(event.getDataValue("id"));
+      io.emit("event updated", newEvent);
       return response.json(event);
     } catch (error) {
       next(ApiError.badRequest(error.message));

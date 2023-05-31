@@ -22,6 +22,13 @@ const Event = database.define("event", {
     endDate: {type: DataTypes.DATE, allowNull: true},
 });
 
+const Comment = database.define("location", {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    text: {type: DataTypes.TEXT, allowNull: false},
+    date: {type: DataTypes.DATE, allowNull: false},
+    mark: {type: DataTypes.BOOLEAN, allowNull: true },
+}, {omitNull: true});
+
 const Location = database.define("location", {
     longitude: {type: DataTypes.DOUBLE, allowNull: false},
     latitude: {type: DataTypes.DOUBLE, allowNull: false},
@@ -70,5 +77,8 @@ Mark.belongsTo(Event);
 
 User.hasMany(Mark);
 Mark.belongsTo(User);
+
+Event.hasMany(Comment);
+Comment.belongsTo(Event);
 
 export {User, Event, Mark, Location, Tag, Images, Subscription};
