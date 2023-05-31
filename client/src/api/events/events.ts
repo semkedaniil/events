@@ -73,3 +73,7 @@ export const updateEvent = async ({
 export const deleteEventImage = async (url: string, eventId: number): Promise<void> => {
     await $authHost.put(`api/events/image/delete`, { url, eventId });
 };
+
+export const deleteEvent = async (eventId: number): Promise<void> => {
+    await $authHost.delete(`api/events/${eventId}`);
+};

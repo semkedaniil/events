@@ -15,6 +15,9 @@ export const Events = (): JSX.Element => {
         loadEvents();
     }, []);
 
+    const onDeleteEvent = (eventId: number) => {
+        setUserEvents(userEvents.filter(event => event.id !== eventId))
+    }
     return (
         <CommonLayout>
             <CommonLayout.Header>
@@ -22,7 +25,7 @@ export const Events = (): JSX.Element => {
                 <h1>Events</h1>
             </CommonLayout.Header>
             <CommonLayout.Content>
-                <EventList events={userEvents} />
+                <EventList events={userEvents} onDeleteEvent={onDeleteEvent}/>
             </CommonLayout.Content>
         </CommonLayout>
     );

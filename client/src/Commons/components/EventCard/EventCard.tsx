@@ -1,6 +1,6 @@
 import { Link } from "@skbkontur/react-ui";
 import React from "react";
-import { BsGearWideConnected } from "react-icons/bs";
+import { BsGearWideConnected, BsTrash3 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
 import { Event } from "../../types/Event";
@@ -9,15 +9,17 @@ import { RowStack } from "../../../ui/components/RowStack/RowStack";
 import { MarksBlock } from "../../../ui/components/MarksBlock/MarksBlock";
 import { useEventsStore } from "../../../stores/eventsStore/eventsStore";
 import { useAuthStore } from "../../../stores/userStore/userStore";
+import {deleteEvent} from "../../../api/events/events";
 
 import cn from "./Event.less";
 
 interface EventListProps {
     events: Event[];
     className?: string;
+    onDeleteEvent?: (eventId: number) => void;
 }
 
-export const EventList = ({ events, className }: EventListProps) => {
+export const EventList = ({ events, className, onDeleteEvent }: EventListProps) => {
     const { events: originalEvents } = useEventsStore();
     const { user } = useAuthStore();
     const navigate = useNavigate();
@@ -36,6 +38,12 @@ export const EventList = ({ events, className }: EventListProps) => {
     const onEditButtonClick = (eventId: number) => {
         navigate(`/event/${eventId}/edit`);
     };
+
+    const onDelete = async (eventId: number) => {
+        await deleteEvent(eventId);
+        onDeleteEvent?.(eventId);
+    }
+
     return (
         <div className={cn("events", className)}>
             {events.map(event => {
@@ -50,17 +58,30 @@ export const EventList = ({ events, className }: EventListProps) => {
                 } = event;
                 const start = new Date(startDate).toLocaleString();
                 const end = endDate && new Date(endDate).toLocaleString();
+                const canDelete = user?.username === creator && onDeleteEvent;
                 return (
                     <div key={id} className={cn("event")}>
-                        {user?.username === creator && (
-                            <div
-                                className={cn("edit-button")}
-                                title="Редактировать событие"
-                                onClick={() => onEditButtonClick(id)}
-                            >
-                                <BsGearWideConnected size={32} />
-                            </div>
-                        )}
+                        <div className={cn("buttons")}>
+                            {user?.username === creator && (
+                                <div
+                                    className={cn("edit-button", { "with-delete": canDelete})}
+                                    title="Редактировать событие"
+                                    onClick={() => onEditButtonClick(id)}
+                                >
+                                    <BsGearWideConnected size={32} />
+                                </div>
+                            )}
+                            {canDelete && (
+                                <div
+                                    className={cn("delete-button")}
+                                    title="Удалить событие"
+                                    onClick={() => onDelete(id)}
+                                >
+                                    <BsTrash3 size={32} />
+                                </div>
+                            )}
+                        </div>
+
                         {photos?.[0] && <img className={cn("img")} src={photos?.[0]} height={100} alt={name} />}
                         <div className={cn("main-info")}>
                             <Link title="Открыть страницу события" href={`/event/${id}`}>

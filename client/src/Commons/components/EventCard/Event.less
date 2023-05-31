@@ -1,16 +1,31 @@
 @import "src/ui/styles/variables";
 
 :local {
-  .edit-button {
+  .buttons {
     position: absolute;
     right: 0;
-    font-size: 24px;
-    cursor: pointer;
-    border-radius: 0 16px 0 16px;
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: @base-size * 2;
-    border: 1px solid rgba(0, 0, 0, 0.16);
+    display: flex;
+
+    .edit-button, .delete-button {
+      font-size: 24px;
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: @base-size * 2;
+      border: 1px solid rgba(0, 0, 0, 0.16);
+    }
+
+    .edit-button {
+      border-radius: 0 16px 0 16px;
+
+      &.with-delete {
+        border-radius: 0 0 0 16px;
+      }
+    }
+    .delete-button {
+      border-radius: 0 16px 0 0;
+    }
   }
+
   .events {
     display: flex;
     flex-wrap: wrap;

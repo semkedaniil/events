@@ -45,13 +45,22 @@ export const MapBox = (): JSX.Element | null => {
         setKey(Math.random() * 5);
     }, [location]);
 
-    const onEventUpdated = useCallback((updatedEvent: Event) => {
-        console.log(updatedEvent);
-        const newEvents = events.filter(x => x.id !== updatedEvent.id);
-        newEvents.push(updatedEvent);
-        console.log(newEvents);
-        setEvents(newEvents);
-    }, [events]);
+    const onEventUpdated = useCallback(
+        (updatedEvent: Event) => {
+            const newEvents = events.filter(x => x.id !== updatedEvent.id);
+            newEvents.push(updatedEvent);
+            setEvents(newEvents);
+        },
+        [events]
+    );
+
+    const onEventDeleted = useCallback(
+        (eventId: number) => {
+            setEvents(events.filter(x => x.id !== eventId));
+        },
+        [events]
+    );
+
     useEffect(() => {
         loadEvents();
     }, []);
@@ -60,6 +69,7 @@ export const MapBox = (): JSX.Element | null => {
         setGeoEvents(mapEventsToGeoJson(events));
         socket.timeout(5000).connect();
         socket.on("event updated", onEventUpdated);
+        socket.on("event deleted", onEventDeleted);
         return () => {
             socket.off("event updated", onEventUpdated);
         };

@@ -8,6 +8,7 @@ router.get("/", authMiddleware, EventController.getEvents);
 router.get("/user", authMiddleware, EventController.getUserEvents);
 router.post("/create", authMiddleware, EventController.createEvent);
 router.put("/image/delete", authMiddleware, EventController.deleteEventImage);
+router.delete("/:id", authMiddleware, EventController.deleteEvent);
 router.put("/:id", authMiddleware, EventController.updateEvent);
 router.get("/:id", authMiddleware, EventController.getEvent);
 

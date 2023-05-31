@@ -5,7 +5,7 @@ import e, { NextFunction, Request, Response } from "express";
 import { v4 } from "uuid";
 
 import { io } from "../index";
-import { Event, Mark, Location, Tag, Images, User } from "../models/models";
+import { Event, Mark, Location, Tag, Images, User, Subscription } from "../models/models";
 import { ApiError } from "../error/ApiError";
 import { CustomRequest } from "../models/types";
 
@@ -40,6 +40,9 @@ export class EventController {
       }, {
         model: Mark,
         attributes: ["isLiked", "userId"]
+      }, {
+        model: Subscription,
+        attributes: ["userId"]
       }]
     });
     return mapEventModelsToEventDTO([event])[0];
@@ -97,6 +100,9 @@ export class EventController {
       }, {
         model: Mark,
         attributes: ["isLiked", "userId"]
+      }, {
+        model: Subscription,
+        attributes: ["userId"]
       }]
     });
     return response.json(mapEventModelsToEventDTO(events));
@@ -164,6 +170,34 @@ export class EventController {
       return response.json({ message: "Сообщение удалено" });
     } catch (error) {
       next(ApiError.badRequest(error.message));
+    }
+
+    return undefined;
+  }
+
+  public async deleteEvent(request: CustomRequest, response: Response, next: NextFunction) {
+    const { params: { id: eventId } } = request;
+    try {
+      const event = await Event.findOne({ where: { id: eventId } });
+      if (event) {
+        const imagesUrls = event.getDataValue("photos");
+        await event?.destroy();
+        if (imagesUrls) {
+          for (const url of imagesUrls) {
+            await Images.destroy({ where: { eventId, url } });
+            const avatarPath = path.join(__dirname, "..", "..", "static", url);
+            fs.unlink(avatarPath, (error) => {
+              if (error) {
+                next(ApiError.badRequest(error.message));
+              }
+            });
+          }
+        }
+        io.emit("event deleted", eventId);
+        return response.json({ message: "Сообщение удалено" });
+      }
+    } catch {
+      next(ApiError.internal("Что - то пошло не так"));
     }
 
     return undefined;
